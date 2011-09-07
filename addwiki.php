@@ -27,7 +27,11 @@
  * @ingroup Wikimedia
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
+	$IP = dirname( __FILE__ ) . '/../..';
+}
+require( "$IP/maintenance/Maintenance.php" );
 
 class AddWiki extends Maintenance {
 	public function __construct() {
