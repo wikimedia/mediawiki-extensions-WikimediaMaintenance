@@ -23,16 +23,9 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-$IP = getenv( 'MW_INSTALL_PATH' );
-if ( $IP === false ) {
-	$IP = dirname( __FILE__ ) . '/../..';
-}
-require( "$IP/maintenance/Maintenance.php" );
-
-require_once( dirname( __FILE__ ) . '/Site.php' );
-
-class DumpInterwiki extends Maintenance {
+class DumpInterwiki extends WikimediaMaintenance {
 
 	public function __construct() {
 		parent::__construct();
@@ -75,14 +68,14 @@ class DumpInterwiki extends Maintenance {
 		# Multi-language sites
 		# db suffix => db suffix, iw prefix, hostname
 		$sites = array(
-			'wiki' => new Site( 'wiki', 'w', 'wikipedia.org' ),
-			'wiktionary' => new Site( 'wiktionary', 'wikt', 'wiktionary.org' ),
-			'wikiquote' => new Site( 'wikiquote', 'q', 'wikiquote.org' ),
-			'wikibooks' => new Site( 'wikibooks', 'b', 'wikibooks.org' ),
-			'wikinews' => new Site( 'wikinews', 'n', 'wikinews.org' ),
-			'wikisource' => new Site( 'wikisource', 's', 'wikisource.org' ),
-			'wikimedia' => new Site( 'wikimedia', 'chapter', 'wikimedia.org' ),
-			'wikiversity' => new Site( 'wikiversity', 'v', 'wikiversity.org' ),
+			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia.org' ),
+			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary.org' ),
+			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote.org' ),
+			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
+			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
+			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
+			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
+			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
 		);
 
 		# Extra interwiki links that can't be in the intermap for some reason

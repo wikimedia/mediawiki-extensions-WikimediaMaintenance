@@ -1,9 +1,9 @@
 <?php
 /**
- * @todo document
+ * A simple little class referring to a specific WMF site.
  * @ingroup Maintenance
  */
-class Site {
+class WMFSite {
 	var $suffix, $lateral, $url;
 
 	function __construct( $s, $l, $u ) {

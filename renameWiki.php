@@ -22,14 +22,9 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-$IP = getenv( 'MW_INSTALL_PATH' );
-if ( $IP === false ) {
-	$IP = dirname( __FILE__ ) . '/../..';
-}
-require( "$IP/maintenance/Maintenance.php" );
-
-class RenameWiki extends Maintenance {
+class RenameWiki extends WikimediaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Rename external storage dbs and leave a new one";

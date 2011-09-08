@@ -23,22 +23,16 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-$IP = getenv( 'MW_INSTALL_PATH' );
-if ( $IP === false ) {
-	$IP = dirname( __FILE__ ) . '/../..';
-}
-require( "$IP/maintenance/Maintenance.php" );
-
-require_once( dirname( __FILE__ ) . '/Site.php' );
-
-class RebuildInterwiki extends Maintenance {
+class RebuildInterwiki extends DumpInterwiki {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Rebuild the interwiki table using the file on meta and the language list.";
 		$this->addOption( 'langlist', 'File with one language code per line', false, true );
 		$this->addOption( 'dblist', 'File with one db per line', false, true );
 		$this->addOption( 'd', 'Output folder', false, true );
+		$this->addOption( 'protocolrelative', 'Output wikimedia interwiki urls as protocol relative', false, false );
 	}
 
 	function execute() {
@@ -52,6 +46,12 @@ class RebuildInterwiki extends Maintenance {
 		//$this->specials = array_flip(	array_map( "trim", file( $this->getOption( 'specialdbs', "/home/wikipedia/common/special.dblist" ) ) ) );
 
 		$this->makeInterwikiSQL( $this->getOption( 'd', '/home/wikipedia/conf/interwiki/sql' ) );
+
+		if ( $this->hasOption( 'protocolrelative' ) ) {
+			$this->urlprotocol = '';
+		} else {
+			$this->urlprotocol = 'http:';
+		}
 	}
 
 	function makeInterwikiSQL( $destDir ) {
@@ -60,14 +60,14 @@ class RebuildInterwiki extends Maintenance {
 		# Multi-language sites
 		# db suffix => db suffix, iw prefix, hostname
 		$sites = array(
-			'wiki' => new Site( 'wiki', 'w', 'wikipedia.org' ),
-			'wiktionary' => new Site( 'wiktionary', 'wikt', 'wiktionary.org' ),
-			'wikiquote' => new Site( 'wikiquote', 'q', 'wikiquote.org' ),
-			'wikibooks' => new Site( 'wikibooks', 'b', 'wikibooks.org' ),
-			'wikinews' => new Site( 'wikinews', 'n', 'wikinews.org' ),
-			'wikisource' => new Site( 'wikisource', 's', 'wikisource.org' ),
-			'wikimedia' => new Site( 'wikimedia', 'chapter', 'wikimedia.org' ),
-			'wikiversity' => new Site( 'wikiversity', 'v', 'wikiversity.org' ),
+			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia.org' ),
+			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary.org' ),
+			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote.org' ),
+			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
+			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
+			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
+			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
+			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
 		);
 
 		# Special-case hostnames
@@ -83,9 +83,9 @@ class RebuildInterwiki extends Maintenance {
 
 		# Extra interwiki links that can't be in the intermap for some reason
 		$extraLinks = array(
-			array( 'm', 'http://meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'meta', 'http://meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'sep11', 'http://sep11.wikipedia.org/wiki/$1', 1 ),
+			array( 'm', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
+			array( 'meta', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
+			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
 		);
 
 		# Language aliases, usually configured as redirects to the real wiki in apache
@@ -164,7 +164,7 @@ class RebuildInterwiki extends Maintenance {
 
 				# Links to multilanguage sites
 				foreach ( $sites as $targetSite ) {
-					$sql .= $this->makeLink( array( $targetSite->lateral, $targetSite->getURL( 'en' ), 1 ), $first, $db );
+					$sql .= $this->makeLink( array( $targetSite->lateral, $targetSite->getURL( 'en', $this->urlprotocol ), 1 ), $first, $db );
 				}
 
 				# Interlanguage links to wikipedia
@@ -213,7 +213,7 @@ class RebuildInterwiki extends Maintenance {
 				foreach ( $sites as $targetSite ) {
 					# Suppress link to self
 					if ( $targetSite->suffix != $site->suffix ) {
-						$sql .= $this->makeLink( array( $targetSite->lateral, $targetSite->getURL( $lang ), 1 ), $first, $db );
+						$sql .= $this->makeLink( array( $targetSite->lateral, $targetSite->getURL( $lang, $this->urlprotocol ), 1 ), $first, $db );
 					}
 				}
 
@@ -223,7 +223,7 @@ class RebuildInterwiki extends Maintenance {
 				# w link within wikipedias
 				# Other sites already have it as a lateral link
 				if ( $site->suffix == "wiki" ) {
-					$sql .= $this->makeLink( array( "w", "http://en.wikipedia.org/wiki/$1", 1 ), $first, $db );
+					$sql .= $this->makeLink( array( "w", "{$this->urlprotocol}//en.wikipedia.org/wiki/$1", 1 ), $first, $db );
 				}
 
 				# Extra links
@@ -244,12 +244,12 @@ class RebuildInterwiki extends Maintenance {
 
 		# Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
-			$sql .= $this->makeLink( array( $targetLang, $site->getURL( $targetLang ), 1 ), $first, $source );
+			$sql .= $this->makeLink( array( $targetLang, $site->getURL( $targetLang, $this->urlprotocol ), 1 ), $first, $source );
 		}
 
 		# Language aliases
 		foreach ( $this->languageAliases as $alias => $lang ) {
-			$sql .= $this->makeLink( array( $alias, $site->getURL( $lang ), 1 ), $first, $source );
+			$sql .= $this->makeLink( array( $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ), $first, $source );
 		}
 		return $sql;
 	}
