@@ -69,6 +69,6 @@ abstract class WikimediaMaintenance extends Maintenance {
 				define( 'TESTWIKI', 1 );
 			}
 		}
-		return '../wmf-config/CommonSettings.php';
+		return MWInit::interpretedPath( '../wmf-config/CommonSettings.php' );
 	}
 }
