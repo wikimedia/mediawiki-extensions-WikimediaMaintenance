@@ -27,6 +27,17 @@ require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
 class DumpInterwiki extends WikimediaMaintenance {
 
+	/**
+	 * @var array
+	 */
+	protected $langlist, $dblist, $specials, $languageAliases, $prefixRewrites, $prefixLists;
+
+	/**
+	 * @var CdbWriter
+	 */
+	protected $dbFile;
+	protected $urlprotocol;
+
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Build constant slightly compact database of interwiki prefixes.";
@@ -221,7 +232,12 @@ class DumpInterwiki extends WikimediaMaintenance {
 
 	# ------------------------------------------------------------------------------------------
 
-	# Executes part of an INSERT statement, corresponding to all interlanguage links to a particular site
+	/**
+	 * Executes part of an INSERT statement, corresponding to all interlanguage links to a particular site
+	 *
+	 * @param $site
+	 * @param $source
+	 */
 	function makeLanguageLinks( &$site, $source ) {
 		# Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
@@ -234,6 +250,10 @@ class DumpInterwiki extends WikimediaMaintenance {
 		}
 	}
 
+	/**
+	 * @param $entry
+	 * @param $source
+	 */
 	function makeLink( $entry, $source ) {
 		if ( isset( $this->prefixRewrites[$source] ) && isset( $this->prefixRewrites[$source][$entry[0]] ) )
 			$entry[0] = $this->prefixRewrites[$source][$entry[0]];

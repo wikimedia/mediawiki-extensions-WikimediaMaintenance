@@ -26,6 +26,13 @@
 require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
 class RebuildInterwiki extends DumpInterwiki {
+
+	/**
+	 * @var array
+	 */
+	protected $specials, $languageAliases, $prefixRewrites,
+		$langlist, $dblist;
+
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Rebuild the interwiki table using the file on meta and the language list.";
@@ -54,6 +61,9 @@ class RebuildInterwiki extends DumpInterwiki {
 		}
 	}
 
+	/**
+	 * @param $destDir string
+	 */
 	function makeInterwikiSQL( $destDir ) {
 		$this->output( "Making new interwiki SQL files in $destDir\n" );
 
@@ -238,7 +248,14 @@ class RebuildInterwiki extends DumpInterwiki {
 
 	# ------------------------------------------------------------------------------------------
 
-	# Returns part of an INSERT statement, corresponding to all interlanguage links to a particular site
+	/**
+	 * Returns part of an INSERT statement, corresponding to all interlanguage links to a particular site
+	 *
+	 * @param $site
+	 * @param $first
+	 * @param $source
+	 * @return string
+	 */
 	function makeLanguageLinks( &$site, &$first, $source ) {
 		$sql = "";
 
@@ -254,7 +271,14 @@ class RebuildInterwiki extends DumpInterwiki {
 		return $sql;
 	}
 
-	# Make SQL for a single link from an array
+	/**
+	 * Make SQL for a single link from an array
+	 *
+	 * @param $entry
+	 * @param $first
+	 * @param $source
+	 * @return string
+	 */
 	function makeLink( $entry, &$first, $source ) {
 
 		if ( isset( $this->prefixRewrites[$source] ) && isset($entry[0]) && isset( $this->prefixRewrites[$source][$entry[0]] ) ) {
