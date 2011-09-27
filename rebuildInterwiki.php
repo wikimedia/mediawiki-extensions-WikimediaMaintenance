@@ -142,7 +142,7 @@ class RebuildInterwiki extends DumpInterwiki {
 			if ( preg_match( '/^\|\s*(.*?)\s*\|\|\s*(https?:\/\/.*?)\s*$/', $line, $matches ) ) {
 				$prefix = strtolower( $matches[1] );
 				$url = $matches[2];
-				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia)\.org/', $url ) ) {
+				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikimediafoundation|mediawiki)\.org/', $url ) ) {
 					$local = 1;
 				} else {
 					$local = 0;
