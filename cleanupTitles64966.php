@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Script to clean up broken, unparseable titles.
  *
  * Usage: php cleanupTitles.php [--fix]
@@ -42,7 +42,7 @@ class TitleCleanup extends TableCleanup {
 		$verified = $wgContLang->normalize( $display );
 		$title = Title::newFromText( $verified );
 
-		if( !is_null( $title ) 
+		if( !is_null( $title )
 			&& $title->canExist()
 			&& $title->getNamespace() == $row->page_namespace
 			&& $title->getDBkey() === $row->page_title )
@@ -114,7 +114,7 @@ class TitleCleanup extends TableCleanup {
 			}
 
 			# Old cleanupTitles could move articles there. See bug 23147.
-			$ns = $row->page_namespace; 
+			$ns = $row->page_namespace;
 			if ( $ns < 0) $ns = 0;
 
 			$clean = 'Broken/' . $prior;
