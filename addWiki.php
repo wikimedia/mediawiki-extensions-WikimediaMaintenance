@@ -171,7 +171,6 @@ class AddWiki extends Maintenance {
 		$this->output( "Script ended. You still have to:
 	* Add any required settings in InitialiseSettings.php
 	* Run sync-common-all
-	* Run /home/wikipedia/conf/interwiki/update
 	" );
 	}
 

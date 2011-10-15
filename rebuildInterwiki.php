@@ -251,7 +251,7 @@ class RebuildInterwiki extends DumpInterwiki {
 	/**
 	 * Returns part of an INSERT statement, corresponding to all interlanguage links to a particular site
 	 *
-	 * @param $site
+	 * @param $site WMFSite
 	 * @param $first
 	 * @param $source
 	 * @return string
