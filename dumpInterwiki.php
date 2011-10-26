@@ -141,13 +141,6 @@ class DumpInterwiki extends WikimediaMaintenance {
 
 				$url = $matches[2];
 				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikimediafoundation|mediawiki)\.org/', $url ) ) {
-					if ( $this->hasOption( 'protocolrelative' ) ) {
-						if ( substr( $url, 0, 5 ) == 'http:' ) {
-							$url = substr( $url, 5 );
-						} else if ( substr( $url, 0, 6 ) == 'https:' ) {
-							$url = substr( $url, 6 );
-						}
-					}
 					$local = 1;
 				} else {
 					$local = 0;
