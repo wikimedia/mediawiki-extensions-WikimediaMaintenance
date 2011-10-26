@@ -59,7 +59,7 @@ class RefreshLinks extends Maintenance {
 	 * @param $redirectsOnly bool Only fix redirects
 	 * @param $oldRedirectsOnly bool Only fix redirects without redirect entries
 	 */
-	private function doRefreshLinks( $start, $newOnly = false, $maxLag = false, 
+	private function doRefreshLinks( $start, $newOnly = false, $maxLag = false,
 						$end = 0, $redirectsOnly = false, $oldRedirectsOnly = false ) {
 		global $wgUser, $wgParser, $wgUseTidy;
 
@@ -112,7 +112,7 @@ class RefreshLinks extends Maintenance {
 			);
 			$num = $dbr->numRows( $res );
 			$this->output( "$num new articles...\n" );
-	
+
 			$i = 0;
 			foreach ( $res as $row ) {
 				if ( !( ++$i % $reportingInterval ) ) {
@@ -132,9 +132,9 @@ class RefreshLinks extends Maintenance {
 			}
 			$this->output( "Refreshing redirects table.\n" );
 			$this->output( "Starting from page_id $start of $end.\n" );
-	
+
 			for ($id = $start; $id <= $end; $id++) {
-	
+
 				if ( !($id % $reportingInterval) ) {
 					$this->output( "$id\n" );
 					wfWaitForSlaves( $maxLag );
@@ -147,7 +147,7 @@ class RefreshLinks extends Maintenance {
 				$this->output( "Starting from page_id $start of $end.\n" );
 
 				for ($id = $start; $id <= $end; $id++) {
-	
+
 					if ( !($id % $reportingInterval) ) {
 						$this->output( "$id\n" );
 						wfWaitForSlaves( $maxLag );
@@ -164,10 +164,10 @@ class RefreshLinks extends Maintenance {
 	 */
 	private function fixRedirect( $id ){
 		global $wgTitle, $wgArticle;
-	
+
 		$wgTitle = Title::newFromID( $id );
 		$dbw = wfGetDB( DB_MASTER );
-	
+
 		if ( is_null( $wgTitle ) ) {
 			// This page doesn't exist (any more)
 			// Delete any redirect table entry for it
@@ -176,9 +176,9 @@ class RefreshLinks extends Maintenance {
 			return;
 		}
 		$wgArticle = new Article($wgTitle);
-	
+
 		$rt = $wgArticle->followRedirect();
-	
+
 		if($rt == false || !is_object($rt)) {
 			// $wgTitle is not a redirect
 			// Delete any redirect table entry for it
@@ -219,7 +219,7 @@ class RefreshLinks extends Maintenance {
 		$dbw->commit();
 	}
 
-	/*
+	/**
 	 * Removes non-existing links from pages from pagelinks, imagelinks,
 	 * categorylinks, templatelinks and externallinks tables.
 	 *
