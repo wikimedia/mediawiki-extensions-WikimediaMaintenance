@@ -24,7 +24,7 @@ abstract class WikimediaMaintenance extends Maintenance {
 	 * Override the core loadSettings.
 	 */
 	public function loadSettings() {
-		global $IP, $wgNoDBParam, $wgUseNormalUser, $wgConf, $site, $lang;
+		global $IP, $wgNoDBParam, $wgConf, $site, $lang;
 
 		if ( empty( $wgNoDBParam ) ) {
 			# Check if we were passed a db name
@@ -51,13 +51,6 @@ abstract class WikimediaMaintenance extends Maintenance {
 		} else {
 			$lang = 'aa';
 			$site = 'wikipedia';
-		}
-
-		# This is for the IRC scripts, which now run as the apache user
-		# The apache user doesn't have access to the wikiadmin_pass command
-		if ( $_ENV['USER'] == 'apache' ) {
-		# if ( posix_geteuid() == 48 ) {
-			$wgUseNormalUser = true;
 		}
 
 		putenv( 'wikilang=' . $lang );
