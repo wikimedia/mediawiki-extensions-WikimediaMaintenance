@@ -88,6 +88,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTrackingEvents.sql" );
 		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTracking.sql" );
 		$dbw->sourceFile( "$IP/extensions/UserDailyContribs/patches/UserDailyContribs.sql" );
+		$dbw->sourceFile( "$IP/extensions/Math/db/math.sql" );
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 
