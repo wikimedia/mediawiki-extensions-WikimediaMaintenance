@@ -24,9 +24,11 @@ class ClearMessageBlobs extends Maintenance {
 		}
 
 		foreach ( glob( "$IP/languages/messages/Messages*.php" ) as $file ) {
-			if ( !file_exists( $file ) ) {
-				continue;
-			}
+			$maxTime = max( $maxTime, filemtime( $file ) );
+		}
+
+		# LocalisationUpdate
+		foreach ( glob( "$IP/cache/l10n/*.cache" ) as $file ) {
 			$maxTime = max( $maxTime, filemtime( $file ) );
 		}
 
