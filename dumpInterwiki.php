@@ -91,7 +91,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 
 		# Site overrides for wikis whose DB names end in 'wiki' but that really belong to another site
 		$siteOverrides = array(
-			'sourceswiki' => 'wikisource',
+			'sourceswiki' => array( 'wikisource', 'en' ),
 		);
 
 		# Extra interwiki links that can't be in the intermap for some reason
@@ -182,7 +182,8 @@ class DumpInterwiki extends WikimediaMaintenance {
 				# Find out which site this DB belongs to
 				$site = false;
 				if ( isset( $siteOverrides[$db] ) ) {
-					$site = $sites[$siteOverrides[$db]];
+					list( $site, $lang ) = $siteOverrides[$db];
+					$site = $sites[$site];
 				} else {
 					foreach ( $sites as $candidateSite ) {
 						$suffix = $candidateSite->suffix;
@@ -191,6 +192,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 							break;
 						}
 					}
+					$lang = $matches[1];
 				}
 
 				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => $site->suffix ), "__sites" );
@@ -198,7 +200,6 @@ class DumpInterwiki extends WikimediaMaintenance {
 					$this->error( "Invalid database $db\n" );
 					continue;
 				}
-				$lang = $matches[1];
 
 				# Lateral links
 				foreach ( $sites as $targetSite ) {
