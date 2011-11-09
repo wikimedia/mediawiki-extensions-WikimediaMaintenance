@@ -163,7 +163,7 @@ class RefreshLinks extends Maintenance {
 	 * @param $id int The page_id of the redirect
 	 */
 	private function fixRedirect( $id ){
-		global $wgTitle, $wgArticle;
+		global $wgTitle;
 
 		$wgTitle = Title::newFromID( $id );
 		$dbw = wfGetDB( DB_MASTER );
@@ -175,9 +175,9 @@ class RefreshLinks extends Maintenance {
 				__METHOD__ );
 			return;
 		}
-		$wgArticle = new Article($wgTitle);
+		$article = new Article($wgTitle);
 
-		$rt = $wgArticle->followRedirect();
+		$rt = $article->followRedirect();
 
 		if($rt == false || !is_object($rt)) {
 			// $wgTitle is not a redirect
@@ -185,7 +185,7 @@ class RefreshLinks extends Maintenance {
 			$dbw->delete( 'redirect', array( 'rd_from' => $id ),
 				__METHOD__ );
 		} else {
-			$wgArticle->updateRedirectOn($dbw,$rt);
+			$article->updateRedirectOn($dbw,$rt);
 		}
 	}
 
