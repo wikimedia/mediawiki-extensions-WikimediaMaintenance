@@ -259,8 +259,9 @@ class DumpInterwiki extends WikimediaMaintenance {
 	 * @param $source
 	 */
 	function makeLink( $entry, $source ) {
-		if ( isset( $this->prefixRewrites[$source] ) && isset( $this->prefixRewrites[$source][$entry[0]] ) )
+		if ( isset( $this->prefixRewrites[$source] ) && isset( $entry[0] ) && isset( $this->prefixRewrites[$source][$entry[0]] ) ) {
 			$entry[0] = $this->prefixRewrites[$source][$entry[0]];
+		}
 
 		if ( !array_key_exists( "iw_prefix", $entry ) ) {
 			$entry = array( "iw_prefix" => $entry[0], "iw_url" => $entry[1], "iw_local" => $entry[2] );
