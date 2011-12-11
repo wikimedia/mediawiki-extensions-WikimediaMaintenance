@@ -56,7 +56,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 		$this->dblist = array_map( "trim", file( $this->getOption( 'dblist', "/home/wikipedia/common/all.dblist" ) ) );
 
 		# Special-case databases
-		$this->specials = array_flip(	array_map( "trim", file( $this->getOption( 'specialdbs', "/home/wikipedia/common/special.dblist" ) ) ) );
+		$this->specials = array_flip( array_map( "trim", file( $this->getOption( 'specialdbs', "/home/wikipedia/common/special.dblist" ) ) ) );
 
 		if ( $this->hasOption( 'o' ) ) {
 			$this->dbFile = CdbWriter::open( $this->getOption( 'o' ) ) ;
@@ -171,7 +171,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 				# Special wiki
 				# Has interwiki links and interlanguage links to wikipedia
 
-				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => "wiki" ), "__sites" );
+				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => "wiki", "iw_local" => 1 ), "__sites" );
 				# Links to multilanguage sites
 				foreach ( $sites as $targetSite ) {
 					$this->makeLink( array( 'iw_prefix' => $targetSite->lateral,
@@ -276,7 +276,6 @@ class DumpInterwiki extends WikimediaMaintenance {
 		} else {
 			$this->output( "{$source}:{$entry['iw_prefix']} {$entry['iw_url']} {$entry['iw_local']}\n" );
 		}
-
 		# Add to list of prefixes
 		$this->prefixLists[$source][$entry['iw_prefix']] = 1;
 	}
