@@ -171,7 +171,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 				# Special wiki
 				# Has interwiki links and interlanguage links to wikipedia
 
-				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => "wiki", "iw_local" => 1 ), "__sites" );
+				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => "wiki" ), "__sites" );
 				# Links to multilanguage sites
 				foreach ( $sites as $targetSite ) {
 					$this->makeLink( array( 'iw_prefix' => $targetSite->lateral,
