@@ -10,7 +10,7 @@ if ( $IP === false ) {
 }
 
 // Require base maintenance class
-require( "$IP/maintenance/Maintenance.php" );
+require_once( "$IP/maintenance/Maintenance.php" );
 
 // Some scripts need the WMFSite class, so include that too
 require( dirname( __FILE__ ) . '/WMFSite.php' );
