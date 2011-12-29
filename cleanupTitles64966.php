@@ -28,7 +28,13 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/cleanupTable.inc' );
+// Detect $IP
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
+	$IP = dirname( __FILE__ ) . '/../..';
+}
+
+require_once( "$IP/maintenance/cleanupTable.inc" );
 
 class TitleCleanup extends TableCleanup {
 	public function __construct() {
