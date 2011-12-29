@@ -4,9 +4,9 @@
  * Clear the msg_resource table on all wikis if any message file has been updated.
  */
 
-require_once( dirname( __FILE__ ) .'/../Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class ClearMessageBlobs extends Maintenance {
+class ClearMessageBlobs extends WikimediaMaintenance {
 	function __construct() {
 		parent::__construct();
 	}

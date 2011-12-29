@@ -18,9 +18,9 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class RefreshLinks extends Maintenance {
+class RefreshLinks extends WikimediaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Refresh link tables";

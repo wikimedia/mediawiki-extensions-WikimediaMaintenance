@@ -23,9 +23,15 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class NamespaceConflictChecker extends Maintenance {
+class NamespaceConflictChecker extends WikimediaMaintenance {
+
+	/**
+	 * @var DatabaseBase
+	 */
+	protected $db;
+
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "";
@@ -52,7 +58,7 @@ class NamespaceConflictChecker extends Maintenance {
 		} else {
 			$retval = $this->checkAll( $fix, $suffix );
 		}
-	
+
 		if( $retval ) {
 			$this->output( "\nLooks good!\n" );
 		} else {
@@ -68,9 +74,9 @@ class NamespaceConflictChecker extends Maintenance {
 	private function checkAll( $fix, $suffix = '' ) {
 		global $wgContLang, $wgNamespaceAliases, $wgCanonicalNamespaceNames;
 		global $wgCapitalLinks;
-		
+
 		$spaces = array();
-		
+
 		// List interwikis first, so they'll be overridden
 		// by any conflicting local namespaces.
 		foreach( $this->getInterwikiList() as $prefix ) {
@@ -96,7 +102,7 @@ class NamespaceConflictChecker extends Maintenance {
 		foreach( $wgContLang->getNamespaceAliases() as $name => $ns ) {
 			$spaces[$name] = $ns;
 		}
-		
+
 		// We'll need to check for lowercase keys as well,
 		// since we're doing case-sensitive searches in the db.
 		foreach( $spaces as $name => $ns ) {
@@ -119,10 +125,10 @@ class NamespaceConflictChecker extends Maintenance {
 				}
 			}
 		}
-		
+
 		ksort( $spaces );
 		asort( $spaces );
-		
+
 		$ok = true;
 		foreach( $spaces as $name => $ns ) {
 			$ok = $this->checkNamespace( $ns, $name, $fix, $suffix ) && $ok;
@@ -169,7 +175,7 @@ class NamespaceConflictChecker extends Maintenance {
 		}
 		return $ok;
 	}
-	
+
 	/**
 	 * @todo: do this for reals
 	 */
@@ -196,7 +202,7 @@ class NamespaceConflictChecker extends Maintenance {
 			// An interwiki; try an alternate encoding with '-' for ':'
 			$titleSql = $this->db->buildConcat( array( "'$prefix-'", $titleSql ) );
 		}
-                                     
+
 		$sql = "SELECT {$page}_id    AS id,
 		               {$page}_title AS oldtitle,
 		               $encNamespace + {$page}_namespace AS namespace,
@@ -212,7 +218,6 @@ class NamespaceConflictChecker extends Maintenance {
 		foreach( $result as $row ) {
 			$set[] = $row;
 		}
-		$this->db->freeResult( $result );
 
 		return $set;
 	}
@@ -253,7 +258,7 @@ class NamespaceConflictChecker extends Maintenance {
 	/**
 	 * Resolve any conflicts
 	 * @param $row Row from the page table to fix
-	 * @param $resolveable bool 
+	 * @param $resolveable bool
 	 * @param $suffix String Suffix to append to the fixed page
 	 */
 	private function resolveConflict( $row, $resolvable, $suffix ) {
@@ -267,9 +272,10 @@ class NamespaceConflictChecker extends Maintenance {
 					$this->output( "... !!! invalid title\n" );
 					return false;
 				}
-				if ( $id = $title->getArticleId() ) {
+				$id = $title->getArticleId();
+				if ( $id ) {
 					$this->output( "...  *** page exists with ID $id ***\n" );
-				} else {	
+				} else {
 					break;
 				}
 			}

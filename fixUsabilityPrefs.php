@@ -1,8 +1,8 @@
 <?php
 
-require( dirname( __FILE__ ) . '/../Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class FixUsabilityPrefs extends Maintenance {
+class FixUsabilityPrefs extends WikimediaMaintenance {
 	function __construct() {
 		parent::__construct();
 	}

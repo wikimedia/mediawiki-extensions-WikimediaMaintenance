@@ -1,8 +1,8 @@
 <?php
- 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
-class unsuppressCrossWiki extends Maintenance {
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
+
+class unsuppressCrossWiki extends WikimediaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Show number of jobs waiting in master database";
@@ -24,14 +24,14 @@ class unsuppressCrossWiki extends Maintenance {
 			# Get local ID like $user->localUserData( $wiki ) does
 			$localUserId = $dbw->selectField( 'user', 'user_id',
 				array( 'user_name' => $userName ), __METHOD__ );
-			
+
 			$delUserBit = Revision::DELETED_USER;
 			$hiddenCount = $dbw->selectField( 'revision', 'COUNT(*)',
 				array( 'rev_user' => $localUserId, "rev_deleted & $delUserBit != 0" ), __METHOD__ );
 			echo "$hiddenCount edits have the username hidden on \"$wiki\"\n";
 			# Unsuppress username on edits
 			if ( $hiddenCount > 0 ) {
-				echo "Unsuppressed edits of attached account (local id $localUserId) on \"$wiki\"..."; 
+				echo "Unsuppressed edits of attached account (local id $localUserId) on \"$wiki\"...";
 				IPBlockForm::unsuppressUserName( $userName, $localUserId, $dbw );
 				echo "done!\n\n";
 			}

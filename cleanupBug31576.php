@@ -1,17 +1,13 @@
 <?php
-$IP = getenv( 'MW_INSTALL_PATH' );
-if ( $IP === false ) {
-	$IP = dirname( __FILE__ ) . '/../..';
-}
-require_once( "$IP/maintenance/Maintenance.php" );
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class CleanupBug31576 extends Maintenance {
+class CleanupBug31576 extends WikimediaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Cleans up templatelinks corruption caused by https://bugzilla.wikimedia.org/show_bug.cgi?id=31576";
 		$this->addOption( 'batchsize', 'Number of rows to process in one batch. Default: 50', false, true );
 	}
-	
+
 	public function execute() {
 		$this->batchsize = $this->getOption( 'batchsize', 50 );
 		$variableIDs = MagicWord::getVariableIDs();
@@ -23,7 +19,7 @@ class CleanupBug31576 extends Maintenance {
 		}
 		$this->output( "All done\n" );
 	}
-	
+
 	public function processSynonym( $synonym ) {
 		$dbr = wfGetDB( DB_SLAVE );
 		$pCount = 0;
@@ -41,7 +37,7 @@ class CleanupBug31576 extends Maintenance {
 				// No more rows, we're done
 				break;
 			}
-			
+
 			$processed = array();
 			foreach ( $res as $row ) {
 				$vCount++;
@@ -57,7 +53,7 @@ class CleanupBug31576 extends Maintenance {
 			wfWaitForSlaves();
 		}
 	}
-	
+
 }
 
 $maintClass = "CleanupBug31576";

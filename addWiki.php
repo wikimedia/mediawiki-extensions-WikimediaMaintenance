@@ -28,7 +28,7 @@
  */
 require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class AddWiki extends Maintenance {
+class AddWiki extends WikimediaMaintenance {
 	public function __construct() {
 		global $wgNoDBParam;
 

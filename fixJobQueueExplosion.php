@@ -4,9 +4,9 @@
  * Removes htmlCacheUpdate categorylinks jobs caused by the bug fixed in r59718.
  */
 
-require_once( dirname(__FILE__).'/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class FixJobQueueExplosion extends Maintenance {
+class FixJobQueueExplosion extends WikimediaMaintenance {
 	public function execute() {
 		global $IP;
 
@@ -27,10 +27,10 @@ class FixJobQueueExplosion extends Maintenance {
 		$numBatchesDone = 0;
 		$newId = 1;
 		while ( true ) {
-			$res = $dbw->select( 'job_explosion_tmp', '*', 
-				array( 
+			$res = $dbw->select( 'job_explosion_tmp', '*',
+				array(
 					'job_id > ' . $dbw->addQuotes( $start ),
-					"NOT ( job_cmd = 'htmlCacheUpdate' AND " . 
+					"NOT ( job_cmd = 'htmlCacheUpdate' AND " .
 						"job_params LIKE '%s:13:\"categorylinks\"%' )"
 				),
 				__METHOD__, array( 'LIMIT' => $batchSize ) );

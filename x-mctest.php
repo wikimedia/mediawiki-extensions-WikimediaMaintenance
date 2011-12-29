@@ -21,9 +21,9 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
-class mcTest extends Maintenance {
+class mcTest extends WikimediaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Makes several 'set', 'incr' and 'get' requests on every"
@@ -65,7 +65,7 @@ class mcTest extends Maintenance {
 				}
 			}
 			$exectime = $this->microtime_float() - $time_start;
-	
+
 			$this->output( "set: $set   incr: $incr   get: $get time: $exectime\n" );
 		}
 	}
