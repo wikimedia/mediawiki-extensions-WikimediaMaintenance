@@ -1,6 +1,6 @@
 <?php
 
-include('commandLine.inc');
+require_once( dirname(__FILE__).'/WikimediaCommandLine.inc' );
 
 $i=1000;
 
@@ -10,7 +10,7 @@ $time = microtime(true) - $start;
 print "Init time: $time\n";
 
 $start=microtime(true);
-while ($i--) { 
+while ($i--) {
  wfMsg("pagetitle");
 }
 

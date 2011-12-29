@@ -1,6 +1,6 @@
 <?php
 
-require( dirname( __FILE__ ) .'/commandLine.inc' );
+require_once( dirname(__FILE__).'/WikimediaCommandLine.inc' );
 
 $file = fopen( $args[0], 'r' );
 if ( !$file ) {
@@ -72,7 +72,7 @@ while ( !feof( $file ) ) {
 	} else {
 		# Does not exist, move this redirect to the unbroken title
 		# Do not leave a redirect behind
-		$result = $brokenTitle->moveTo( $unbrokenTitle, /*auth*/ false, 
+		$result = $brokenTitle->moveTo( $unbrokenTitle, /*auth*/ false,
 			'Fixing broken redirect', /*createRedirect*/ false );
 		if ( $result === true ) {
 			echo "Moved: $line\n";

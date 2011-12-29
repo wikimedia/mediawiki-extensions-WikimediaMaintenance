@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Entry point for WikimediaMaintenance scripts :)
  */
 
@@ -13,7 +13,7 @@ if ( $IP === false ) {
 require_once( "$IP/maintenance/Maintenance.php" );
 
 // Some scripts need the WMFSite class, so include that too
-require( dirname( __FILE__ ) . '/WMFSite.php' );
+require_once( dirname( __FILE__ ) . '/WMFSite.php' );
 
 /**
  * Wikimedia-specific maintenance classes should extend this. This class will

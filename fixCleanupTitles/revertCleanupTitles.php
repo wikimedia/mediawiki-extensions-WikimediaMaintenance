@@ -1,6 +1,6 @@
 <?php
 
-require( '../commandLine.inc' );
+require_once( dirname(__FILE__).'/../WikimediaCommandLine.inc' );
 
 $lines = file( $args[0] );
 if ( !$lines ) {
@@ -35,7 +35,7 @@ foreach ( $lines as $line ) {
 foreach ( $opsByWiki as $wiki => $ops ) {
 	$lb = wfGetLB( $wiki );
 	$db = $lb->getConnection( DB_MASTER, array(), $wiki );
-	
+
 	foreach ( $ops as $op ) {
 		$msg = "{$op['id']} -> {$op['ns']}:{$op['dbk']}";
 
@@ -53,8 +53,8 @@ foreach ( $opsByWiki as $wiki => $ops ) {
 		}
 
 		$db->update( 'page',
-			/* SET */ array( 
-				'page_namespace' => $op['ns'], 
+			/* SET */ array(
+				'page_namespace' => $op['ns'],
 				'page_title' => $op['dbk'] ),
 			/* WHERE */ array(
 				'page_id' => $op['id'] ),
