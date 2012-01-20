@@ -24,6 +24,7 @@
  * @ingroup Wikimedia
  */
 require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
+require_once( dirname( __FILE__ ) . '/WMFSite.php' );
 
 class DumpInterwiki extends WikimediaMaintenance {
 
@@ -270,7 +271,12 @@ class DumpInterwiki extends WikimediaMaintenance {
 				array_key_exists( $entry['iw_prefix'], $this->prefixRewrites[$source] ) ) {
 			$entry['iw_prefix'] = $this->prefixRewrites[$source][$entry['iw_prefix']];
 		}
-
+		if ( !array_key_exists( "iw_local", $entry ) ) {
+			$entry["iw_local"] = 0;
+		}
+		if ( !array_key_exists( "iw_url", $entry ) ) {
+			return;
+		}
 		if ( $this->dbFile ) {
 			$this->dbFile->set( "{$source}:{$entry['iw_prefix']}", trim( "{$entry['iw_local']} {$entry['iw_url']}" ) );
 		} else {

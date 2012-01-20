@@ -12,9 +12,6 @@ if ( $IP === false ) {
 // Require base maintenance class
 require_once( "$IP/maintenance/Maintenance.php" );
 
-// Some scripts need the WMFSite class, so include that too
-require_once( dirname( __FILE__ ) . '/WMFSite.php' );
-
 /**
  * Wikimedia-specific maintenance classes should extend this. This class will
  * override some maintenance setup process to be wmf-specific.
