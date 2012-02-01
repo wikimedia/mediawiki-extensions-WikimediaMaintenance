@@ -164,7 +164,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 		}
 
 		# Exclude Wikipedia for Wikipedia
-		$this->makeLink ( array ( 'iw_prefix' => 'wikipedia', 'is_url' => null ), "_wiki" );
+		$this->makeLink ( array ( 'iw_prefix' => 'wikipedia', 'iw_url' => null ), "_wiki" );
 
 		# Multilanguage sites
 		foreach ( $sites as $site ) {
