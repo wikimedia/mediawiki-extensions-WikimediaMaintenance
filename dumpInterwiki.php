@@ -235,8 +235,6 @@ class DumpInterwiki extends WikimediaMaintenance {
 		}
 	}
 
-	# ------------------------------------------------------------------------------------------
-
 	/**
 	 * Executes part of an INSERT statement, corresponding to all interlanguage links to a particular site
 	 *
@@ -270,12 +268,6 @@ class DumpInterwiki extends WikimediaMaintenance {
 		if ( array_key_exists( $source, $this->prefixRewrites ) &&
 				array_key_exists( $entry['iw_prefix'], $this->prefixRewrites[$source] ) ) {
 			$entry['iw_prefix'] = $this->prefixRewrites[$source][$entry['iw_prefix']];
-		}
-		if ( !array_key_exists( "iw_local", $entry ) ) {
-			$entry["iw_local"] = 0;
-		}
-		if ( !array_key_exists( "iw_url", $entry ) ) {
-			return;
 		}
 		if ( $this->dbFile ) {
 			$this->dbFile->set( "{$source}:{$entry['iw_prefix']}", trim( "{$entry['iw_local']} {$entry['iw_url']}" ) );
