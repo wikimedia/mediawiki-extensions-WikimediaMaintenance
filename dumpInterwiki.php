@@ -127,6 +127,10 @@ class DumpInterwiki extends WikimediaMaintenance {
 		foreach ( $this->languageAliases as $alias => $lang ) {
 			$reserved[$alias] = 1;
 		}
+
+		/**
+		 * @var $site WMFSite
+		 */
 		foreach ( $sites as $site ) {
 			$reserved[$site->lateral] = 1;
 		}
@@ -174,6 +178,9 @@ class DumpInterwiki extends WikimediaMaintenance {
 
 				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => "wiki" ), "__sites" );
 				# Links to multilanguage sites
+				/**
+				 * @var $targetSite WMFSite
+				 */
 				foreach ( $sites as $targetSite ) {
 					$this->makeLink( array( 'iw_prefix' => $targetSite->lateral,
 						'iw_url' => $targetSite->getURL( 'en', $this->urlprotocol ),
@@ -186,6 +193,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 					list( $site, $lang ) = $siteOverrides[$db];
 					$site = $sites[$site];
 				} else {
+					$matches = array();
 					foreach ( $sites as $candidateSite ) {
 						$suffix = $candidateSite->suffix;
 						if ( preg_match( "/(.*)$suffix$/", $db, $matches ) ) {
@@ -238,7 +246,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 	/**
 	 * Executes part of an INSERT statement, corresponding to all interlanguage links to a particular site
 	 *
-	 * @param $site
+	 * @param $site WMFSite
 	 * @param $source
 	 */
 	function makeLanguageLinks( &$site, $source ) {
@@ -268,6 +276,12 @@ class DumpInterwiki extends WikimediaMaintenance {
 		if ( array_key_exists( $source, $this->prefixRewrites ) &&
 				array_key_exists( $entry['iw_prefix'], $this->prefixRewrites[$source] ) ) {
 			$entry['iw_prefix'] = $this->prefixRewrites[$source][$entry['iw_prefix']];
+		}
+		if ( !array_key_exists( "iw_local", $entry ) ) {
+			$entry["iw_local"] = 0;
+		}
+		if ( !array_key_exists( "iw_url", $entry ) ) {
+			$entry["iw_url"] = '';
 		}
 		if ( $this->dbFile ) {
 			$this->dbFile->set( "{$source}:{$entry['iw_prefix']}", trim( "{$entry['iw_local']} {$entry['iw_url']}" ) );
