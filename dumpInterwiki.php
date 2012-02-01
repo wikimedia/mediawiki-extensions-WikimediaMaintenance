@@ -278,7 +278,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 			$entry['iw_prefix'] = $this->prefixRewrites[$source][$entry['iw_prefix']];
 		}
 		if ( !array_key_exists( "iw_local", $entry ) ) {
-			$entry["iw_local"] = 0;
+			$entry["iw_local"] = null;
 		}
 		if ( !array_key_exists( "iw_url", $entry ) ) {
 			$entry["iw_url"] = '';
