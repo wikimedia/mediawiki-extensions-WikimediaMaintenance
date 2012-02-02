@@ -124,6 +124,10 @@ class RebuildInterwiki extends DumpInterwiki {
 		foreach ( $this->languageAliases as $alias => $lang ) {
 			$reserved[$alias] = 1;
 		}
+
+		/**
+		 * @var $site WMFSite
+		 */
 		foreach ( $sites as $site ) {
 			$reserved[$site->lateral] = 1;
 		}
@@ -174,6 +178,9 @@ class RebuildInterwiki extends DumpInterwiki {
 				}
 
 				# Links to multilanguage sites
+				/**
+				 * @var $targetSite WMFSite
+				 */
 				foreach ( $sites as $targetSite ) {
 					$sql .= $this->makeLink( array( $targetSite->lateral, $targetSite->getURL( 'en', $this->urlprotocol ), 1 ), $first, $db );
 				}
@@ -190,6 +197,7 @@ class RebuildInterwiki extends DumpInterwiki {
 			} else {
 				# Find out which site this DB belongs to
 				$site = false;
+				$matches = array();
 				foreach ( $sites as $candidateSite ) {
 					$suffix = $candidateSite->suffix;
 					if ( preg_match( "/(.*)$suffix$/", $db, $matches ) ) {
@@ -213,8 +221,8 @@ class RebuildInterwiki extends DumpInterwiki {
 				# Intermap links
 				foreach ( $iwArray as $iwEntry ) {
 					# Suppress links with the same name as the site
-					if ( ( $suffix == 'wiki' && $iwEntry['iw_prefix'] != 'wikipedia' ) ||
-						( $suffix != 'wiki' && $suffix != $iwEntry['iw_prefix'] ) )
+					if ( ( $site->suffix == 'wiki' && $iwEntry['iw_prefix'] != 'wikipedia' ) ||
+						( $site->suffix != 'wiki' && $site->suffix != $iwEntry['iw_prefix'] ) )
 					{
 						$sql .= $this->makeLink( $iwEntry, $first, $db );
 					}
@@ -246,8 +254,6 @@ class RebuildInterwiki extends DumpInterwiki {
 			file_put_contents( "$destDir/$db.sql", $sql );
 		}
 	}
-
-	# ------------------------------------------------------------------------------------------
 
 	/**
 	 * Returns part of an INSERT statement, corresponding to all interlanguage links to a particular site
