@@ -1,13 +1,15 @@
 #!/bin/bash
 
+ulimit -v 400000
+
 trap 'kill %-; exit' SIGTERM
 [ ! -z "$1" ] && {
-    echo "starting type-specific job runner: $1"
-    type=$1
+	echo "starting type-specific job runner: $1"
+	type=$1
 }
 
 #types="htmlCacheUpdate sendMail enotifNotify uploadFromUrl fixDoubleRedirect renameUser"
-types="sendMail enotifNotify uploadFromUrl fixDoubleRedirect"
+types="sendMail enotifNotify uploadFromUrl fixDoubleRedirect MoodBarHTMLMailerJob"
 
 cd `readlink -f /usr/local/apache/common/multiversion`
 while [ 1 ];do

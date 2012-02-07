@@ -171,7 +171,8 @@ class AddWiki extends WikimediaMaintenance {
 
 		$this->output( "Script ended. You still have to:
 	* Add any required settings in InitialiseSettings.php
-	* Run sync-common-all"
+	* Run sync-common-all
+"
 		);
 	}
 
