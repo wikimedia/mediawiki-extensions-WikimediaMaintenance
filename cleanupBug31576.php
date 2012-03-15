@@ -2,6 +2,11 @@
 require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
 
 class CleanupBug31576 extends WikimediaMaintenance {
+
+	protected $batchsize;
+
+	protected $processed = array();
+
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Cleans up templatelinks corruption caused by https://bugzilla.wikimedia.org/show_bug.cgi?id=31576";
@@ -38,15 +43,14 @@ class CleanupBug31576 extends WikimediaMaintenance {
 				break;
 			}
 
-			$processed = array();
 			foreach ( $res as $row ) {
 				$vCount++;
-				if ( isset( $processed[$row->tl_from] ) ) {
+				if ( isset( $this->processed[$row->tl_from] ) ) {
 					// We've already processed this page, skip it
 					continue;
 				}
 				RefreshLinks::fixLinksFromArticle( $row->tl_from );
-				$processed[$row->tl_from] = true;
+				$this->processed[$row->tl_from] = true;
 				$pCount++;
 			}
 			$this->output( "{$pCount}/{$vCount} pages processed\n" );
