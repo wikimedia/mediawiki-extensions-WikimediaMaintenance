@@ -30,12 +30,19 @@ class CleanupBug31576 extends WikimediaMaintenance {
 		$pCount = 0;
 		$vCount = 0;
 		$this->output( "Fixing pages with template links to $synonym ...\n" );
+		$from = null;
 		while ( true ) {
+			$where = array(
+				'tl_namespace' => NS_TEMPLATE,
+				'tl_title ' . $dbr->buildLike( $synonym, $dbr->anyString() )
+			);
+			if ( $from !== null ) {
+				$where[] = 'tl_from > ' . $dbr->addQuotes( $from );
+				$from = null;
+			}
 			$res = $dbr->select( 'templatelinks', array( 'tl_title', 'tl_from' ),
-				array(
-					'tl_namespace' => NS_TEMPLATE,
-					'tl_title' => $synonym
-				), __METHOD__,
+				$where,
+				__METHOD__,
 				array( 'ORDER BY' => array( 'tl_title', 'tl_from' ), 'LIMIT' => $this->batchsize )
 			);
 			if ( $dbr->numRows( $res ) == 0 ) {
@@ -52,6 +59,9 @@ class CleanupBug31576 extends WikimediaMaintenance {
 				RefreshLinks::fixLinksFromArticle( $row->tl_from );
 				$this->processed[$row->tl_from] = true;
 				$pCount++;
+			}
+			if ( isset( $row ) ) {
+				$from = $row->tl_from;
 			}
 			$this->output( "{$pCount}/{$vCount} pages processed\n" );
 			wfWaitForSlaves();
