@@ -34,7 +34,7 @@ class CleanupBug31576 extends WikimediaMaintenance {
 			$res = $dbr->select( 'templatelinks', array( 'tl_title', 'tl_from' ),
 				array(
 					'tl_namespace' => NS_TEMPLATE,
-					'tl_title ' . $dbr->buildLike( $synonym, $dbr->anyString() )
+					'tl_title' => $synonym
 				), __METHOD__,
 				array( 'ORDER BY' => array( 'tl_title', 'tl_from' ), 'LIMIT' => $this->batchsize )
 			);
