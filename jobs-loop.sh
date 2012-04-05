@@ -9,7 +9,7 @@ trap 'kill %-; exit' SIGTERM
 }
 
 #types="htmlCacheUpdate sendMail enotifNotify uploadFromUrl fixDoubleRedirect renameUser"
-types="sendMail enotifNotify uploadFromUrl fixDoubleRedirect MoodBarHTMLMailerJob"
+types="sendMail enotifNotify uploadFromUrl fixDoubleRedirect MoodBarHTMLMailerJob ArticleFeedbackv5MailerJob"
 
 cd `readlink -f /usr/local/apache/common/multiversion`
 while [ 1 ];do
