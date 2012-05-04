@@ -81,9 +81,8 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_log.sql" );
 		$dbw->sourceFile( "$IP/extensions/TitleKey/titlekey.sql" );
 		$dbw->sourceFile( "$IP/extensions/Oversight/hidden.sql" );
-		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/localdb_patches/setup-global_block_whitelist.sql" );
+		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/globalblocking.sql" );
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
-		$dbw->sourceFile( "$IP/extensions/PrefStats/patches/PrefStats.sql" );
 		$dbw->sourceFile( "$IP/extensions/ProofreadPage/ProofreadPage.sql" );
 		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTrackingEvents.sql" );
 		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTracking.sql" );
@@ -150,7 +149,7 @@ class AddWiki extends WikimediaMaintenance {
 
 		# Add to wikiversions.dat
 		$file = fopen( "$common/wikiversions.dat", "a" );
-		fwrite( $file, "$dbName php-$wmfVersionNumber\n" );
+		fwrite( $file, "$dbName php-$wmfVersionNumber *\n" );
 		fclose( $file );
 		# Rebuild wikiversions.cdb
 		shell_exec( "cd $common/multiversion && ./refreshWikiversionsCDB" );
