@@ -89,6 +89,7 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTracking.sql" );
 		$dbw->sourceFile( "$IP/extensions/UserDailyContribs/patches/UserDailyContribs.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/db/math.sql" );
+		$dbw->sourceFile( "$IP/maintenance/archives/patch-filejournal.sql" );
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 
