@@ -35,14 +35,24 @@ ulimit -v 400000
 # When killed, make sure we are also getting ride of the child jobs
 # we have spawned.
 trap 'kill %-; exit' SIGTERM
-[ ! -z "$1" ] && {
-	echo "starting type-specific job runner: $1"
-	type=$1
-}
 
-#types="htmlCacheUpdate sendMail enotifNotify uploadFromUrl fixDoubleRedirect renameUser"
-types="sendMail enotifNotify uploadFromUrl fixDoubleRedirect MoodBarHTMLMailerJob ArticleFeedbackv5MailerJob RenderJob"
 
+# Whether to process the default queue. Will be the case if no job type
+# was specified on the command line. Else we only want to process given types
+dodefault=true
+
+if [ -z "$1" ]; then
+	echo "Starting default queue job runner"
+	dodefault=true
+	#types="htmlCacheUpdate sendMail enotifNotify uploadFromUrl fixDoubleRedirect renameUser"
+	types="sendMail enotifNotify uploadFromUrl fixDoubleRedirect MoodBarHTMLMailerJob ArticleFeedbackv5MailerJob RenderJob"
+else
+	echo "Starting type-specific job runner: $1"
+	dodefault=false
+	types=$1
+fi
+
+# Starting the infinite loop of doom
 cd `readlink -f /usr/local/apache/common/multiversion`
 while [ 1 ];do
 
@@ -61,16 +71,19 @@ while [ 1 ];do
 		done
 	done
 
-	# Do the remaining types
-	db=`php -n MWScript.php nextJobDB.php --wiki=aawiki`
+	if $dodefault; then
+		# Do the remaining types
+		db=`php -n MWScript.php nextJobDB.php --wiki=aawiki`
 
-	if [ -z "$db" ];then
-		# No jobs to do, wait for a while
-		echo "No jobs..."
-		sleep 5
-	else
-		echo "$db"
-		nice -n 20 php MWScript.php runJobs.php --wiki="$db" --procs=5 --maxtime=300 &
-		wait
+		if [ ! -z "$db" ];then
+			echo "$db"
+			nice -n 20 php MWScript.php runJobs.php --wiki="$db" --procs=5 --maxtime=300 &
+			wait
+		fi
 	fi
+
+	# No jobs to do, wait for a while
+	echo "No jobs..."
+	sleep 5
+
 done
