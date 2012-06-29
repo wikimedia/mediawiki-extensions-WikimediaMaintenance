@@ -172,7 +172,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 		}
 
 		foreach ( $this->dblist as $db ) {
-			if ( isset( $this->specials[$db] ) ) {
+			if ( isset( $this->specials[$db] ) && !isset( $siteOverrides[$db] ) ) {
 				# Special wiki
 				# Has interwiki links and interlanguage links to wikipedia
 
