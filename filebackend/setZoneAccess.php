@@ -4,11 +4,12 @@ require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 class SetZoneAccess extends Maintenance {
 	public function construct() {
 		parent::__construct();
+		$this->addOption( 'backend', 'Name of the file backend', true, true );
 		$this->addOption( 'private', 'Make all containers private' );
 	}
 
 	public function execute() {
-		$backend = FileBackendGroup::singleton()->get( 'local-swift' );
+		$backend = FileBackendGroup::singleton()->get( $this->getOption( 'backend' ) );
 		foreach ( array( 'public', 'thumb', 'temp', 'deleted' ) as $zone ) { // all zones
 			$dir = $backend->getRootStoragePath() . "/local-$zone";
 			$secure = ( $zone === 'deleted' || $this->hasOption( 'private' ) )
