@@ -32,7 +32,7 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 		$testerUsernames = array(
 			'Jdlrobson',
 			'Tfinc',
-			'Brion_VIBBER',
+			'Brion VIBBER',
 			'Awjrichards',
 			'Philinje',
 		),
@@ -72,7 +72,7 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 		$this->dryRun = !$this->hasOption( 'do-it' );
 
 		$dbw = $this->getDB( DB_MASTER );
-		$this->commonsDbw = $this->getDB( DB_MASTER);//, array(), 'commonswiki' );
+		$this->commonsDbw = $this->getDB( DB_MASTER, array(), 'commonswiki' );
 		$wlmTemplate = Title::newFromText( 'Template:Uploaded with WLM Mobile' );
 		$this->deletingUser = User::newFromName( 'Maintenance script' );
 
@@ -98,6 +98,7 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 			$this->output( "$title by $user uploaded at $timestamp\n" );
 			if ( in_array( $user, $this->testerUsernames ) ) {
 				$this->output( "   ...this user is an app tester, rejecting\n" );
+				continue;
 			}
 			$this->migrateFile( $title, $user, $timestamp );
 		}
@@ -155,7 +156,7 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 		// Because uploading directly to Commons requires manipulation with globals and other scary stuff,
 		// we just call upload script instead
 		$tempFile = "{$this->tmpDir}/{$fileName}";
-		$cmd = 'mwscript importImages.php commonswiki'
+		$cmd = 'sudo -u apache mwscript importImages.php --wiki=commonswiki'
 		 	. ' --user=' . wfEscapeShellArg( $user )
 			. ' --comment-file=' . wfEscapeShellArg( $descFile )
 			. ' --summary=' . wfEscapeShellArg( 'WLM image automatically imported from testwiki' )
@@ -171,7 +172,7 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 		copy( $localCopy->getPath(), $tempFile );
 
 		$retval = 0;
-		$output = wfShellExec( $cmd, $retval );
+		$output = wfShellExec( $cmd, $retval, array(), array( 'memory' => 1024*512 ) );
 		if ( $output ) {
 			$this->output( $output . "\n" );
 		}
@@ -183,11 +184,13 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 		unlink( $tempFile );
 		wfRestoreWarnings();
 
+/*
 		$wp = WikiPage::factory( $title );
 		$error = '';
 		$reason = 'This erroneous upload has been migrated to [[commons:|Commons]]';
 		$localFile->delete( $reason );
 		$wp->doDeleteArticle( $reason, false, 0, true, $error, $this->deletingUser );
+*/
 	}
 }
 
