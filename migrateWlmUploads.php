@@ -164,6 +164,7 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 			. ' ' . wfEscapeShellArg( $this->tmpDir );
 		$this->output( "   ...Executing $cmd\n" );
 		if ( $this->dryRun ) {
+			$this->logToFile( 'done', array( $fileName, $user ) );
 			return;
 		}
 
@@ -179,6 +180,7 @@ class MigrateWlmUploads extends WikimediaMaintenance {
 		if ( $retval ) {
 			$this->error( '*** Upload error, aborting ***', 1 );
 		}
+		$this->logToFile( 'done', array( $fileName, $user ) );
 
 		wfSuppressWarnings();
 		unlink( $tempFile );
