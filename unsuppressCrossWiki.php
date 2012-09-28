@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
+require_once( __DIR__ . '/WikimediaMaintenance.php' );
 
 class unsuppressCrossWiki extends WikimediaMaintenance {
 	public function __construct() {
@@ -32,7 +32,7 @@ class unsuppressCrossWiki extends WikimediaMaintenance {
 			# Unsuppress username on edits
 			if ( $hiddenCount > 0 ) {
 				echo "Unsuppressed edits of attached account (local id $localUserId) on \"$wiki\"...";
-				IPBlockForm::unsuppressUserName( $userName, $localUserId, $dbw );
+				RevisionDeleteUser::unsuppressUserName( $userName, $localUserId, $dbw );
 				echo "done!\n\n";
 			}
 			$lb->reuseConnection( $dbw ); // not really needed

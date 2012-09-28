@@ -1,6 +1,6 @@
 <?php
 
-require( dirname( __FILE__ ) . '/commandLine.inc' );
+require( __DIR__ . '/commandLine.inc' );
 $msg = 'test ' . str_repeat( 'TTTT ', 10000 );
 #wfErrorLog( $msg, 'udp://10.0.6.30:8420/test' );
 

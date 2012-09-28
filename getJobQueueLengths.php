@@ -4,7 +4,7 @@
  * Get the length of the job queue on all wikis in $wgConf
  */
 
-require_once( dirname( __FILE__ ) .'/WikimediaMaintenance.php' );
+require_once( __DIR__ .'/WikimediaMaintenance.php' );
 
 class GetJobQueueLengths extends WikimediaMaintenance {
 	function __construct() {

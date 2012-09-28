@@ -1,5 +1,5 @@
 <?php
-require_once( dirname(__FILE__).'/WikimediaCommandLine.inc' );
+require_once( __DIR__ .'/WikimediaCommandLine.inc' );
 
 $bad = 0;
 $good = 0;

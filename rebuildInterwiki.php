@@ -24,10 +24,9 @@
  * @ingroup Wikimedia
  */
 
-require_once( dirname( __FILE__ ) . '/dumpInterwiki.php' );
+require_once( __DIR__ . '/dumpInterwiki.php' );
 
 class RebuildInterwiki extends DumpInterwiki {
-
 	/**
 	 * @var array
 	 */
@@ -307,4 +306,3 @@ class RebuildInterwiki extends DumpInterwiki {
 
 $maintClass = "RebuildInterwiki";
 require_once( RUN_MAINTENANCE_IF_MAIN );
-

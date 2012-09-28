@@ -1,18 +1,18 @@
 <?php
 
-require_once( dirname(__FILE__).'/WikimediaCommandLine.inc' );
+require_once( __DIR__ . '/WikimediaCommandLine.inc' );
 
-$i=1000;
+$i = 1000;
 
-$start = microtime(true);
-wfMsg("pagetitle");
-$time = microtime(true) - $start;
+$start = microtime( true );
+wfMessage( "pagetitle" )->text();
+$time = microtime( true ) - $start;
 print "Init time: $time\n";
 
-$start=microtime(true);
-while ($i--) {
- wfMsg("pagetitle");
+$start = microtime( true );
+while ( $i-- ) {
+	wfMessage( "pagetitle" )->text();
 }
 
-$time = microtime(true) - $start;
+$time = microtime( true ) - $start;
 print "Time: $time\n";

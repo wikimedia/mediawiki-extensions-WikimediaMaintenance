@@ -1,5 +1,5 @@
 <?php
-require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
+require_once( __DIR__ . '/WikimediaMaintenance.php' );
 
 class CleanupBug31576 extends WikimediaMaintenance {
 

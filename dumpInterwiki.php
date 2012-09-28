@@ -23,8 +23,8 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
-require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
-require_once( dirname( __FILE__ ) . '/WMFSite.php' );
+require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once( __DIR__ . '/WMFSite.php' );
 
 class DumpInterwiki extends WikimediaMaintenance {
 

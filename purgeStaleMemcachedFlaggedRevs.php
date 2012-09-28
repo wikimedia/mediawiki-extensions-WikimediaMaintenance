@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname(__FILE__).'/WikimediaCommandLine.inc' );
+require_once( __DIR__ .'/WikimediaCommandLine.inc' );
 
 function purgeStaleMemcachedText() {
 	global $wgMemc, $wgDBname;

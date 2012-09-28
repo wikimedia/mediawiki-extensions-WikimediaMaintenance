@@ -26,7 +26,7 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
-require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
+require_once( __DIR__ . '/WikimediaMaintenance.php' );
 
 class AddWiki extends WikimediaMaintenance {
 	public function __construct() {
@@ -56,7 +56,7 @@ class AddWiki extends WikimediaMaintenance {
 		$site = $this->getArg( 1 );
 		$dbName = $this->getArg( 2 );
 		$domain = $this->getArg( 3 );
-		$languageNames = Language::getLanguageNames();
+		$languageNames = Language::fetchLanguageNames();
 
 		if ( !isset( $languageNames[$lang] ) ) {
 			$this->error( "Language $lang not found in Names.php", true );
@@ -133,7 +133,7 @@ class AddWiki extends WikimediaMaintenance {
 
 		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )->useDatabase( false )->plain() );
 		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
-		$article = new Article( $title );
+		$article = WikiPage::factory( $title );
 		$ucsite = ucfirst( $site );
 
 		$article->doEdit( $this->getFirstArticle( $ucsite, $name ), '', EDIT_NEW | EDIT_AUTOSUMMARY );
