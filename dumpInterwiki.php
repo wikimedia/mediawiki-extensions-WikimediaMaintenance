@@ -88,6 +88,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
 			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
 			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
+			'wikivoyage' => new WMFSite( 'wikivoyage', 'y', 'wikivoyage.org' ),
 		);
 
 		# Site overrides for wikis whose DB names end in 'wiki' but that really belong to another site
@@ -150,7 +151,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 				$prefix = str_replace( ' ', '_', $prefix );
 
 				$url = $matches[2];
-				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikimediafoundation|mediawiki|wikidata)\.org/', $url ) ) {
+				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikivoyage|wikimediafoundation|mediawiki|wikidata)\.org/', $url ) ) {
 					$local = 1;
 				} else {
 					$local = 0;

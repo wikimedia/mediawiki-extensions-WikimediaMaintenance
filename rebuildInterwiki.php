@@ -78,6 +78,7 @@ class RebuildInterwiki extends DumpInterwiki {
 			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
 			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
 			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
+			'wikivoyage' => new WMFSite( 'wikivoyage', 'y', 'wikivoyage.org' ),
 		);
 
 		# Special-case hostnames
@@ -146,7 +147,7 @@ class RebuildInterwiki extends DumpInterwiki {
 			if ( preg_match( '/^\|\s*(.*?)\s*\|\|\s*(https?:\/\/.*?)\s*$/', $line, $matches ) ) {
 				$prefix = strtolower( $matches[1] );
 				$url = $matches[2];
-				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikimediafoundation|mediawiki|wikidata)\.org/', $url ) ) {
+				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikivoyage|wikimediafoundation|mediawiki|wikidata)\.org/', $url ) ) {
 					$local = 1;
 				} else {
 					$local = 0;
