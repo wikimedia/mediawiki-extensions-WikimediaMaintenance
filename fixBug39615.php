@@ -31,20 +31,23 @@ class FixBug39615 extends WikimediaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addOption( 'move', "Actually move the files", false, false );
-		$this->addOption( 'logfile', "File to log to", true, true );
+		$this->addOption( 'logdir', "File to log to", true, true );
 		$this->mDescription = "Fix files that were affected by bug 39615 and still broken";
 		$this->setBatchSize( 100 );
 	}
 
 	public function execute() {
+		global $wgDBname;
+
 		$name = ''; // page on img_name
 		$repo = RepoGroup::singleton()->getLocalRepo();
 
-		$logFile = $this->getOption( 'logfile' );
-		if ( !file_put_contents( $logFile, "STARTED {wfTimestamp()}\n", FILE_APPEND ) ) {
+		$logFile = $this->getOption( 'logdir' ) . "/$wgDBname";
+		if ( !file_put_contents( $logFile, "STARTED " . wfTimestamp() . "\n", FILE_APPEND ) ) {
 			$this->error( "Could not write to log file.", 1 ); // die
 		}
 
+		$count = 0;
 		$dbr = wfGetDB( DB_SLAVE );
 		$cutoff = $dbr->addQuotes( $dbr->timestamp( time() - 86400*60 ) ); // 2 months
 		while ( true ) {
@@ -58,10 +61,12 @@ class FixBug39615 extends WikimediaMaintenance {
 				break; // done
 			}
 			foreach ( $res as $row ) {
+				++$count;
 				$name = $row->img_name;
 				$file = LocalFile::newFromRow( $row, $repo );
 				$file->lock();
 				if ( !$repo->fileExists( $file->getPath() ) ) { // 404
+					$this->output( "Current version missing for '$name'.\n" );
 					$jpath = $dbr->selectField( 'filejournal',
 						'fj_path',
 						array( 'fj_new_sha1' => $file->getSha1(), "fj_timestamp > {$cutoff}" ),
@@ -69,6 +74,7 @@ class FixBug39615 extends WikimediaMaintenance {
 						array( 'ORDER BY' => 'fj_id DESC' )
 					);
 					if ( $jpath === false || strpos( $jpath, "!" ) === false ) {
+						$this->output( "No logs for '$jpath'.\n" );
 						continue; // no entry or not evicted to archive name ("<timestamp>!<name>")
 					}
 					$path = preg_replace( # fj_path is under the "master" backend
@@ -96,6 +102,7 @@ class FixBug39615 extends WikimediaMaintenance {
 				$file->unlock();
 			}
 		}
+		$this->output( "Done. [$count rows].\n" );
 	}
 }
 
