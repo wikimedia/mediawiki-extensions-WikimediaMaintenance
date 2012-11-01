@@ -150,7 +150,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 				$prefix = str_replace( ' ', '_', $prefix );
 
 				$url = $matches[2];
-				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikimediafoundation|mediawiki)\.org/', $url ) ) {
+				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|wikinews|wikiversity|wikimediafoundation|mediawiki|wikidata)\.org/', $url ) ) {
 					$local = 1;
 				} else {
 					$local = 0;
