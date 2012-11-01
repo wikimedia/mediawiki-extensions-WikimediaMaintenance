@@ -31,6 +31,7 @@ class FixBug39615 extends WikimediaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addOption( 'move', "Actually move the files", false, false );
+		$this->addOption( 'logfile', "File to log to", true, true );
 		$this->mDescription = "Fix files that were affected by bug 39615 and still broken";
 		$this->setBatchSize( 100 );
 	}
@@ -38,6 +39,11 @@ class FixBug39615 extends WikimediaMaintenance {
 	public function execute() {
 		$name = ''; // page on img_name
 		$repo = RepoGroup::singleton()->getLocalRepo();
+
+		$logFile = $this->getOption( 'logfile' );
+		if ( !file_put_contents( $logFile, "STARTED {wfTimestamp()}\n", FILE_APPEND ) ) {
+			$this->error( "Could not write to log file.", 1 ); // die
+		}
 
 		$dbr = wfGetDB( DB_SLAVE );
 		$cutoff = $dbr->addQuotes( $dbr->timestamp( time() - 86400*60 ) ); // 2 months
@@ -69,6 +75,9 @@ class FixBug39615 extends WikimediaMaintenance {
 						'!^mwstore://[^/]+!/', $repo->getBackend()->getRootStoragePath(), $jpath
 					);
 					if ( $repo->getFileSha1( $path ) === $file->getSha1() ) {
+						if ( !file_put_contents( $logFile, "$path => {$file->getPath()}\n", FILE_APPEND ) ) {
+							$this->error( "Could not write to log file.", 1 ); // die
+						}
 						# File was evicted to an archive name
 						if ( $this->hasOption( 'move' ) ) {
 							$status = $this->repo()->getBackend()->move( array(
