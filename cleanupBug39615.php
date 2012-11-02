@@ -33,6 +33,8 @@ class FixBug39615 extends WikimediaMaintenance {
 		$this->addOption( 'move', "Actually move the files", false, false );
 		$this->addOption( 'logdir', "File to log to", true, true );
 		$this->addOption( 'start', "File to start from", false, true );
+		$this->addOption( 'file', 'Run for a single file', false, true );
+		$this->addOption( 'verbose', "Verbose mode" );
 		$this->mDescription = "Fix files that were affected by bug 39615 and still broken";
 		$this->setBatchSize( 100 );
 	}
@@ -40,7 +42,8 @@ class FixBug39615 extends WikimediaMaintenance {
 	public function execute() {
 		global $wgDBname;
 
-		$name = $this->getOption( 'start', '' ); // page on img_name
+		$fname = str_replace( ' ', '_', $this->getOption( 'file' ) );
+		$name = str_replace( ' ', '_', $this->getOption( 'start', '' ) ); // page on img_name
 		$repo = RepoGroup::singleton()->getLocalRepo();
 
 		$logFile = $this->getOption( 'logdir' ) . "/$wgDBname";
@@ -51,19 +54,26 @@ class FixBug39615 extends WikimediaMaintenance {
 		$count = 0;
 		$dbr = wfGetDB( DB_SLAVE );
 		$cutoff = $dbr->addQuotes( $dbr->timestamp( time() - 86400*60 ) ); // 2 months
-		while ( true ) {
-			$this->output( "Doing next batch from '$name'.\n" );
-			$res = $dbr->select( 'image', '*',
-				array( "img_name > {$dbr->addQuotes( $name )}" ),
-				__METHOD__,
-				array( 'ORDER BY' => 'img_name ASC', 'LIMIT' => $this->mBatchSize )
-			);
+		do {
+			if ( $fname ) {
+				$res = $dbr->select( 'image', '*', array( 'img_name' => $fname ) );
+			} else {
+				$this->output( "Doing next batch from '$name'.\n" );
+				$res = $dbr->select( 'image', '*',
+					array( "img_name > {$dbr->addQuotes( $name )}" ),
+					__METHOD__,
+					array( 'ORDER BY' => 'img_name ASC', 'LIMIT' => $this->mBatchSize )
+				);
+			}
 			if ( !$res->numRows() ) {
 				break; // done
 			}
 			foreach ( $res as $row ) {
 				++$count;
 				$name = $row->img_name;
+				if ( $this->hasOption( 'verbose' ) ) {
+					$this->output( "Checking '$name'.\n" );
+				}
 				$file = LocalFile::newFromRow( $row, $repo );
 				$file->lock();
 				if ( !$repo->fileExists( $file->getPath() ) ) { // 404
@@ -72,14 +82,14 @@ class FixBug39615 extends WikimediaMaintenance {
 						'fj_path',
 						array( 'fj_new_sha1' => $file->getSha1(), "fj_timestamp > {$cutoff}" ),
 						__METHOD__,
-						array( 'ORDER BY' => 'fj_id DESC' )
+						array( 'ORDER BY' => 'fj_timestamp DESC' )
 					);
 					if ( $jpath === false || strpos( $jpath, "!" ) === false ) {
-						$this->output( "No logs for '$jpath'.\n" );
+						$this->output( "No logs for SHA1 '{$file->getSha1()}'.\n" );
 						continue; // no entry or not evicted to archive name ("<timestamp>!<name>")
 					}
 					$path = preg_replace( # fj_path is under the "master" backend
-						'!^mwstore://[^/]+!/', $repo->getBackend()->getRootStoragePath(), $jpath
+						'!^mwstore://[^/]+!', $repo->getBackend()->getRootStoragePath(), $jpath
 					);
 					if ( $repo->getFileSha1( $path ) === $file->getSha1() ) {
 						if ( !file_put_contents( $logFile, "$path => {$file->getPath()}\n", FILE_APPEND ) ) {
@@ -102,7 +112,7 @@ class FixBug39615 extends WikimediaMaintenance {
 				}
 				$file->unlock();
 			}
-		}
+		} while ( !$fname );
 		$this->output( "Done. [$count rows].\n" );
 	}
 }
