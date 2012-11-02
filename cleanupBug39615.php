@@ -32,6 +32,7 @@ class FixBug39615 extends WikimediaMaintenance {
 		parent::__construct();
 		$this->addOption( 'move', "Actually move the files", false, false );
 		$this->addOption( 'logdir', "File to log to", true, true );
+		$this->addOption( 'start', "File to start from", false, true );
 		$this->mDescription = "Fix files that were affected by bug 39615 and still broken";
 		$this->setBatchSize( 100 );
 	}
@@ -39,7 +40,7 @@ class FixBug39615 extends WikimediaMaintenance {
 	public function execute() {
 		global $wgDBname;
 
-		$name = ''; // page on img_name
+		$name = $this->getOption( 'start', '' ); // page on img_name
 		$repo = RepoGroup::singleton()->getLocalRepo();
 
 		$logFile = $this->getOption( 'logdir' ) . "/$wgDBname";
