@@ -79,6 +79,7 @@ class RebuildInterwiki extends DumpInterwiki {
 			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
 			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
 			'wikivoyage' => new WMFSite( 'wikivoyage', 'y', 'wikivoyage.org' ),
+			'wikidata' => new WMFSite( 'wikidata', 'd', 'wikidata.org' ),
 		);
 
 		# Special-case hostnames
