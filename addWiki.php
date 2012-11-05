@@ -83,13 +83,37 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->sourceFile( "$IP/extensions/Oversight/hidden.sql" );
 		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/globalblocking.sql" );
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
-		$dbw->sourceFile( "$IP/extensions/ProofreadPage/ProofreadPage.sql" );
 		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTrackingEvents.sql" );
 		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTracking.sql" );
 		$dbw->sourceFile( "$IP/extensions/UserDailyContribs/patches/UserDailyContribs.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/db/math.sql" );
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/TimedMediaHandler.sql" );
 		$dbw->sourceFile( "$IP/maintenance/archives/patch-filejournal.sql" );
+
+		// Add project specific extension table additions here
+		switch ( $site ) {
+			case 'wikipedia':
+				break;
+			case 'wiktionary':
+				break;
+			case 'wikiquote':
+				break;
+			case 'books':
+				break;
+			case 'wikinews':
+				break;
+			case 'wikisource':
+				$dbw->sourceFile( "$IP/extensions/ProofreadPage/ProofreadPage.sql" );
+				break;
+			case 'wikiversity':
+				break;
+			case 'wikimedia':
+				break;
+			case 'wikidata':
+				break;
+			case 'wikivoyage':
+				break;
+		}
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 
