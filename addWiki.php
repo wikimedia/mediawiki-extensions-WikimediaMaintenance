@@ -112,6 +112,7 @@ class AddWiki extends WikimediaMaintenance {
 			case 'wikidata':
 				break;
 			case 'wikivoyage':
+				$dbw->sourceFile( "$IP/extensions/CreditsSource/schema/mysql/CreditsSource.sql" );
 				break;
 		}
 
