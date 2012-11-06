@@ -23,13 +23,33 @@ class CleanupBug41615 extends WikimediaMaintenance {
 		global $wgDBname;
 
 		$logFile = $this->getOption( 'logdir' ) . "/$wgDBname";
-		if ( !file_put_contents( $logFile, "STARTED {" . wfTimestamp() . "\n", FILE_APPEND ) ) {
+		if ( !file_put_contents( $logFile, "STARTED " . wfTimestamp() . "\n", FILE_APPEND ) ) {
 			$this->error( "Could not write to log file", 1 ); // die
 		}
 
-		$binlog = explode( "\n", trim( file_get_contents( $this->getOption( 'binlogdump' ) ) ) );
+		# Mangle throw the log as log_comment can have newlines and such...
+		$binlog = array(); // lines
+		$buffer = '';
+		$inQuote = false;
+		$binraw = trim( file_get_contents( $this->getOption( 'binlogdump' ) ) );
+		for ( $i=0; $i < strlen( $binraw ); ++$i ) {
+			$ch = $binraw[$i];
+			if ( $ch === "'" && ( $i <= 0 || $binraw[$i-1] !== "\\" ) ) {
+				$inQuote = !$inQuote; // unescaped quote
+			}
+			if ( $ch === "\n" && !$inQuote ) {
+				$binlog[] = $buffer;
+				$buffer = '';
+			} else {
+				$buffer .= $ch;
+			}
+		}
+		if ( $buffer !== '' ) {
+			$binlog[] = $buffer;
+		}
+
 		if ( ( count( $binlog ) % 2 ) != 0 ) {
-			$this->error( "Binlog dump entries not matched up.", 1 );
+			$this->error( "Binlog dump entries not matched up.\n", 1 );
 		}
 		$binlog = array_chunk( $binlog, 2 ); // there should be pairs of corresponding logs
 
@@ -47,7 +67,7 @@ class CleanupBug41615 extends WikimediaMaintenance {
 			// (log_id,log_type,log_action,log_timestamp,log_user,log_user_text,log_namespace,log_title,log_page,log_comment,log_params)
 			// VALUES (NULL,'delete','delete','20121031141555','276491','Guidomac','0','Doesn\'t_Matter','0','([[WP:IMMEDIATA|C1]]) Pagina o sottopagina vuota, di prova, senza senso o tautologica','a:0:{}')
 			$et = "(?:[^']|\')*"; // single-quote escaped item
-			if ( !preg_match( "! VALUES \(NULL,'delete','delete',(?:'$et',){3}'(\d+)','($et)',(?:'$et',){2}'$et'\)$!", $iEntry, $m ) ) {
+			if ( !preg_match( "! VALUES \(NULL,'delete','delete','\d+','\d+','$et','(\d+)','($et)','\d','$et','$et'\)!m", $iEntry, $m ) ) {
 				$this->error( "Could not parse '$iEntry'.", 1 );
 			}
 			$info['log_namespace'] = $m[1];

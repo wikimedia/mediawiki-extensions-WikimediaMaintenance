@@ -53,7 +53,7 @@ class FixBug39615 extends WikimediaMaintenance {
 
 		$count = 0;
 		$dbr = wfGetDB( DB_SLAVE );
-		$cutoff = $dbr->addQuotes( $dbr->timestamp( time() - 86400*60 ) ); // 2 months
+		$cutoff = $dbr->addQuotes( $dbr->timestamp( time() - 86400*120 ) ); // 4 months
 		do {
 			if ( $fname ) {
 				$res = $dbr->select( 'image', '*', array( 'img_name' => $fname ) );
