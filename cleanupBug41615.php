@@ -14,7 +14,7 @@ class CleanupBug41615 extends WikimediaMaintenance {
 		parent::__construct();
 		$this->mDescription = "Cleans up corruption caused by bug 41615";
 		$this->addOption( 'fix', 'Actually update the rev_page values' );
-		$this->addOption( 'logfile', "Log file", true, true );
+		$this->addOption( 'logdir', "Log directory", true, true );
 		$this->addOption( 'binlogdump', "Binlog dump of DELETE(page)+INSERT(logging)", true, true );
 		$this->setBatchSize( 50 );
 	}
@@ -22,7 +22,7 @@ class CleanupBug41615 extends WikimediaMaintenance {
 	public function execute() {
 		global $wgDBname;
 
-		$logFile = $this->getOption( 'logfile' );
+		$logFile = $this->getOption( 'logdir' ) . "/$wgDBname";
 		if ( !file_put_contents( $logFile, "STARTED {" . wfTimestamp() . "\n", FILE_APPEND ) ) {
 			$this->error( "Could not write to log file", 1 ); // die
 		}
