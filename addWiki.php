@@ -167,7 +167,7 @@ class AddWiki extends WikimediaMaintenance {
 		$this->output( "Adding to dblists\n" );
 
 		# Add to dblist
-		$file = fopen( "$common/all.dblist", "a" );
+		$file = fopen( getRealmSpecificFilename( "$common/all.dblist" ), "a" );
 		fwrite( $file, "$dbName\n" );
 		fclose( $file );
 
@@ -175,7 +175,7 @@ class AddWiki extends WikimediaMaintenance {
 		shell_exec( "cd $common && ./refresh-dblist" );
 
 		# Add to wikiversions.dat
-		$file = fopen( "$common/wikiversions.dat", "a" );
+		$file = fopen( getRealmSpecificFilename( "$common/wikiversions.dat" ), "a" );
 		fwrite( $file, "$dbName php-$wmfVersionNumber *\n" );
 		fclose( $file );
 		# Rebuild wikiversions.cdb

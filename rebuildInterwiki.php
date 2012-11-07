@@ -41,10 +41,12 @@ class RebuildInterwiki extends DumpInterwiki {
 		$this->langlist = array_map( "trim", file( $this->getOption( 'langlist', "/home/wikipedia/common/langlist" ) ) );
 
 		# List of all database names
-		$this->dblist = array_map( "trim", file( $this->getOption( 'dblist', "/home/wikipedia/common/all.dblist" ) ) );
+		$default_all_dblist = getRealmSpecificFilename( "/home/wikipedia/common/all.dblist" );
+		$this->dblist = array_map( "trim", file( $this->getOption( 'dblist', $default_all_dblist ) ) );
 
 		# Special-case databases
-		//$this->specials = array_flip(	array_map( "trim", file( $this->getOption( 'specialdbs', "/home/wikipedia/common/special.dblist" ) ) ) );
+		//$default_special_dblist = getRealmSpecificFilename( "/home/wikipedia/common/special.dblist" );
+		//$this->specials = array_flip(	array_map( "trim", file( $this->getOption( 'specialdbs', $default_special_dblist ) ) ) );
 
 		$this->makeInterwikiSQL( $this->getOption( 'd', '/home/wikipedia/conf/interwiki/sql' ) );
 

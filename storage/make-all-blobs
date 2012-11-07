@@ -11,7 +11,10 @@ else
 	table=$2
 fi
 
-for db in `</home/wikipedia/common/all.dblist`;do
+. /usr/local/apache/common/multiversion/MWRealm.sh
+FILE=`getRealmSpecificFilename /usr/local/apache/common/all.dblist`
+
+for db in `<$FILE`;do
 	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u wikiadmin -p`wikiadmin_pass` -h $server && \
 	sed "s/blobs\>/$table/" blobs.sql | mysql -u wikiadmin -p`wikiadmin_pass` -h $server $db
 done
