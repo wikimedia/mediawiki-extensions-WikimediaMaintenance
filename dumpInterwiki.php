@@ -88,7 +88,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
 			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
 			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
-			'wikivoyage' => new WMFSite( 'wikivoyage', 'y', 'wikivoyage.org' ),
+			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage.org' ),
 			'wikidata' => new WMFSite( 'wikidata', 'd', 'wikidata.org' ),
 		);
 
