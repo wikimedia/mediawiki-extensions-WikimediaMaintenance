@@ -27,12 +27,6 @@
 require_once( __DIR__ . '/dumpInterwiki.php' );
 
 class RebuildInterwiki extends DumpInterwiki {
-	/**
-	 * @var array
-	 */
-	protected $specials, $languageAliases, $prefixRewrites,
-		$langlist, $dblist;
-
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Rebuild the interwiki table using the file on meta and the language list.";
