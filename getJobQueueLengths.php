@@ -14,13 +14,16 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 
 	function execute() {
 		global $wgConf;
+		$total = 0;
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			$lb = wfGetLB( $wiki );
 			$db = $lb->getConnection( DB_MASTER, array(), $wiki );
 			$count = intval( $db->selectField( 'job', 'COUNT(*)', '', __METHOD__ ) );
 			$this->output( "$wiki $count\n" );
+			$total += $count;
 			$lb->reuseConnection( $db );
 		}
+		$this->output( "Total $total" );
 	}
 }
 
