@@ -1,5 +1,5 @@
 <?php
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( __DIR__ . '/../Maintenance.php' );
 
 class SetZoneAccess extends Maintenance {
 	public function construct() {
