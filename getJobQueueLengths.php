@@ -11,18 +11,22 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 		parent::__construct();
 		$this->mDescription = 'Get the length of the job queue on all wikis in $wgConf';
 		$this->addOption( 'showzero', 'Whether to output wikis with 0 jobs', false, false, false );
+		$this->addOption( 'totalonly', 'Whether to only output the total number of jobs', false, false, false );
 	}
 
 	function execute() {
 		global $wgConf;
 		$outputZero = $this->getOption( 'showzero', false );
+		$totalOnly = $this->getOption( 'totalonly', false );
 		$total = 0;
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			$lb = wfGetLB( $wiki );
 			$db = $lb->getConnection( DB_MASTER, array(), $wiki );
 			$count = intval( $db->selectField( 'job', 'COUNT(*)', '', __METHOD__ ) );
 			if ( $outputZero || $count > 0 ) {
-				$this->output( "$wiki $count\n" );
+				if ( !$totalOnly ) {
+					$this->output( "$wiki $count\n" );
+				}
 				$total += $count;
 			}
 			$lb->reuseConnection( $db );
