@@ -64,7 +64,7 @@ class AddWiki extends WikimediaMaintenance {
 		$name = $languageNames[$lang];
 
 		$dbw = wfGetDB( DB_MASTER );
-		$common = "/home/wikipedia/common";
+		$common = "/srv/deployment/mediawiki/common";
 
 		$this->output( "Creating database $dbName for $lang.$site ($name)\n" );
 
@@ -168,7 +168,7 @@ class AddWiki extends WikimediaMaintenance {
 		$this->output( "Adding to dblists\n" );
 
 		# Add to dblist
-		$file = fopen( getRealmSpecificFilename( "$common/all.dblist" ), "a" );
+		$file = fopen( getRealmSpecificFilename( "$common/dblists/all.dblist" ), "a" );
 		fwrite( $file, "$dbName\n" );
 		fclose( $file );
 
@@ -184,7 +184,7 @@ class AddWiki extends WikimediaMaintenance {
 
 		# print "Constructing interwiki SQL\n";
 		# Rebuild interwiki tables
-		# passthru( '/home/wikipedia/conf/interwiki/update' );
+		# passthru( '/home/wikipedia/conf/interwiki/update' ); // FIXME
 
 		$time = wfTimestamp( TS_RFC2822 );
 		// These arguments need to be escaped twice: once for echo and once for at

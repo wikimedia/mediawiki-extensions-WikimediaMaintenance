@@ -38,17 +38,17 @@ class RebuildInterwiki extends DumpInterwiki {
 
 	function execute() {
 		# List of language prefixes likely to be found in multi-language sites
-		$this->langlist = array_map( "trim", file( $this->getOption( 'langlist', "/home/wikipedia/common/langlist" ) ) );
+		$this->langlist = array_map( "trim", file( $this->getOption( 'langlist', "/srv/deployment/mediawiki/common/langlist" ) ) );
 
 		# List of all database names
-		$default_all_dblist = getRealmSpecificFilename( "/home/wikipedia/common/all.dblist" );
+		$default_all_dblist = getRealmSpecificFilename( "/srv/deployment/mediawiki/common/dblists/all.dblist" );
 		$this->dblist = array_map( "trim", file( $this->getOption( 'dblist', $default_all_dblist ) ) );
 
 		# Special-case databases
-		//$default_special_dblist = getRealmSpecificFilename( "/home/wikipedia/common/special.dblist" );
+		//$default_special_dblist = getRealmSpecificFilename( "/srv/deployment/mediawiki/common/dblists/special.dblist" );
 		//$this->specials = array_flip(	array_map( "trim", file( $this->getOption( 'specialdbs', $default_special_dblist ) ) ) );
 
-		$this->makeInterwikiSQL( $this->getOption( 'd', '/home/wikipedia/conf/interwiki/sql' ) );
+		$this->makeInterwikiSQL( $this->getOption( 'd', '/home/wikipedia/conf/interwiki/sql' ) ); // FIXME:
 
 		if ( $this->hasOption( 'protocolrelative' ) ) {
 			$this->urlprotocol = '';
