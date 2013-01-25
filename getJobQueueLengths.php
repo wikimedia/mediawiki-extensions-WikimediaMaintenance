@@ -31,7 +31,7 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 			}
 			$lb->reuseConnection( $db );
 		}
-		$this->output( "Total $total" );
+		$this->output( "Total $total\n" );
 	}
 }
 
