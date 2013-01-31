@@ -57,7 +57,7 @@ class CleanupSkinPrefs extends WikimediaMaintenance {
 		$countOnly = $this->getOption( 'count', false );
 
 		$res = (int)$dbr->selectField( 'user_properties', 'COUNT(*) as count',
-			array( 'up_property' => 'skin', 'up_value' => $cleanupMap ), __METHOD__ );
+			array( 'up_property' => 'skin', 'up_value' => array_keys( $cleanupMap ) ), __METHOD__ );
 		$this->output( "$res users with old integer-style skin preferences\n" );
 		if( !$countOnly && $count > 0 ) {
 			$this->output( "Updating..." );
