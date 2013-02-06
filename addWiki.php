@@ -168,7 +168,7 @@ class AddWiki extends WikimediaMaintenance {
 		$this->output( "Adding to dblists\n" );
 
 		# Add to dblist
-		$file = fopen( getRealmSpecificFilename( "$common/dblists/all.dblist" ), "a" );
+		$file = fopen( getRealmSpecificFilename( "$common/all.dblist" ), "a" );
 		fwrite( $file, "$dbName\n" );
 		fclose( $file );
 
