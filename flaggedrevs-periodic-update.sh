@@ -1,9 +1,9 @@
 #!/bin/bash
 
-. /srv/deployment/mediawiki/common/multiversion/MWRealm.sh
-FILE=`getRealmSpecificFilename /srv/deployment/mediawiki/common/dblists/flaggedrevs.dblist`
+. /home/wikipedia/common/multiversion/MWRealm.sh
+FILE=`getRealmSpecificFilename /home/wikipedia/common/flaggedrevs.dblist`
 
 for db in `<$FILE`;do
 	echo $db
-	php -n /srv/deployment/mediawiki/common/multiversion/MWScript.php extensions/FlaggedRevs/maintenance/updateStats.php $db
+	php -n /home/wikipedia/common/multiversion/MWScript.php extensions/FlaggedRevs/maintenance/updateStats.php $db
 done
