@@ -22,7 +22,7 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			$lb = wfGetLB( $wiki );
 			$db = $lb->getConnection( DB_MASTER, array(), $wiki );
-			$count = intval( $db->selectField( 'job', 'COUNT(*)', '', __METHOD__ ) );
+			$count = intval( $db->selectField( 'job', 'COUNT(*)', array( 'job_token' => '' ), __METHOD__ ) );
 			if ( $outputZero || $count > 0 ) {
 				if ( !$totalOnly ) {
 					$this->output( "$wiki $count\n" );
