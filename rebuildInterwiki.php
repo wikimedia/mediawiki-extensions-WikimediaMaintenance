@@ -93,6 +93,7 @@ class RebuildInterwiki extends DumpInterwiki {
 			array( 'm', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
 			array( 'meta', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
 			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
+			array( 'd', $this->urlprotocol . '//www.wikidata.org/wiki/$1', 1 ),
 		);
 
 		# Language aliases, usually configured as redirects to the real wiki in apache
