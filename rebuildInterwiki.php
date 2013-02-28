@@ -72,6 +72,7 @@ class RebuildInterwiki extends DumpInterwiki {
 			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
 			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
 			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
+			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
 			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
 			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage.org' ),
 		);
