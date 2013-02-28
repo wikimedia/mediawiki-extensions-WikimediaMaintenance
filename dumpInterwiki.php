@@ -89,10 +89,8 @@ class DumpInterwiki extends WikimediaMaintenance {
 			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
 			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
 			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
-			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
 			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
 			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage.org' ),
-			'wikidata' => new WMFSite( 'wikidata', 'd', 'wikidata.org' ),
 		);
 
 		# Site overrides for wikis whose DB names end in 'wiki' but that really belong to another site
