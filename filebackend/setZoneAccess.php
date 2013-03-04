@@ -10,7 +10,7 @@ class SetZoneAccess extends Maintenance {
 
 	public function execute() {
 		$backend = FileBackendGroup::singleton()->get( $this->getOption( 'backend' ) );
-		foreach ( array( 'public', 'thumb', 'temp', 'deleted' ) as $zone ) { // all zones
+		foreach ( array( 'public', 'thumb', 'transcoded', 'temp', 'deleted' ) as $zone ) {
 			$dir = $backend->getRootStoragePath() . "/local-$zone";
 			$secure = ( $zone === 'deleted' || $this->hasOption( 'private' ) )
 				? array( 'noAccess' => true, 'noListing' => true )
