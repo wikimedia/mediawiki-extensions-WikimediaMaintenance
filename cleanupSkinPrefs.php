@@ -50,6 +50,8 @@ class CleanupSkinPrefs extends WikimediaMaintenance {
 
 		# Current skins
 		$currentSkins = array_keys( Skin::getSkinNames() );
+		# Plus an empty string for "default"
+		$currentSkins[] = '';
 
 		$dbr = wfGetDB( DB_SLAVE );
 		$dbw = wfGetDB( DB_MASTER );
@@ -59,7 +61,7 @@ class CleanupSkinPrefs extends WikimediaMaintenance {
 		$res = (int)$dbr->selectField( 'user_properties', 'COUNT(*) as count',
 			array( 'up_property' => 'skin', 'up_value' => array_keys( $cleanupMap ) ), __METHOD__ );
 		$this->output( "$res users with old integer-style skin preferences\n" );
-		if( !$countOnly && $count > 0 ) {
+		if( !$countOnly && $res > 0 ) {
 			$this->output( "Updating..." );
 			foreach( $cleanupMap as $old => $new ) {
 				$dbw->update( 'user_properties', array( 'up_value' => $new ),
@@ -69,13 +71,14 @@ class CleanupSkinPrefs extends WikimediaMaintenance {
 			$this->output( "done.\n" );
 		}
 
+		$dontChange = array_merge( $currentSkins, array_keys( $cleanupMap ) );
 		$res = (int)$dbr->selectField( 'user_properties', 'COUNT(*) as count',
-			array( 'up_property' => 'skin', 'up_value NOT IN (' . $dbr->makeList( $currentSkins ) . ')' ), __METHOD__ );
+			array( 'up_property' => 'skin', 'up_value NOT IN (' . $dbr->makeList( $dontChange ) . ')' ), __METHOD__ );
 		$this->output( "$res users with bogus skin properties\n" );
-		if( !$countOnly && $count > 0 ) {
+		if( !$countOnly && $res > 0 ) {
 			$this->output( "Updating..." );
 			$dbw->delete( 'user_properties',
-				array( 'up_property' => 'skin', 'up_value NOT IN (' . $dbw->makeList( $currentSkins ) . ')' ), __METHOD__ );
+				array( 'up_property' => 'skin', 'up_value NOT IN (' . $dbw->makeList( $dontChange ) . ')' ), __METHOD__ );
 			$this->output( "done.\n" );
 		}
 	}
