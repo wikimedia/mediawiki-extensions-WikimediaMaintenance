@@ -42,6 +42,22 @@ class RenameWiki extends WikimediaMaintenance {
 		# Setup
 		$from = $this->getArg( 0 );
 		$to = $this->getArg( 1 );
+
+		$this->output( "Renaming core tables...\n" );
+		$this->output( "Sleeping 5 seconds...\n" );
+		sleep( 5 );
+
+		$dbw = wfGetDB( DB_MASTER );
+		foreach( $dbw->tableNames() as $table ) {
+			$dbw->query( "ALTER TABLE {$from}.{$table} RENAME TO {$to}.{$table}" );
+		}
+
+		$this->output( "done.\n" );
+
+		$this->output( "Waiting for slaves...\n" );
+		wfWaitForSlaves();
+		$this->output( "done.\n" );
+
 		$this->output( "Renaming blob tables in ES from $from to $to...\n" );
 		$this->output( "Sleeping 5 seconds...\n" );
 		sleep( 5 );
