@@ -215,13 +215,13 @@ class AddWiki extends WikimediaMaintenance {
 
 == Sister projects ==
 <span class="plainlinks">
-[http://www.wikipedia.org Wikipedia] |
-[http://www.wiktionary.org Wiktionary] |
-[http://www.wikibooks.org Wikibooks] |
-[http://www.wikinews.org Wikinews] |
-[http://www.wikiquote.org Wikiquote] |
-[http://www.wikisource.org Wikisource] |
-[http://www.wikiversity.org Wikiversity]
+[//www.wikipedia.org Wikipedia] |
+[//www.wiktionary.org Wiktionary] |
+[//www.wikibooks.org Wikibooks] |
+[//www.wikinews.org Wikinews] |
+[//www.wikiquote.org Wikiquote] |
+[//www.wikisource.org Wikisource] |
+[//www.wikiversity.org Wikiversity]
 </span>
 
 See Wikimedia's [[m:|Meta-Wiki]] for the coordination of these projects.
