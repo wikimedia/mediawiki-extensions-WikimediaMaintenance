@@ -15,21 +15,25 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 	}
 
 	function execute() {
-		global $wgConf;
 		$outputZero = $this->getOption( 'showzero', false );
 		$totalOnly = $this->getOption( 'totalonly', false );
+
 		$total = 0;
-		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
-			$lb = wfGetLB( $wiki );
-			$db = $lb->getConnection( DB_MASTER, array(), $wiki );
-			$count = intval( $db->selectField( 'job', 'COUNT(*)', array( 'job_token' => '' ), __METHOD__ ) );
+		$pendingDBs = JobQueueAggregator::singleton()->getAllReadyWikiQueues();
+		$sizeByWiki = array();
+		foreach ( $pendingDBs as $type => $wikis ) {
+			foreach ( $wikis as $wiki ) {
+				$sizeByWiki[$wiki] = isset( $sizeByWiki[$wiki] ) ? $sizeByWiki[$wiki] : 0;
+				$sizeByWiki[$wiki] += JobQueueGroup::singleton( $wiki )->get( $type )->getSize();
+			}
+		}
+		foreach ( $sizeByWiki as $wiki => $count ) {
 			if ( $outputZero || $count > 0 ) {
 				if ( !$totalOnly ) {
 					$this->output( "$wiki $count\n" );
 				}
 				$total += $count;
 			}
-			$lb->reuseConnection( $db );
 		}
 		$this->output( "Total $total\n" );
 	}
