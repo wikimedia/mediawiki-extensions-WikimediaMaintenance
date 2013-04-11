@@ -83,8 +83,6 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->sourceFile( "$IP/extensions/Oversight/hidden.sql" );
 		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/globalblocking.sql" );
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
-		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTrackingEvents.sql" );
-		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTracking.sql" );
 		$dbw->sourceFile( "$IP/extensions/UserDailyContribs/patches/UserDailyContribs.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/db/math.sql" );
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/TimedMediaHandler.sql" );
