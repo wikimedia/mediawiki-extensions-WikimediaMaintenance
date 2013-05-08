@@ -221,7 +221,9 @@ class AddWiki extends WikimediaMaintenance {
 [//www.wikiquote.org Wikiquote] |
 [//www.wikisource.org Wikisource] |
 [//www.wikiversity.org Wikiversity] |
-[//www.wikivoyage.org Wikivoyage]
+[//www.wikivoyage.org Wikivoyage] |
+[//www.wikidata.org Wikidata] |
+[//commons.wikimedia.org Commons]
 </span>
 
 See Wikimedia's [[m:|Meta-Wiki]] for the coordination of these projects.
