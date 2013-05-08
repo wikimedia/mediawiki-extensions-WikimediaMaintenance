@@ -49,6 +49,10 @@ class CreateExtensionTables extends WikimediaMaintenance {
 				$path = "$IP/extensions/WikiLove/patches";
 				break;
 
+			case 'educationprogram':
+				$files = array( 'EducationProgram.sql' );
+				$path = "$IP/extensions/EducationProgram/sql";
+
 			default:
 				$this->error( "This script is not configured to create tables for $extension\n", 1 );
 		}
@@ -63,3 +67,4 @@ class CreateExtensionTables extends WikimediaMaintenance {
 
 $maintClass = 'CreateExtensionTables';
 require_once( DO_MAINTENANCE );
+
