@@ -164,6 +164,8 @@ class AddWiki extends WikimediaMaintenance {
 
 		$article->doEdit( $this->getFirstArticle( $ucsite, $name ), '', EDIT_NEW | EDIT_AUTOSUMMARY );
 
+		$this->setFundraisingLink( $domain, $lang );
+
 		$this->output( "Adding to dblists\n" );
 
 		# Add to dblist
@@ -229,6 +231,24 @@ class AddWiki extends WikimediaMaintenance {
 See Wikimedia's [[m:|Meta-Wiki]] for the coordination of these projects.
 
 EOT;
+	}
+
+	private function setFundraisingLink( $domain, $language ) {
+
+		$title = Title::newFromText( "Mediawiki:Sitesupport-url" );
+		$this->output( "Writing sidebar donate link to " . $title->getPrefixedDBkey() . "\n" );
+		$article = WikiPage::factory( $title );
+
+		// There is likely a better way to create the link, but it seems like one
+		// cannot count on interwiki links at this point
+		$linkurl = "https://donate.wikimedia.org/?" . http_build_query( array(
+			"utm_source" => "donate",
+			"utm_medium" => "sidebar",
+			"utm_campaign" => $domain,
+			"uselang" => $language
+		) );
+
+		return $article->doEdit( $linkurl, 'Setting sidebar link', EDIT_NEW );
 	}
 }
 
