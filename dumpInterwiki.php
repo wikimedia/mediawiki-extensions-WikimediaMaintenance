@@ -50,11 +50,11 @@ class DumpInterwiki extends WikimediaMaintenance {
 	}
 
 	function execute() {
-		$default_all_dblist = getRealmSpecificFilename( "/home/wikipedia/common/all.dblist" );
-		$default_special_dblist = getRealmSpecificFilename( "/home/wikipedia/common/special.dblist" );
+		$default_all_dblist = getRealmSpecificFilename( "/a/common/all.dblist" );
+		$default_special_dblist = getRealmSpecificFilename( "/a/common/special.dblist" );
 
 		# List of language prefixes likely to be found in multi-language sites
-		$this->langlist = array_map( "trim", file( $this->getOption( 'langlist', "/home/wikipedia/common/langlist" ) ) );
+		$this->langlist = array_map( "trim", file( $this->getOption( 'langlist', "/a/common/langlist" ) ) );
 
 		# List of all database names
 		$this->dblist = array_map( "trim", file( $this->getOption( 'dblist', $default_all_dblist ) ) );
