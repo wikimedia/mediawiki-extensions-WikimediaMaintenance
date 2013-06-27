@@ -53,6 +53,10 @@ class CreateExtensionTables extends WikimediaMaintenance {
 				$files = array( 'EducationProgram.sql' );
 				$path = "$IP/extensions/EducationProgram/sql";
 				break;
+			case 'echo':
+				$files = array( 'echo.sql' );
+				$path = "$IP/extensions/Echo";
+				break;
 
 			default:
 				$this->error( "This script is not configured to create tables for $extension\n", 1 );
