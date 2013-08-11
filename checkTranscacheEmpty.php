@@ -13,6 +13,7 @@ foreach ( $wgLocalDatabases as $wiki ) {
 	} else {
 		$good++;
 	}
+	$lb->reuseConnection( $db );
 }
 echo "bad = $bad, good = $good\n";
 
