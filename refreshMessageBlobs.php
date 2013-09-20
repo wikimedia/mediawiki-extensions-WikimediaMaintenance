@@ -66,6 +66,7 @@ class RefreshMessageBlobs extends WikimediaMaintenance {
 				),
 				__METHOD__
 			);
+			wfWaitForSlaves();
 		}
 	}
 }
