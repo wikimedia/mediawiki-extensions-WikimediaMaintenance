@@ -1,5 +1,5 @@
 <?php
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/../WikimediaMaintenance.php' );
 
 class MeasureZoneSizes extends Maintenance {
 	public function __construct() {
