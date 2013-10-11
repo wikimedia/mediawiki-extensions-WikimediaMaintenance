@@ -20,6 +20,21 @@ class CreateExtensionTables extends WikimediaMaintenance {
 		$path = '';
 
 		switch ( strtolower( $extension ) ) {
+			case 'echo':
+				$files = array( 'echo.sql' );
+				$path = "$IP/extensions/Echo";
+				break;
+
+			case 'educationprogram':
+				$files = array( 'EducationProgram.sql' );
+				$path = "$IP/extensions/EducationProgram/sql";
+				break;
+
+			case 'flaggedrevs':
+				$files = array( 'FlaggedRevs.sql' );
+				$path = "$IP/extensions/FlaggedRevs/backend/schema/mysql";
+				break;
+
 			case 'moodbar':
 				$files = array(
 					'MoodBar.sql',
@@ -47,15 +62,6 @@ class CreateExtensionTables extends WikimediaMaintenance {
 					'WikiLoveLog.sql',
 				);
 				$path = "$IP/extensions/WikiLove/patches";
-				break;
-
-			case 'educationprogram':
-				$files = array( 'EducationProgram.sql' );
-				$path = "$IP/extensions/EducationProgram/sql";
-				break;
-			case 'echo':
-				$files = array( 'echo.sql' );
-				$path = "$IP/extensions/Echo";
 				break;
 
 			default:
