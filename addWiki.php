@@ -46,6 +46,17 @@ class AddWiki extends WikimediaMaintenance {
 		return Maintenance::DB_ADMIN;
 	}
 
+	/**
+	 * Used as an override from SQL commands in tables.sql being executed.
+	 * In this cases, index creations on the searchindex table
+	 *
+	 * @param $cmd string
+	 * @return bool
+	 */
+	public function noExecuteCommands( $cmd ) {
+		return strpos( $cmd, 'ON /*_*/searchindex' ) === false;
+	}
+
 	public function execute() {
 		global $IP, $wgDefaultExternalStore, $wmfVersionNumber;
 		if ( !$wmfVersionNumber ) { // set in CommonSettings.php
@@ -74,7 +85,13 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->selectDB( $dbName );
 
 		$this->output( "Initialising tables\n" );
-		$dbw->sourceFile( $this->getDir() . '/tables.sql' );
+		$dbw->sourceFile(
+			$this->getDir() . '/tables.sql',
+			false,
+			false,
+			__METHOD__,
+			array( $this, 'noExecuteCommands' )
+		);
 		$dbw->sourceFile( "$IP/extensions/OAI/update_table.sql" );
 		$dbw->sourceFile( "$IP/extensions/AntiSpoof/sql/patch-antispoof.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_changes.sql" );
