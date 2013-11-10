@@ -35,9 +35,9 @@ class CleanupSkinPrefs extends WikimediaMaintenance {
 	}
 
 	public function execute() {
-		global $wgDefaultSkin, $wmfVersionNumber;
-		if ( !$wmfVersionNumber ) { // set in CommonSettings.php
-			$this->error( '$wmfVersionNumber is not set, please use MWScript.php wrapper.', true );
+		global $wgDefaultSkin, $wmgVersionNumber;
+		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
+			$this->error( '$wmgVersionNumber is not set, please use MWScript.php wrapper.', true );
 		}
 
 		# Explicit skins we want to remap. All other bogus skins fall back to
