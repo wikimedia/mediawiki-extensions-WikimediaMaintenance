@@ -11,25 +11,36 @@ class SetZoneAccess extends Maintenance {
 	public function execute() {
 		$backend = FileBackendGroup::singleton()->get( $this->getOption( 'backend' ) );
 		foreach ( array( 'public', 'thumb', 'transcoded', 'temp', 'deleted' ) as $zone ) {
-			$dir = $backend->getRootStoragePath() . "/local-$zone";
+			$dir = $backend->getContainerStoragePath( "local-$zone" );
 			$secure = ( $zone === 'deleted' || $this->hasOption( 'private' ) )
 				? array( 'noAccess' => true, 'noListing' => true )
 				: array();
-			// Create zone if it doesn't exist...
-			$this->output( "Making sure $dir exists..." );
-			$status = $backend->prepare( array( 'dir' => $dir ) + $secure );
-			// Make sure zone has the right ACLs...
-			if ( count( $secure ) ) { // private
-				$this->output( "making '$zone' private..." );
-				$status->merge( $backend->secure( array( 'dir' => $dir ) + $secure ) );
-			} else { // public
-				$this->output( "making '$zone' public..." );
-				$status->merge( $backend->publish( array( 'dir' => $dir, 'access' => true ) ) );
-			}
-			$this->output( "done.\n" );
-			if ( !$status->isOK() ) {
-				print_r( array_merge( $status->getErrorsArray(), $status->getWarningsArray() ) );
-			}
+			$this->prepareDirectory( $backend, $dir, $secure );
+		}
+		foreach ( array( 'timeline-render' ) as $container ) {
+			$dir = $backend->getContainerStoragePath( $container );
+			$secure = $this->hasOption( 'private' )
+				? array( 'noAccess' => true, 'noListing' => true )
+				: array();
+			$this->prepareDirectory( $backend, $dir, $secure );
+		}
+	}
+
+	protected function prepareDirectory( FileBackend $backend, $dir, array $secure ) {
+		// Create zone if it doesn't exist...
+		$this->output( "Making sure $dir exists..." );
+		$status = $backend->prepare( array( 'dir' => $dir ) + $secure );
+		// Make sure zone has the right ACLs...
+		if ( count( $secure ) ) { // private
+			$this->output( "making '$dir' private..." );
+			$status->merge( $backend->secure( array( 'dir' => $dir ) + $secure ) );
+		} else { // public
+			$this->output( "making '$dir' public..." );
+			$status->merge( $backend->publish( array( 'dir' => $dir, 'access' => true ) ) );
+		}
+		$this->output( "done.\n" );
+		if ( !$status->isOK() ) {
+			print_r( array_merge( $status->getErrorsArray(), $status->getWarningsArray() ) );
 		}
 	}
 }
