@@ -34,9 +34,10 @@ class DumpInterwiki extends WikimediaMaintenance {
 	protected $langlist, $dblist, $specials, $languageAliases, $prefixRewrites, $prefixLists;
 
 	/**
-	 * @var CdbWriter
+	 * @var CdbWriter|bool
 	 */
-	protected $dbFile;
+	protected $dbFile = false;
+
 	protected $urlprotocol;
 
 	public function __construct() {
@@ -63,9 +64,11 @@ class DumpInterwiki extends WikimediaMaintenance {
 		$this->specials = array_flip( array_map( "trim", file( $this->getOption( 'specialdbs', $default_special_dblist ) ) ) );
 
 		if ( $this->hasOption( 'o' ) ) {
-			$this->dbFile = CdbWriter::open( $this->getOption( 'o' ) ) ;
-		} else {
-			$this->dbFile = false;
+			try {
+				$this->dbFile = CdbWriter::open( $this->getOption( 'o' ) ) ;
+			} catch( CdbException $e ) {
+				$this->error( "Unable to open cdb file for writing", 1 );
+			}
 		}
 
 		if ( $this->hasOption( 'protocolrelative' ) ) {
@@ -241,9 +244,13 @@ class DumpInterwiki extends WikimediaMaintenance {
 			$list = array_keys( $hash );
 			sort( $list );
 			if ( $this->dbFile ) {
-				$this->dbFile->set( "__list:{$source}", implode( ' ', $list ) );
+				try {
+					$this->dbFile->set( "__list:{$source}", implode( ' ', $list ) );
+				} catch ( CdbException $e ) {
+					throw new MWException( $e->getMessage() );
+				}
 			} else {
-				print "__list:{$source} " . implode( ' ', $list ) . "\n";
+				$this->output( "__list:{$source} " . implode( ' ', $list ) . "\n" );
 			}
 		}
 	}
@@ -289,7 +296,12 @@ class DumpInterwiki extends WikimediaMaintenance {
 			$entry["iw_url"] = '';
 		}
 		if ( $this->dbFile ) {
-			$this->dbFile->set( "{$source}:{$entry['iw_prefix']}", trim( "{$entry['iw_local']} {$entry['iw_url']}" ) );
+			try {
+				$this->dbFile->set( "{$source}:{$entry['iw_prefix']}",
+					trim( "{$entry['iw_local']} {$entry['iw_url']}" ) );
+			} catch ( CdbException $e ) {
+				throw new MWException( $e->getMessage() );
+			}
 		} else {
 			$this->output( "{$source}:{$entry['iw_prefix']} {$entry['iw_url']} {$entry['iw_local']}\n" );
 		}
