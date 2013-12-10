@@ -76,7 +76,7 @@ class AddWiki extends WikimediaMaintenance {
 		$this->output( "Creating database $dbName for $lang.$site ($name)\n" );
 
 		# Set up the database
-		$dbw->query( "SET table_type=Innodb" );
+		$dbw->query( "SET storage_engine=InnoDB" );
 		$dbw->query( "CREATE DATABASE $dbName" );
 		$dbw->selectDB( $dbName );
 
