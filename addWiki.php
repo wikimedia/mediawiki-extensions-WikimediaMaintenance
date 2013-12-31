@@ -196,6 +196,11 @@ class AddWiki extends WikimediaMaintenance {
 		# Rebuild wikiversions.cdb
 		shell_exec( "cd $common/multiversion && ./refreshWikiversionsCDB" );
 
+		# Create new search index
+		$searchIndex = $this->runChild( 'CirrusSearch\UpdateSearchIndexConfig' );
+		$searchIndex->mOptions[ 'baseName' ] = $dbName;
+		$searchIndex->execute();
+
 		# print "Constructing interwiki SQL\n";
 		# Rebuild interwiki tables
 		# passthru( '/home/wikipedia/conf/interwiki/update' ); // FIXME
