@@ -102,6 +102,7 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->sourceFile( "$IP/maintenance/archives/patch-filejournal.sql" );
 		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" ); // Not actually enabled everywhere, but this is easier
 		$dbw->sourceFile( "$IP/extensions/AccountAudit/accountaudit.sql" );
+		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/create_counts.sql" );
 
 		// Add project specific extension table additions here
 		switch ( $site ) {
