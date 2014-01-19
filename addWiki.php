@@ -203,6 +203,13 @@ class AddWiki extends WikimediaMaintenance {
 		$searchIndex->mOptions[ 'baseName' ] = $dbName;
 		$searchIndex->execute();
 
+		# Clear MassMessage cache (bug 60075)
+		global $wgMemc, $wgConf;
+		// Even if the dblists have been updated, it's not in $wgConf yet
+		$wgConf->wikis[] = $dbName;
+		$wgMemc->delete( 'massmessage:urltodb' );
+		MassMessage::getDBName( '' ); // Forces re-cache
+
 		# print "Constructing interwiki SQL\n";
 		# Rebuild interwiki tables
 		# passthru( '/home/wikipedia/conf/interwiki/update' ); // FIXME
