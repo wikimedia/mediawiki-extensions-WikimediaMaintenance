@@ -54,6 +54,8 @@ class ClearMessageBlobs extends WikimediaMaintenance {
 			$db->query( "TRUNCATE TABLE " . $db->tableName( 'msg_resource' ), __METHOD__ );
 			$db->query( "TRUNCATE TABLE " . $db->tableName( 'msg_resource_links' ), __METHOD__ );
 			$lb->reuseConnection( $db );
+
+			wfWaitForSlaves( false, $wiki, false );
 		}
 		echo "Done.\n";
 	}
