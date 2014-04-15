@@ -10,13 +10,12 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 	function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Get the length of the job queue on all wikis in $wgConf';
-		$this->addOption( 'showzero', 'Whether to output wikis with 0 jobs', false, false, false );
-		$this->addOption( 'totalonly', 'Whether to only output the total number of jobs', false, false, false );
+		$this->addOption( 'totalonly', 'Whether to only output the total number of jobs' );
+		$this->addOption( 'nototal', "Don't print the total number of jobs" );
 	}
 
 	function execute() {
-		$outputZero = $this->getOption( 'showzero', false );
-		$totalOnly = $this->getOption( 'totalonly', false );
+		$totalOnly = $this->hasOption( 'totalonly' );
 
 		$total = 0;
 		$pendingDBs = JobQueueAggregator::singleton()->getAllReadyWikiQueues();
@@ -28,14 +27,16 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 			}
 		}
 		foreach ( $sizeByWiki as $wiki => $count ) {
-			if ( $outputZero || $count > 0 ) {
+			if ( $count > 0 ) {
 				if ( !$totalOnly ) {
 					$this->output( "$wiki $count\n" );
 				}
 				$total += $count;
 			}
 		}
-		$this->output( "Total $total\n" );
+		if ( !$this->hasOption( 'nototal' ) ) {
+			$this->output( "Total $total\n" );
+		}
 	}
 }
 
