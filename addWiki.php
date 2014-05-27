@@ -98,6 +98,7 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
 		$dbw->sourceFile( "$IP/extensions/UserDailyContribs/patches/UserDailyContribs.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/db/math.mysql.sql" );
+		$dbw->sourceFile( "$IP/extensions/Math/db/mathoid.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/TimedMediaHandler.sql" );
 		$dbw->sourceFile( "$IP/maintenance/archives/patch-filejournal.sql" );
 		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" ); // Not actually enabled everywhere, but this is easier
