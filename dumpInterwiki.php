@@ -31,7 +31,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 	/**
 	 * @var array
 	 */
-	protected $langlist, $dblist, $specials, $languageAliases, $prefixRewrites, $prefixLists;
+	protected $langlist, $dblist, $specials, $prefixLists;
 
 	/**
 	 * @var CdbWriter|bool
@@ -39,6 +39,117 @@ class DumpInterwiki extends WikimediaMaintenance {
 	protected $dbFile = false;
 
 	protected $urlprotocol;
+
+	/**
+	 * Returns an array of multi-language sites
+	 * db suffix => db suffix, iw prefix, hostname
+	 * @returns array
+	 */
+	protected function getSites() {
+		return array(
+			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia.org' ),
+			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary.org' ),
+			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote.org' ),
+			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
+			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
+			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
+			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
+			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
+			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage.org' ),
+		);
+	}
+
+	/**
+	 * Returns an array of extra global interwiki links that can't be in the
+	 * intermap for some reason
+	 * @returns array
+	 */
+	protected function getExtraLinks() {
+		return array(
+			array( 'm', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
+			array( 'meta', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
+			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
+			array( 'd', $this->urlprotocol . '//www.wikidata.org/wiki/$1', 1 ),
+		);
+	}
+
+	/**
+	 * Site overrides for wikis whose DB names end in 'wiki' but that really belong
+	 * to another site
+	 * @var array
+	 */
+	protected static $siteOverrides = array(
+		'sourceswiki' => array( 'wikisource', 'en' ),
+	);
+
+	/**
+	 * Language aliases, usually configured as redirects to the real wiki in apache
+	 * Interlanguage links are made directly to the real wiki
+	 * Something horrible happens if you forget to list an alias here, I can't
+	 *   remember what
+	 * @var array
+	 */
+	protected static $languageAliases = array(
+		'zh-cn' => 'zh',
+		'zh-tw' => 'zh',
+		'dk' => 'da',
+		'nb' => 'no',
+	);
+
+	/**
+	 * Special case prefix rewrites, for the benefit of Swedish which uses s:t
+	 * as an abbreviation for saint
+	 */
+	protected static $prefixRewrites = array(
+		'svwiki' => array( 's' => 'src' ),
+	);
+
+	/**
+	 * Set the wiki's interproject links to point to some other language code
+	 * Useful for chapter wikis (e.g. brwikimedia (Brazil chapter) has nothing to
+	 *   do with br language (Breton), interwikis like w: should point to
+	 *   Portuguese projects instead)
+	 * @var array
+	 */
+	protected static $languageOverrides = array(
+		'wikimedia' => array(
+			'ar' => 'es',
+			'bd' => 'bn',
+			'be' => 'en',
+			'br' => 'pt',
+			'co' => 'es',
+			'dk' => 'da',
+			'il' => 'he',
+			'mx' => 'es',
+			'noboard_chapters' => 'no',
+			'nyc' => 'en',
+			'nz' => 'en',
+			'pa_us' => 'en',
+			'rs' => 'sr',
+			'se' => 'sv',
+			'ua' => 'uk',
+			'uk' => 'en',
+		),
+		'wikiversity' => array(
+			'beta' => 'en',
+		),
+	);
+
+	/**
+	 * Additional links to provide for the needs of the different projects
+	 * @param $project The site (e.g. wikibooks)
+	 * @returns array
+	 */
+	protected function getAdditionalLinks( $project ) {
+		switch( $project ) {
+			case 'wiki':
+				return array(
+					array( 'w', $this->urlprotocol . '//en.wikipedia.org/wiki/$1', 1 ),
+				);
+			default:
+				return array();
+		}
+	}
 
 	public function __construct() {
 		parent::__construct();
@@ -83,56 +194,15 @@ class DumpInterwiki extends WikimediaMaintenance {
 	function getRebuildInterwikiDump() {
 		global $wgContLang;
 
-		# Multi-language sites
-		# db suffix => db suffix, iw prefix, hostname
-		$sites = array(
-			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia.org' ),
-			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary.org' ),
-			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote.org' ),
-			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
-			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
-			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
-			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
-			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
-			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage.org' ),
-		);
-
-		# Site overrides for wikis whose DB names end in 'wiki' but that really belong to another site
-		$siteOverrides = array(
-			'sourceswiki' => array( 'wikisource', 'en' ),
-		);
-
-		# Extra interwiki links that can't be in the intermap for some reason
-		$extraLinks = array(
-			array( 'm', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'meta', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
-			array( 'd', $this->urlprotocol . '//www.wikidata.org/wiki/$1', 1 ),
-		);
-
-		# Language aliases, usually configured as redirects to the real wiki in apache
-		# Interlanguage links are made directly to the real wiki
-		# Something horrible happens if you forget to list an alias here, I can't
-		#   remember what
-		$this->languageAliases = array(
-			'zh-cn' => 'zh',
-			'zh-tw' => 'zh',
-			'dk' => 'da',
-			'nb' => 'no',
-		);
-
-		# Special case prefix rewrites, for the benefit of Swedish which uses s:t
-		# as an abbreviation for saint
-		$this->prefixRewrites = array(
-			'svwiki' => array( 's' => 'src' ),
-		);
+		$sites = $this->getSites();
+		$extraLinks = $this->getExtraLinks();
 
 		# Construct a list of reserved prefixes
 		$reserved = array();
 		foreach ( $this->langlist as $lang ) {
 			$reserved[$lang] = 1;
 		}
-		foreach ( $this->languageAliases as $alias => $lang ) {
+		foreach ( self::$languageAliases as $alias => $lang ) {
 			$reserved[$alias] = 1;
 		}
 
@@ -180,7 +250,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 		}
 
 		foreach ( $this->dblist as $db ) {
-			if ( isset( $this->specials[$db] ) && !isset( $siteOverrides[$db] ) ) {
+			if ( isset( $this->specials[$db] ) && !isset( self::$siteOverrides[$db] ) ) {
 				# Special wiki
 				# Has interwiki links and interlanguage links to wikipedia
 
@@ -197,8 +267,8 @@ class DumpInterwiki extends WikimediaMaintenance {
 			} else {
 				# Find out which site this DB belongs to
 				$site = false;
-				if ( isset( $siteOverrides[$db] ) ) {
-					list( $site, $lang ) = $siteOverrides[$db];
+				if ( isset( self::$siteOverrides[$db] ) ) {
+					list( $site, $lang ) = self::$siteOverrides[$db];
 					$site = $sites[$site];
 				} else {
 					$matches = array();
@@ -220,16 +290,20 @@ class DumpInterwiki extends WikimediaMaintenance {
 
 				# Lateral links
 				foreach ( $sites as $targetSite ) {
-					if ( $targetSite->suffix != $site->suffix ) {
-						$this->makeLink( array( 'iw_prefix' => $targetSite->lateral,
-							'iw_url' => $targetSite->getURL( $lang, $this->urlprotocol ),
-							'iw_local' => 1 ), $db );
+					# Suppress link to self
+					if ( $targetSite->suffix == $site->suffix ) {
+						continue;
 					}
-				}
 
-				if ( $site->suffix == "wiki" ) {
-					$this->makeLink( array( 'iw_prefix' => 'w',
-						'iw_url' => $this->urlprotocol . "//en.wikipedia.org/wiki/$1",
+					$lateralLang = $lang;
+					# Check for language overrides
+					if ( isset( self::$languageOverrides[$site->suffix] ) &&
+						isset( self::$languageOverrides[$site->suffix][$lang] ) ) {
+						$lateralLang = self::$languageOverrides[$site->suffix][$lang];
+					}
+
+					$this->makeLink( array( 'iw_prefix' => $targetSite->lateral,
+						'iw_url' => $targetSite->getURL( $lateralLang, $this->urlprotocol ),
 						'iw_local' => 1 ), $db );
 				}
 
@@ -268,8 +342,14 @@ class DumpInterwiki extends WikimediaMaintenance {
 		}
 
 		# Language aliases
-		foreach ( $this->languageAliases as $alias => $lang ) {
+		foreach ( self::$languageAliases as $alias => $lang ) {
 			$this->makeLink( array( $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ), $source );
+		}
+
+		# Additional links
+		$additionalLinks = $this->getAdditionalLinks( $site->suffix );
+		foreach ( $additionalLinks as $link ) {
+			$this->makeLink( $link, $source );
 		}
 	}
 
@@ -278,16 +358,16 @@ class DumpInterwiki extends WikimediaMaintenance {
 	 * @param $source
 	 */
 	function makeLink( $entry, $source ) {
-		if ( isset( $this->prefixRewrites[$source] ) && isset( $entry[0] ) && isset( $this->prefixRewrites[$source][$entry[0]] ) ) {
-			$entry[0] = $this->prefixRewrites[$source][$entry[0]];
+		if ( isset( self::$prefixRewrites[$source] ) && isset( $entry[0] ) && isset( self::$prefixRewrites[$source][$entry[0]] ) ) {
+			$entry[0] = self::$prefixRewrites[$source][$entry[0]];
 		}
 
 		if ( !array_key_exists( "iw_prefix", $entry ) ) {
 			$entry = array( "iw_prefix" => $entry[0], "iw_url" => $entry[1], "iw_local" => $entry[2] );
 		}
-		if ( array_key_exists( $source, $this->prefixRewrites ) &&
-				array_key_exists( $entry['iw_prefix'], $this->prefixRewrites[$source] ) ) {
-			$entry['iw_prefix'] = $this->prefixRewrites[$source][$entry['iw_prefix']];
+		if ( array_key_exists( $source, self::$prefixRewrites ) &&
+				array_key_exists( $entry['iw_prefix'], self::$prefixRewrites[$source] ) ) {
+			$entry['iw_prefix'] = self::$prefixRewrites[$source][$entry['iw_prefix']];
 		}
 		if ( !array_key_exists( "iw_local", $entry ) ) {
 			$entry["iw_local"] = null;

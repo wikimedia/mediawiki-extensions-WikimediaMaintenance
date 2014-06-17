@@ -63,19 +63,8 @@ class RebuildInterwiki extends DumpInterwiki {
 	function makeInterwikiSQL( $destDir ) {
 		$this->output( "Making new interwiki SQL files in $destDir\n" );
 
-		# Multi-language sites
-		# db suffix => db suffix, iw prefix, hostname
-		$sites = array(
-			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia.org' ),
-			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary.org' ),
-			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote.org' ),
-			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
-			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
-			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
-			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
-			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
-			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage.org' ),
-		);
+		$sites = $this->getSites();
+		$extraLinks = $this->getExtraLinks();
 
 		# Special-case hostnames
 		$this->specials = array(
@@ -88,37 +77,12 @@ class RebuildInterwiki extends DumpInterwiki {
 			'specieswiki' => 'species.wikimedia.org',
 		);
 
-		# Extra interwiki links that can't be in the intermap for some reason
-		$extraLinks = array(
-			array( 'm', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'meta', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
-			array( 'd', $this->urlprotocol . '//www.wikidata.org/wiki/$1', 1 ),
-		);
-
-		# Language aliases, usually configured as redirects to the real wiki in apache
-		# Interlanguage links are made directly to the real wiki
-		# Something horrible happens if you forget to list an alias here, I can't
-		#   remember what
-		$this->languageAliases = array(
-			'zh-cn' => 'zh',
-			'zh-tw' => 'zh',
-			'dk' => 'da',
-			'nb' => 'no',
-		);
-
-		# Special case prefix rewrites, for the benefit of Swedish which uses s:t
-		# as an abbreviation for saint
-		$this->prefixRewrites = array(
-			'svwiki' => array( 's' => 'src' ),
-		);
-
 		# Construct a list of reserved prefixes
 		$reserved = array();
 		foreach ( $this->langlist as $lang ) {
 			$reserved[$lang] = 1;
 		}
-		foreach ( $this->languageAliases as $alias => $lang ) {
+		foreach ( self::$languageAliases as $alias => $lang ) {
 			$reserved[$alias] = 1;
 		}
 
@@ -227,9 +191,16 @@ class RebuildInterwiki extends DumpInterwiki {
 
 				# Lateral links
 				foreach ( $sites as $targetSite ) {
+					$lateralLang = $lang;
+					# Check for language overrides
+					if ( isset( self::$languageOverrides[$site->suffix] ) &&
+						isset( self::$languageOverrides[$site->suffix][$lang] ) ) {
+						$lateralLang = self::$languageOverrides[$site->suffix][$lang];
+					}
 					# Suppress link to self
 					if ( $targetSite->suffix != $site->suffix ) {
-						$sql .= $this->makeLink( array( $targetSite->lateral, $targetSite->getURL( $lang, $this->urlprotocol ), 1 ), $first, $db );
+						$sql .= $this->makeLink( array( $targetSite->lateral, $targetSite->getURL( $lateralLang, $this->urlprotocol ), 1 ), 
+							$first, $db );
 					}
 				}
 
@@ -269,7 +240,7 @@ class RebuildInterwiki extends DumpInterwiki {
 		}
 
 		# Language aliases
-		foreach ( $this->languageAliases as $alias => $lang ) {
+		foreach ( self::$languageAliases as $alias => $lang ) {
 			$sql .= $this->makeLink( array( $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ), $first, $source );
 		}
 		return $sql;
@@ -285,8 +256,8 @@ class RebuildInterwiki extends DumpInterwiki {
 	 */
 	function makeLink( $entry, &$first, $source ) {
 
-		if ( isset( $this->prefixRewrites[$source] ) && isset($entry[0]) && isset( $this->prefixRewrites[$source][$entry[0]] ) ) {
-			$entry[0] = $this->prefixRewrites[$source][$entry[0]];
+		if ( isset( self::$prefixRewrites[$source] ) && isset($entry[0]) && isset( self::$prefixRewrites[$source][$entry[0]] ) ) {
+			$entry[0] = self::$prefixRewrites[$source][$entry[0]];
 		}
 
 		$sql = "";
