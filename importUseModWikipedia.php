@@ -13,9 +13,9 @@ require_once( "$IP/includes/normal/UtfNormalUtil.php" );
 
 
 class ImportUseModWikipedia extends Maintenance {
-	var $encodeMap, $decodeMap;
+	public $encodeMap, $decodeMap;
 
-	var $deepRenames = array(
+	public $deepRenames = array(
 		'JimboWales' => 983862286,
 		'TexaS' => 983918410,
 		'HistoryOfUnitedStatesTalk' => 984795423,
@@ -30,9 +30,9 @@ class ImportUseModWikipedia extends Maintenance {
 		'AaRiver' => '?',
 	);
 
-	var $replacements = array();
+	public $replacements = array();
 
-	var $renameTextLinksOps = array(
+	public $renameTextLinksOps = array(
 		983846265 => array(
 			'TestIgnore' => 'IgnoreTest',
 		),
@@ -72,30 +72,30 @@ class ImportUseModWikipedia extends Maintenance {
 	/**
 	 * Hack for observed substitution issues
 	 */
-	var $skipSelfSubstitution = array(
+	public $skipSelfSubstitution = array(
 		'Pythagorean_Theorem',
 		'The_Most_Remarkable_Formula_In_The_World',
 		'Wine',
 	);
 
-	var $unixLineEndingsOps = array(
+	public $unixLineEndingsOps = array(
 		987743732 => 'Wikipedia_FAQ'
 	);
 
-	var $replacementsDone = array();
+	public $replacementsDone = array();
 
-	var $moveLog = array();
-	var $moveDests = array();
-	var $revId;
+	public $moveLog = array();
+	public $moveDests = array();
+	public $revId;
 
-	var $rc = array();
-	var $textCache = array();
-	var $blacklist = array();
+	public $rc = array();
+	public $textCache = array();
+	public $blacklist = array();
 
-	var $FS, $FS1, $FS2, $FS3;
-	var $FreeLinkPattern, $UrlPattern, $LinkPattern, $InterLinkPattern;
+	public $FS, $FS1, $FS2, $FS3;
+	public $FreeLinkPattern, $UrlPattern, $LinkPattern, $InterLinkPattern;
 
-	var $cp1252Table = array(
+	public $cp1252Table = array(
 0x80 => 0x20ac,
 0x81 => 0x0081,
 0x82 => 0x201a,

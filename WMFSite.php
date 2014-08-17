@@ -4,7 +4,7 @@
  * @ingroup Maintenance
  */
 class WMFSite {
-	var $suffix, $lateral, $url;
+	public $suffix, $lateral, $url;
 
 	function __construct( $s, $l, $u ) {
 		$this->suffix = $s;
