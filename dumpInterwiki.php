@@ -85,8 +85,6 @@ class DumpInterwiki extends WikimediaMaintenance {
 	/**
 	 * Language aliases, usually configured as redirects to the real wiki in apache
 	 * Interlanguage links are made directly to the real wiki
-	 * Something horrible happens if you forget to list an alias here, I can't
-	 *   remember what
 	 * @var array
 	 */
 	protected static $languageAliases = array(
@@ -94,6 +92,16 @@ class DumpInterwiki extends WikimediaMaintenance {
 		'zh-tw' => 'zh',
 		'dk' => 'da',
 		'nb' => 'no',
+		'nan' => 'zh-min-nan',
+		'vro' => 'fiu-vro',
+		'cmn' => 'zh',
+		'lzh' => 'zh-classical',
+		'yue' => 'zh-yue',
+		'rup' => 'roa-rup',
+		'gsw' => 'als',
+		'be-tarask' => 'be-x-old',
+		'sgs' => 'bat-smg',
+		'egl' => 'eml',
 	);
 
 	/**
@@ -142,6 +150,14 @@ class DumpInterwiki extends WikimediaMaintenance {
 	 */
 	protected function getAdditionalLinks( $project ) {
 		switch( $project ) {
+			case 'wikisource':
+				return array(
+					array( 'mul', $this->urlprotocol . '//wikisource.org/wiki/$1', 1 ),
+				);
+			case 'wikiversity':
+				return array(
+					array( 'mul', $this->urlprotocol . '//beta.wikiversity.org/wiki/$1', 1 ),
+				);
 			case 'wiki':
 				return array(
 					array( 'w', $this->urlprotocol . '//en.wikipedia.org/wiki/$1', 1 ),
