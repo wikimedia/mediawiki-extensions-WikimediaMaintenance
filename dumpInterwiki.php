@@ -178,11 +178,11 @@ class DumpInterwiki extends WikimediaMaintenance {
 	}
 
 	function execute() {
-		$default_all_dblist = getRealmSpecificFilename( "/a/common/all.dblist" );
-		$default_special_dblist = getRealmSpecificFilename( "/a/common/special.dblist" );
+		$default_all_dblist = getRealmSpecificFilename( "/srv/mediawiki/all.dblist" );
+		$default_special_dblist = getRealmSpecificFilename( "/srv/mediawiki/special.dblist" );
 
 		# List of language prefixes likely to be found in multi-language sites
-		$this->langlist = array_map( "trim", file( $this->getOption( 'langlist', "/a/common/langlist" ) ) );
+		$this->langlist = array_map( "trim", file( $this->getOption( 'langlist', "/srv/mediawiki/langlist" ) ) );
 
 		# List of all database names
 		$this->dblist = array_map( "trim", file( $this->getOption( 'dblist', $default_all_dblist ) ) );

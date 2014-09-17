@@ -71,7 +71,7 @@ class AddWiki extends WikimediaMaintenance {
 		$name = $languageNames[$lang];
 
 		$dbw = wfGetDB( DB_MASTER );
-		$common = "/a/common";
+		$common = "/srv/mediawiki";
 
 		$this->output( "Creating database $dbName for $lang.$site ($name)\n" );
 

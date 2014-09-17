@@ -31,7 +31,7 @@ class RemoveDeletedWikis extends WikimediaMaintenance {
 	}
 
 	function execute() {
-		$wikis = file( '/a/common/deleted.dblist' );
+		$wikis = file( '/srv/mediawiki/deleted.dblist' );
 		if ( $wikis === false ) {
 			$this->error( 'Unable to open deleted.dblist', 1 );
 		}

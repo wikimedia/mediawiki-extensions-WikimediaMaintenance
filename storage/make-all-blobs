@@ -11,8 +11,8 @@ else
 	table=$2
 fi
 
-. /a/common/multiversion/MWRealm.sh
-FILE=`getRealmSpecificFilename /a/common/all.dblist`
+. /srv/mediawiki/multiversion/MWRealm.sh
+FILE=`getRealmSpecificFilename /srv/mediawiki/all.dblist`
 
 for db in `<$FILE`;do
 	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u wikiadmin -p`wikiadmin_pass` -h $server && \
