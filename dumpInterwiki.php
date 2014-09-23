@@ -125,6 +125,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 			'bd' => 'bn',
 			'be' => 'en',
 			'br' => 'pt',
+			'ca' => 'en',
 			'co' => 'es',
 			'dk' => 'da',
 			'il' => 'he',
