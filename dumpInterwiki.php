@@ -91,10 +91,17 @@ class DumpInterwiki extends Maintenance {
 	 * @var array
 	 */
 	protected static $languageAliases = array(
+		# Nasty legacy codes
+		'cz' => 'cs',
+		'dk' => 'da',
+		'epo' => 'eo',
+		'jp' => 'ja',
+		'minnan' => 'zh-min-nan',
+		'nb' => 'no',
+		'zh-cfr' => 'zh-min-nan',
 		'zh-cn' => 'zh',
 		'zh-tw' => 'zh',
-		'dk' => 'da',
-		'nb' => 'no',
+		# Real ISO language codes to our fake ones
 		'nan' => 'zh-min-nan',
 		'vro' => 'fiu-vro',
 		'cmn' => 'zh',
