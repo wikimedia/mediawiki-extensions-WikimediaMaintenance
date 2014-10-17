@@ -12,7 +12,7 @@ class SetZoneAccess extends Maintenance {
 		$backend = FileBackendGroup::singleton()->get( $this->getOption( 'backend' ) );
 		foreach ( array( 'public', 'thumb', 'transcoded', 'temp', 'deleted' ) as $zone ) {
 			$dir = $backend->getContainerStoragePath( "local-$zone" );
-			$secure = ( $zone === 'deleted' || $this->hasOption( 'private' ) )
+			$secure = ( $zone === 'deleted' || $zone === 'temp' || $this->hasOption( 'private' ) )
 				? array( 'noAccess' => true, 'noListing' => true )
 				: array();
 			$this->prepareDirectory( $backend, $dir, $secure );
