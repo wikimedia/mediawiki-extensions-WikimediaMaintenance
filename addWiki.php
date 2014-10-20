@@ -119,7 +119,7 @@ class AddWiki extends WikimediaMaintenance {
 			case 'wikinews':
 				break;
 			case 'wikisource':
-				$dbw->sourceFile( "$IP/extensions/ProofreadPage/ProofreadPage.sql" );
+				$dbw->sourceFile( "$IP/extensions/ProofreadPage/sql/ProofreadIndex.sql" );
 				break;
 			case 'wikiversity':
 				break;
