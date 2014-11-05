@@ -200,7 +200,7 @@ class AddWiki extends WikimediaMaintenance {
 		shell_exec( "cd $common/multiversion && ./refreshWikiversionsCDB" );
 
 		# Create new search index
-		$searchIndex = $this->runChild( 'CirrusSearch\UpdateSearchIndexConfig' );
+		$searchIndex = $this->runChild( 'CirrusSearch\Maintenance\UpdateSearchIndexConfig' );
 		$searchIndex->mOptions[ 'baseName' ] = $dbName;
 		$searchIndex->execute();
 
