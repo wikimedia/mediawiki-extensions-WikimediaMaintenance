@@ -36,11 +36,11 @@ class MakeSizeDBLists extends WikimediaMaintenance {
 		}
 
 		$this->output( 'Small wiki count: ' . count( $small ) . "\n" );
-		$this->writeFile( '/srv/mediawiki/small.dblist', $small );
+		$this->writeFile( '/srv/mediawiki-staging/small.dblist', $small );
 		$this->output( 'Medium wiki count: ' . count( $medium ) . "\n" );
-		$this->writeFile( '/srv/mediawiki/medium.dblist', $medium );
+		$this->writeFile( '/srv/mediawiki-staging/medium.dblist', $medium );
 		$this->output( 'Large wiki count: ' . count( $large ) . "\n" );
-		$this->writeFile( '/srv/mediawiki/large.dblist', $large );
+		$this->writeFile( '/srv/mediawiki-staging/large.dblist', $large );
 	}
 
 	/**
