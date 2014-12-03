@@ -26,6 +26,9 @@
 require_once( __DIR__ . '/WikimediaMaintenance.php' );
 require_once( __DIR__ . '/WMFSite.php' );
 
+use Cdb\Writer as CdbWriter;
+use Cdb\Exception as CdbException;
+
 class DumpInterwiki extends WikimediaMaintenance {
 
 	/**
