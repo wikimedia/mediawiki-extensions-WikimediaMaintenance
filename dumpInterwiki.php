@@ -23,13 +23,13 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
-require_once( __DIR__ . '/WMFSite.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
+require_once __DIR__ . '/WMFSite.php';
 
 use Cdb\Writer as CdbWriter;
 use Cdb\Exception as CdbException;
 
-class DumpInterwiki extends WikimediaMaintenance {
+class DumpInterwiki extends Maintenance {
 
 	/**
 	 * @var array
@@ -149,7 +149,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 
 	/**
 	 * Additional links to provide for the needs of the different projects
-	 * @param $project The site (e.g. wikibooks)
+	 * @param string $project The site (e.g. wikibooks)
 	 * @returns array
 	 */
 	protected function getAdditionalLinks( $project ) {
@@ -376,6 +376,7 @@ class DumpInterwiki extends WikimediaMaintenance {
 	/**
 	 * @param $entry
 	 * @param $source
+	 * @throws MWException
 	 */
 	function makeLink( $entry, $source ) {
 		if ( isset( self::$prefixRewrites[$source] ) && isset( $entry[0] ) && isset( self::$prefixRewrites[$source][$entry[0]] ) ) {
@@ -411,5 +412,5 @@ class DumpInterwiki extends WikimediaMaintenance {
 }
 
 $maintClass = "DumpInterwiki";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;
 
