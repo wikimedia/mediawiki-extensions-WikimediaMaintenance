@@ -4,14 +4,24 @@
  * @ingroup Maintenance
  */
 class WMFSite {
-	public $suffix, $lateral, $url;
+	public $suffix, $prefix, $url;
 
-	function __construct( $s, $l, $u ) {
-		$this->suffix = $s;
-		$this->lateral = $l;
-		$this->url = $u;
+	/**
+	 * @param string $suffix
+	 * @param $prefix
+	 * @param string $url
+	 */
+	function __construct( $suffix, $prefix, $url ) {
+		$this->suffix = $suffix;
+		$this->prefix = $prefix;
+		$this->url = $url;
 	}
 
+	/**
+	 * @param string $lang
+	 * @param string $urlprotocol
+	 * @return string
+	 */
 	function getURL( $lang, $urlprotocol ) {
 		$xlang = str_replace( '_', '-', $lang );
 		return "$urlprotocol//$xlang.{$this->url}/wiki/\$1";
