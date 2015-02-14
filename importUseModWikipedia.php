@@ -9,7 +9,7 @@
  */
 
 require_once( dirname( __FILE__ ) . '/WikimediaMaintenance.php' );
-require_once( "$IP/includes/normal/UtfNormalUtil.php" );
+require_once( "$IP/includes/libs/normal/UtfNormalUtil.php" );
 
 
 class ImportUseModWikipedia extends Maintenance {
