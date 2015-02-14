@@ -154,13 +154,35 @@ class DumpInterwiki extends Maintenance {
 	 */
 	protected function getAdditionalLinks( $project ) {
 		switch( $project ) {
+			case 'wikibooks':
+				return array(
+					array( 'b', $this->urlprotocol . '//en.wikibooks.org/wiki/$1', 1 ),
+				);
+			case 'wikinews':
+				return array(
+					array( 'n', $this->urlprotocol . '//en.wikinews.org/wiki/$1', 1 ),
+				);
+			case 'wikiquote':
+				return array(
+					array( 'q', $this->urlprotocol . '//en.wikiquote.org/wiki/$1', 1 ),
+				);
 			case 'wikisource':
 				return array(
 					array( 'mul', $this->urlprotocol . '//wikisource.org/wiki/$1', 1 ),
+					array( 's', $this->urlprotocol . '//en.wikisource.org/wiki/$1', 1 ),
 				);
 			case 'wikiversity':
 				return array(
 					array( 'mul', $this->urlprotocol . '//beta.wikiversity.org/wiki/$1', 1 ),
+					array( 'v', $this->urlprotocol . '//en.wikiversity.org/wiki/$1', 1 ),
+				);
+			case 'wikivoyage':
+				return array(
+					array( 'voy', $this->urlprotocol . '//en.wikivoyage.org/wiki/$1', 1 ),
+				);
+			case 'wiktionary':
+				return array(
+					array( 'wikt', $this->urlprotocol . '//en.wiktionary.org/wiki/$1', 1 ),
 				);
 			case 'wiki':
 				return array(
@@ -313,7 +335,8 @@ class DumpInterwiki extends Maintenance {
 
 				// Lateral links
 				foreach ( $sites as $targetSite ) {
-					// Suppress link to self
+					// Suppress link to self; these are defined in getAdditionalLinks()
+					// and always point to the English-language version of the project
 					if ( $targetSite->suffix == $site->suffix ) {
 						continue;
 					}
