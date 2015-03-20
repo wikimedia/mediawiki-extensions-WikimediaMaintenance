@@ -77,10 +77,7 @@ class CreateExtensionTables extends WikimediaMaintenance {
 				break;
 
 			case 'wikilove':
-				$files = array(
-					'WikiLoveImageLog.sql',
-					'WikiLoveLog.sql',
-				);
+				$files = array( 'WikiLoveLog.sql' );
 				$path = "$IP/extensions/WikiLove/patches";
 				break;
 
