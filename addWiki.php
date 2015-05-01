@@ -191,6 +191,12 @@ class AddWiki extends WikimediaMaintenance {
 		$searchIndex->mOptions[ 'baseName' ] = $dbName;
 		$searchIndex->execute();
 
+		# Populate sites table
+		$sitesPopulation = $this->runChild( 'PopulateSitesTable' );
+		$sitesPopulation->mOptions[ 'site-group' ] = $site;
+		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
+		$sitesPopulation->execute();
+
 		# Clear MassMessage cache (bug 60075)
 		global $wgMemc, $wgConf;
 		// Even if the dblists have been updated, it's not in $wgConf yet
