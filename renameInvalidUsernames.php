@@ -46,7 +46,7 @@ class RenameInvalidUsernames extends Maintenance {
 				sleep( 5 );
 				$this->output( "done.\n" );
 				$count = $this->getCurrentRenameCount();
-				while ( $count > 30 ) {
+				while ( $count > 15 ) {
 					$this->output( "There are currently $count renames queued, pausing...\n" );
 					sleep( 5 );
 					$count = $this->getCurrentRenameCount();
@@ -62,10 +62,6 @@ class RenameInvalidUsernames extends Maintenance {
 		$row = $dbw->selectRow( 'user', User::selectFields(), array( 'user_id' => $userId ), __METHOD__ );
 
 		$oldUser = User::newFromRow( $row );
-		if ( User::isUsableName( $oldUser->getName() ) ) {
-			$this->output( "$userId has a valid username, all is good!\n" );
-			return;
-		}
 
 		$reason = '[[m:Special:MyLanguage/Single User Login finalisation announcement|SUL finalization]] - [[phab:T5507]]';
 		$caUser = new CentralAuthUser( $oldUser->getName() );
