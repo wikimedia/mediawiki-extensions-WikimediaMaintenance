@@ -92,7 +92,6 @@ class AddWiki extends WikimediaMaintenance {
 		$dbw->sourceFile( "$IP/extensions/AntiSpoof/sql/patch-antispoof.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_changes.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_log.sql" );
-		$dbw->sourceFile( "$IP/extensions/TitleKey/titlekey.sql" );
 		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/globalblocking.sql" );
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
 		$dbw->sourceFile( "$IP/extensions/UserDailyContribs/patches/UserDailyContribs.sql" );
