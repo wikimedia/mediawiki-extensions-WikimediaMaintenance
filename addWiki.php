@@ -132,6 +132,13 @@ class AddWiki extends WikimediaMaintenance {
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 
+		// Initialise extension1 cluster (Echo)
+		$x1w = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
+		$x1w->query( "SET storage_engine=InnoDB" );
+		$x1w->query( "CREATE DATABASE $dbName" );
+		$x1w->selectDB( $dbName );
+		$x1w->sourceFile( "$IP/extensions/Echo/echo.sql" );
+
 		# Initialise external storage
 		if ( is_array( $wgDefaultExternalStore ) ) {
 			$stores = $wgDefaultExternalStore;

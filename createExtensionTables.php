@@ -32,7 +32,7 @@ class CreateExtensionTables extends WikimediaMaintenance {
 	}
 
 	function execute() {
-		global $IP;
+		global $IP, $wgEchoCluster;
 		$dbw = $this->getDB( DB_MASTER );
 		$extension = $this->getArg( 0 );
 
@@ -41,6 +41,9 @@ class CreateExtensionTables extends WikimediaMaintenance {
 
 		switch ( strtolower( $extension ) ) {
 			case 'echo':
+				if ( $wgEchoCluster !== false ) {
+					$this->error( "Cannot create Echo tables on $wgEchoCluster using this script.", 1 );
+				}
 				$files = array( 'echo.sql' );
 				$path = "$IP/extensions/Echo";
 				break;
