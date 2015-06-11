@@ -130,6 +130,10 @@ class AddWiki extends WikimediaMaintenance {
 				break;
 		}
 
+		if ( $site !== 'wikimedia' ) {
+			$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
+		}
+
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 
 		// Initialise extension1 cluster (Echo)
