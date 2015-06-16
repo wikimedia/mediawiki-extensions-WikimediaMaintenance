@@ -71,7 +71,6 @@ class AddWiki extends WikimediaMaintenance {
 		$name = $languageNames[$lang];
 
 		$dbw = wfGetDB( DB_MASTER );
-		$common = "/srv/mediawiki";
 
 		$this->output( "Creating database $dbName for $lang.$site ($name)\n" );
 
@@ -187,23 +186,6 @@ class AddWiki extends WikimediaMaintenance {
 
 		$this->setFundraisingLink( $domain, $lang );
 
-		$this->output( "Adding to dblists\n" );
-
-		# Add to dblist
-		$file = fopen( getRealmSpecificFilename( "$common/all.dblist" ), "a" );
-		fwrite( $file, "$dbName\n" );
-		fclose( $file );
-
-		# Update the sublists
-		shell_exec( "cd $common && ./refresh-dblist" );
-
-		# Add to wikiversions.dat
-		$file = fopen( getRealmSpecificFilename( "$common/wikiversions.dat" ), "a" );
-		fwrite( $file, "$dbName php-$wmfVersionNumber *\n" );
-		fclose( $file );
-		# Rebuild wikiversions.cdb
-		shell_exec( "cd $common/multiversion && ./refreshWikiversionsCDB" );
-
 		# Create new search index
 		$searchIndex = $this->runChild( 'CirrusSearch\Maintenance\UpdateSearchIndexConfig' );
 		$searchIndex->mOptions[ 'baseName' ] = $dbName;
@@ -216,10 +198,6 @@ class AddWiki extends WikimediaMaintenance {
 		$wgMemc->delete( 'massmessage:urltodb' );
 		MassMessage::getDBName( '' ); // Forces re-cache
 
-		# print "Constructing interwiki SQL\n";
-		# Rebuild interwiki tables
-		# passthru( '/home/wikipedia/conf/interwiki/update' ); // FIXME
-
 		$time = wfTimestamp( TS_RFC2822 );
 		// These arguments need to be escaped twice: once for echo and once for at
 		$escDbName = wfEscapeShellArg( wfEscapeShellArg( $dbName ) );
@@ -230,11 +208,7 @@ class AddWiki extends WikimediaMaintenance {
 		$escDomain = wfEscapeShellArg( wfEscapeShellArg( $domain ) );
 		shell_exec( "echo notifyNewProjects $escDbName $escTime $escUcsite $escName $escLang $escDomain | at now + 15 minutes" );
 
-		$this->output( "Script ended. You still have to:
-	* Add any required settings in InitialiseSettings.php
-	* Run sync-common-all
-"
-		);
+		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration" );
 	}
 
 	private function getFirstArticle( $ucsite, $name ) {
