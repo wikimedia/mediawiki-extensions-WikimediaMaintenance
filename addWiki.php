@@ -198,15 +198,12 @@ class AddWiki extends WikimediaMaintenance {
 		$wgMemc->delete( 'massmessage:urltodb' );
 		MassMessage::getDBName( '' ); // Forces re-cache
 
+		$user = getenv( 'SUDO_USER' );
 		$time = wfTimestamp( TS_RFC2822 );
-		// These arguments need to be escaped twice: once for echo and once for at
-		$escDbName = wfEscapeShellArg( wfEscapeShellArg( $dbName ) );
-		$escTime = wfEscapeShellArg( wfEscapeShellArg( $time ) );
-		$escUcsite = wfEscapeShellArg( wfEscapeShellArg( $ucsite ) );
-		$escName = wfEscapeShellArg( wfEscapeShellArg( $name ) );
-		$escLang = wfEscapeShellArg( wfEscapeShellArg( $lang ) );
-		$escDomain = wfEscapeShellArg( wfEscapeShellArg( $domain ) );
-		shell_exec( "echo notifyNewProjects $escDbName $escTime $escUcsite $escName $escLang $escDomain | at now + 15 minutes" );
+		UserMailer::send( new MailAddress( $wmgAddWikiNotify ),
+			new MailAddress( $wgPasswordSender ), "New wiki: $dbName",
+			"A new wiki was created by $user at $time for a $ucsite in $name ($lang).\nOnce the wiki is fully set up, it'll be visible at https://$domain"
+		);
 
 		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration" );
 	}
