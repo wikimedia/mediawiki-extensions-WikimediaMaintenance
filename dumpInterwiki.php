@@ -136,6 +136,7 @@ class DumpInterwiki extends Maintenance {
 			'be' => 'en',
 			'br' => 'pt',
 			'ca' => 'en',
+			'cn' => 'zh',
 			'co' => 'es',
 			'dk' => 'da',
 			'il' => 'he',
