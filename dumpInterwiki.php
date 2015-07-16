@@ -264,7 +264,7 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		// Extract the intermap from meta
-		$intermap = Http::get( 'http://meta.wikimedia.org/w/index.php?title=Interwiki_map&action=raw', 30 );
+		$intermap = Http::get( 'https://meta.wikimedia.org/w/index.php?title=Interwiki_map&action=raw', 30 );
 		$lines = array_map( 'trim', explode( "\n", trim( $intermap ) ) );
 
 		if ( !$lines || count( $lines ) < 2 ) {
