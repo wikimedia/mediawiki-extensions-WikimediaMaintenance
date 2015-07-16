@@ -44,21 +44,26 @@ class DumpInterwiki extends Maintenance {
 	protected $urlprotocol;
 
 	/**
+	 * @var string
+	 */
+	protected $end = '.org';
+
+	/**
 	 * Returns an array of multi-language sites
 	 * db suffix => db suffix, iw prefix, hostname
 	 * @returns array
 	 */
 	protected function getSites() {
 		return array(
-			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia.org' ),
-			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary.org' ),
-			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote.org' ),
-			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks.org' ),
-			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews.org' ),
-			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource.org' ),
-			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia.org' ),
-			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity.org' ),
-			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage.org' ),
+			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia' . $this->end ),
+			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary' . $this->end ),
+			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote' . $this->end ),
+			'wikibooks' => new WMFSite( 'wikibooks', 'b', 'wikibooks' . $this->end ),
+			'wikinews' => new WMFSite( 'wikinews', 'n', 'wikinews' . $this->end ),
+			'wikisource' => new WMFSite( 'wikisource', 's', 'wikisource' . $this->end ),
+			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia' . $this->end ),
+			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity' . $this->end ),
+			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage' . $this->end ),
 		);
 	}
 
@@ -69,10 +74,10 @@ class DumpInterwiki extends Maintenance {
 	 */
 	protected function getExtraLinks() {
 		return array(
-			array( 'm', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'meta', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
+			array( 'm', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ),
+			array( 'meta', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ),
 			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
-			array( 'd', $this->urlprotocol . '//www.wikidata.org/wiki/$1', 1 ),
+			array( 'd', $this->urlprotocol . '//www.wikidata' . $this->end . '/wiki/$1', 1 ),
 		);
 	}
 
@@ -163,25 +168,25 @@ class DumpInterwiki extends Maintenance {
 		switch( $project ) {
 			case 'wikibooks':
 				return array(
-					array( 'b', $this->urlprotocol . '//en.wikibooks.org/wiki/$1', 1 ),
+					array( 'b', $this->urlprotocol . '//en.wikibooks' . $this->end . '/wiki/$1', 1 ),
 				);
 			case 'wikinews':
 				return array(
-					array( 'n', $this->urlprotocol . '//en.wikinews.org/wiki/$1', 1 ),
+					array( 'n', $this->urlprotocol . '//en.wikinews' . $this->end . '/wiki/$1', 1 ),
 				);
 			case 'wikiquote':
 				return array(
-					array( 'q', $this->urlprotocol . '//en.wikiquote.org/wiki/$1', 1 ),
+					array( 'q', $this->urlprotocol . '//en.wikiquote' . $this->end . '/wiki/$1', 1 ),
 				);
 			case 'wikisource':
 				return array(
 					array( 'mul', $this->urlprotocol . '//wikisource.org/wiki/$1', 1 ),
-					array( 's', $this->urlprotocol . '//en.wikisource.org/wiki/$1', 1 ),
+					array( 's', $this->urlprotocol . '//en.wikisource' . $this->end . '/wiki/$1', 1 ),
 				);
 			case 'wikiversity':
 				return array(
 					array( 'mul', $this->urlprotocol . '//beta.wikiversity.org/wiki/$1', 1 ),
-					array( 'v', $this->urlprotocol . '//en.wikiversity.org/wiki/$1', 1 ),
+					array( 'v', $this->urlprotocol . '//en.wikiversity' . $this->end . '/wiki/$1', 1 ),
 				);
 			case 'wikivoyage':
 				return array(
@@ -189,11 +194,11 @@ class DumpInterwiki extends Maintenance {
 				);
 			case 'wiktionary':
 				return array(
-					array( 'wikt', $this->urlprotocol . '//en.wiktionary.org/wiki/$1', 1 ),
+					array( 'wikt', $this->urlprotocol . '//en.wiktionary' . $this->end . '/wiki/$1', 1 ),
 				);
 			case 'wiki':
 				return array(
-					array( 'w', $this->urlprotocol . '//en.wikipedia.org/wiki/$1', 1 ),
+					array( 'w', $this->urlprotocol . '//en.wikipedia' . $this->end . '/wiki/$1', 1 ),
 				);
 			default:
 				return array();
@@ -208,6 +213,11 @@ class DumpInterwiki extends Maintenance {
 		$this->addOption( 'specialdbs', "File with one 'special' db per line", false, true );
 		$this->addOption( 'o', 'Cdb output file', false, true );
 		$this->addOption( 'protocolrelative', 'Output wikimedia interwiki urls as protocol relative', false, false );
+
+		global $wmfRealm;
+		if ( $wmfRealm === 'labs' ) {
+			$this->end = '.beta.wmflabs.org';
+		}
 	}
 
 	function execute() {
