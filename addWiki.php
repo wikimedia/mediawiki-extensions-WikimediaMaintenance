@@ -54,7 +54,7 @@ class AddWiki extends WikimediaMaintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgDefaultExternalStore, $wmfVersionNumber;
+		global $IP, $wgDefaultExternalStore, $wmfVersionNumber, $wmgAddWikiNotify, $wgPasswordSender;
 		if ( !$wmfVersionNumber ) { // set in CommonSettings.php
 			$this->error( '$wmfVersionNumber is not set, please use MWScript.php wrapper.', true );
 		}
