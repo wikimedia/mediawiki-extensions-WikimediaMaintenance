@@ -109,6 +109,7 @@ class DumpInterwiki extends Maintenance {
 		'yue' => 'zh-yue',
 		'rup' => 'roa-rup',
 		'gsw' => 'als',
+		'be-tarask' => 'be-x-old',
 		'sgs' => 'bat-smg',
 		'egl' => 'eml',
 	);
