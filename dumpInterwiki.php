@@ -255,7 +255,7 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	function getRebuildInterwikiDump() {
-		global $wgContLang;
+		global $wgContLang, $wmfRealm;
 
 		$sites = $this->getSites();
 		$extraLinks = $this->getExtraLinks();
@@ -265,8 +265,10 @@ class DumpInterwiki extends Maintenance {
 		foreach ( $this->langlist as $lang ) {
 			$reserved[$lang] = 1;
 		}
-		foreach ( self::$languageAliases as $alias => $lang ) {
-			$reserved[$alias] = 1;
+		if ( $wmfRealm === 'production' ) {
+			foreach ( self::$languageAliases as $alias => $lang ) {
+				$reserved[$alias] = 1;
+			}
 		}
 
 		/**
@@ -403,14 +405,18 @@ class DumpInterwiki extends Maintenance {
 	 * @param $source
 	 */
 	function makeLanguageLinks( &$site, $source ) {
+		global $wmfRealm;
+
 		// Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
 			$this->makeLink( array( $targetLang, $site->getURL( $targetLang, $this->urlprotocol ), 1 ), $source );
 		}
 
 		// Language aliases
-		foreach ( self::$languageAliases as $alias => $lang ) {
-			$this->makeLink( array( $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ), $source );
+		if ( $wmfRealm === 'production' ) {
+			foreach ( self::$languageAliases as $alias => $lang ) {
+				$this->makeLink( array( $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ), $source );
+			}
 		}
 
 		// Additional links
