@@ -222,8 +222,8 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	function execute() {
-		$default_all_dblist = getRealmSpecificFilename( "/srv/mediawiki/all.dblist" );
-		$default_special_dblist = getRealmSpecificFilename( "/srv/mediawiki/special.dblist" );
+		$default_all_dblist = getRealmSpecificFilename( '/srv/mediawiki/dblists/all.dblist' );
+		$default_special_dblist = getRealmSpecificFilename( '/srv/mediawiki/dblists/special.dblist' );
 
 		// List of language prefixes likely to be found in multi-language sites
 		$this->langlist = array_map( "trim", file( $this->getOption(
