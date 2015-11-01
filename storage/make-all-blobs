@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [ -z $1 ];then
 	echo "Usage: make-all-blobs <server> [<table name>]"
 	exit 1
@@ -11,8 +10,11 @@ else
 	table=$2
 fi
 
-. /srv/mediawiki/multiversion/MWRealm.sh
-FILE=`getRealmSpecificFilename /srv/mediawiki/dblists/all.dblist`
+if hostname --domain | grep -q wmflabs ; then
+	FILE="$MEDIAWIKI_STAGING_DIR/dblists/all-labs.dblist"
+else
+	FILE="$MEDIAWIKI_STAGING_DIR/dblists/all.dblist"
+fi
 
 for db in `<$FILE`;do
 	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u wikiadmin -p`wikiadmin_pass` -h $server && \

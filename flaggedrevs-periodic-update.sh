@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. /srv/mediawiki/multiversion/MWRealm.sh
-FILE=`getRealmSpecificFilename /srv/mediawiki/dblists/flaggedrevs.dblist`
+FILE="/srv/mediawiki/dblists/flaggedrevs.dblist"
 
 for db in `<$FILE`;do
 	echo $db
