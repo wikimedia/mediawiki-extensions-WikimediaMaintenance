@@ -43,8 +43,8 @@ class GetPageCounts extends Maintenance {
 			if ( isset( $exclude[$wiki] ) ) {
 				continue;
 			}
-			$lb = LBFactory::singleton()->getMainLB( $wiki );
-			$dbr = $lb->getConnection( DB_SLAVE );
+			$lb = wfGetLB( $wiki );
+			$dbr = $lb->getConnection( DB_SLAVE, array(), $wiki );
 			$row = $dbr->selectRow( 'site_stats', array( 'ss_total_pages', 'ss_good_articles' ), '', __METHOD__ );
 			if ( !$row ) {
 				$this->error( "Error: '$wiki' has empty site_stats\n", 1 ); // Die
@@ -53,7 +53,7 @@ class GetPageCounts extends Maintenance {
 				'pages' => $row->ss_total_pages,
 				'contentPages' => $row->ss_good_articles
 			);
-			$lb->closeAll();
+			$lb->reuseConnection( $dbr );
 		}
 		$this->output( FormatJson::encode( $counts, true ) . "\n" );
 	}
