@@ -72,7 +72,7 @@ class GetPageCounts extends Maintenance {
 			$this->error( "Warning: can't read $fileName, no wikis will be blacklisted\n" );
 			return array();
 		}
-		return file( $fileName );
+		return array_map( 'trim', file( $fileName ) );
 	}
 }
 
