@@ -50,8 +50,8 @@ class GetPageCounts extends Maintenance {
 				$this->error( "Error: '$wiki' has empty site_stats\n", 1 ); // Die
 			}
 			$counts[$wiki] = array(
-				'pages' => $row->ss_total_pages,
-				'contentPages' => $row->ss_good_articles
+				'pages' => intval( $row->ss_total_pages ),
+				'contentPages' => intval( $row->ss_good_articles ),
 			);
 			$lb->reuseConnection( $dbr );
 		}
