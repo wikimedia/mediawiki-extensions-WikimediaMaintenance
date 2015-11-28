@@ -64,7 +64,7 @@ class RenameInvalidUsernames extends Maintenance {
 		$oldUser = User::newFromRow( $row );
 
 		$reason = '[[m:Special:MyLanguage/Single User Login finalisation announcement|SUL finalization]] - [[phab:T5507]]';
-		$caUser = new CentralAuthUser( $oldUser->getName() );
+		$caUser = new CentralAuthUser( $oldUser->getName(), CentralAuthUser::READ_LATEST );
 		$maintScript = User::newFromName( 'Maintenance script' );
 		$session = array(
 			'userId' => $maintScript->getId(),
@@ -102,7 +102,10 @@ class RenameInvalidUsernames extends Maintenance {
 		} else { // Not attached, do a promote to global rename
 			$newUser = User::newFromName( 'Invalid username ' . (string)$oldUser->getId(), 'usable' );
 			$suffix = '~' . str_replace( '_', '-', $wiki );
-			$newCAUser = new CentralAuthUser( $newUser->getName() . $suffix );
+			$newCAUser = new CentralAuthUser(
+				$newUser->getName() . $suffix,
+				CentralAuthUser::READ_LATEST
+			);
 			if ( $newCAUser->exists() ) {
 				$this->output( "ERROR: {$newCAUser->getName()} already exists!\n" );
 				return;
