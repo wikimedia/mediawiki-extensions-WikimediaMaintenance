@@ -26,9 +26,9 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class AddWiki extends WikimediaMaintenance {
+class AddWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Add a new wiki to the family. Wikimedia specific!";
@@ -266,5 +266,5 @@ EOT;
 	}
 }
 
-$maintClass = "AddWiki";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+$maintClass = 'AddWiki';
+require_once RUN_MAINTENANCE_IF_MAIN;

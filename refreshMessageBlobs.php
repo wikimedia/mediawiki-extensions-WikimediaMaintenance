@@ -4,9 +4,9 @@
  * Refresh the msg_resource table when cdb message files have been updated
  */
 
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class RefreshMessageBlobs extends WikimediaMaintenance {
+class RefreshMessageBlobs extends Maintenance {
 	function execute() {
 		global $IP;
 

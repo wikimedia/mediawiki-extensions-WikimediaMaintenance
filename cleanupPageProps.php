@@ -20,7 +20,7 @@
  * @ingroup Wikimedia
  */
 
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class CleanupPageProps extends Maintenance {
 	public function __construct() {

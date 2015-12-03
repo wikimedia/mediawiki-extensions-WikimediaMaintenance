@@ -1,6 +1,6 @@
 <?php
 
-require_once( __DIR__ .'/WikimediaCommandLine.inc' );
+require_once __DIR__ .'/WikimediaCommandLine.inc';
 
 $file = fopen( $args[0], 'r' );
 if ( !$file ) {
@@ -86,5 +86,3 @@ while ( !feof( $file ) ) {
 	sleep( 1 );
 	wfWaitForSlaves( 5 );
 }
-
-

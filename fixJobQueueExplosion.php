@@ -4,9 +4,9 @@
  * Removes htmlCacheUpdate categorylinks jobs caused by the bug fixed in r59718.
  */
 
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class FixJobQueueExplosion extends WikimediaMaintenance {
+class FixJobQueueExplosion extends Maintenance {
 	public function execute() {
 		global $IP;
 

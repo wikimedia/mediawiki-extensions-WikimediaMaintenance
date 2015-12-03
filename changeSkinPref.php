@@ -26,9 +26,9 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class ChangeSkinPref extends WikimediaMaintenance {
+class ChangeSkinPref extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Set a skin for a user, usually monobook';

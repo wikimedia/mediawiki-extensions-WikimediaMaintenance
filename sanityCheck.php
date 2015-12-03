@@ -1,14 +1,14 @@
 <?php
 /**
- * Pre-deployment sanity check. 
+ * Pre-deployment sanity check.
  *
  * A quick integration test to be done during scap: execute a parser cache hit.
  */
 
 // Use WikimediaCommandLine.inc instead of WikimediaMaintenance so that the code
-// can be parsed after the autoloader is started, so that we can have 
+// can be parsed after the autoloader is started, so that we can have
 // SanityCheckRequest in the same file as the execution code.
-require_once( __DIR__ . '/WikimediaCommandLine.inc' );
+require_once __DIR__ .'/WikimediaCommandLine.inc';
 
 class SanityCheckRequest extends FauxRequest {
 	public $title;

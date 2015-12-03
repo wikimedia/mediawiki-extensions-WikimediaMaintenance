@@ -1,5 +1,5 @@
 <?php
-require_once( __DIR__ .'/WikimediaCommandLine.inc' );
+require_once __DIR__ .'/WikimediaCommandLine.inc';
 
 $bad = 0;
 $good = 0;
@@ -16,4 +16,3 @@ foreach ( $wgLocalDatabases as $wiki ) {
 	$lb->reuseConnection( $db );
 }
 echo "bad = $bad, good = $good\n";
-

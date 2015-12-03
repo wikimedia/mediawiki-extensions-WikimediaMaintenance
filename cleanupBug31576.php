@@ -1,7 +1,7 @@
 <?php
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class CleanupBug31576 extends WikimediaMaintenance {
+class CleanupBug31576 extends Maintenance {
 
 	protected $batchsize;
 

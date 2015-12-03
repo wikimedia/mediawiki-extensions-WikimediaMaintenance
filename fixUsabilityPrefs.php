@@ -1,8 +1,8 @@
 <?php
 
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class FixUsabilityPrefs extends WikimediaMaintenance {
+class FixUsabilityPrefs extends Maintenance {
 	function __construct() {
 		parent::__construct();
 	}

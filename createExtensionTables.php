@@ -19,12 +19,12 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
 /**
  * Creates the necessary tables to install various extensions on a WMF wiki
  */
-class CreateExtensionTables extends WikimediaMaintenance {
+class CreateExtensionTables extends Maintenance {
 	function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Creates database tables for specific MediaWiki Extensions';

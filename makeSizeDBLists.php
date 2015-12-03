@@ -4,9 +4,9 @@
  * Builds database lists of wikis based on size
  */
 
-require_once( __DIR__ .'/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class MakeSizeDBLists extends WikimediaMaintenance {
+class MakeSizeDBLists extends Maintenance {
 
 	const DB_SMALL = 10000;
 	const DB_MEDIUM = 1000000;

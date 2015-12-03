@@ -1,5 +1,5 @@
 <?php
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
 // Given a binlog dump with entries like:
 // 1351654498 zhwiki DELETE FROM `page` WHERE page_id = '3141968'
@@ -9,7 +9,7 @@ require_once( __DIR__ . '/WikimediaMaintenance.php' );
 // If will create a new page there is there is none.
 // This fixes broken restore attempts.
 // The format of 'binlogdump' is very specific, see /home/asher/db/bug41649.
-class CleanupBug41615 extends WikimediaMaintenance {
+class CleanupBug41615 extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Cleans up corruption caused by bug 41615";
@@ -131,5 +131,5 @@ class CleanupBug41615 extends WikimediaMaintenance {
 	}
 }
 
-$maintClass = "CleanupBug41615";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+$maintClass = 'CleanupBug41615';
+require_once RUN_MAINTENANCE_IF_MAIN;

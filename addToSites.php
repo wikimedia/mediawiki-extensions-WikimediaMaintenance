@@ -1,18 +1,13 @@
 <?php
 
+require_once __DIR__ . '/WikimediaMaintenance.php';
+
 /**
  * Add wikidata and testwikidata to sites table
  *
  * @todo make this generic for adding any site
  *       and integrate with addWiki!
  */
-$IP = getenv( 'MW_INSTALL_PATH' );
-if ( $IP === false ) {
-	$IP = __DIR__ . '/../..';
-}
-
-require_once ( "$IP/maintenance/Maintenance.php" );
-
 class AddToSites extends Maintenance {
 
 	function __construct() {

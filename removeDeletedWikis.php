@@ -21,9 +21,9 @@
  * @ingroup Wikimedia
  */
 
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class RemoveDeletedWikis extends WikimediaMaintenance {
+class RemoveDeletedWikis extends Maintenance {
 	function __construct() {
 		parent::__construct();
 		$this->mDescription = "Remove any remaining entries in globalimagelinks, localuser and localnames for deleted wikis.\n"

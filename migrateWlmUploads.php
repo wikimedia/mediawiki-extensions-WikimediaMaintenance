@@ -25,9 +25,9 @@
  * @ingroup Wikimedia
  */
 
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class MigrateWlmUploads extends WikimediaMaintenance {
+class MigrateWlmUploads extends Maintenance {
 	private $dryRun,
 		$testerUsernames = array(
 			'Jdlrobson',

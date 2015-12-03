@@ -1,6 +1,6 @@
 <?php
 
-require_once( __DIR__ .'/../WikimediaCommandLine.inc' );
+require_once __DIR__ .'/../WikimediaCommandLine.inc';
 
 $lines = file( $args[0] );
 if ( !$lines ) {

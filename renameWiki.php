@@ -22,9 +22,9 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class RenameWiki extends WikimediaMaintenance {
+class RenameWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Rename external storage dbs and leave a new one";

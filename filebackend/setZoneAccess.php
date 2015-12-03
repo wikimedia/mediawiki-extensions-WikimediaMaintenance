@@ -1,5 +1,5 @@
 <?php
-require_once( __DIR__ . '/../WikimediaMaintenance.php' );
+require_once __DIR__ . '/../WikimediaMaintenance.php';
 
 class SetZoneAccess extends Maintenance {
 	public function construct() {
