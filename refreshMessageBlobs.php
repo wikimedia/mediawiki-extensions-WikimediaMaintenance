@@ -27,6 +27,7 @@ class RefreshMessageBlobs extends WikimediaMaintenance {
 			array( 'ORDER BY' => 'mr_lang' )
 		);
 		$prevLang = false;
+		$rows = 0;
 		foreach ( $res as $row ) {
 			# Check modification time for this language
 			if ( !isset( $langModTime[$row->mr_lang] ) ) {
@@ -66,8 +67,11 @@ class RefreshMessageBlobs extends WikimediaMaintenance {
 				),
 				__METHOD__
 			);
-			wfWaitForSlaves();
+			if ( ++$rows % 1000 == 0 ) {
+				wfWaitForSlaves();
+			}
 		}
+		wfWaitForSlaves();
 	}
 }
 
