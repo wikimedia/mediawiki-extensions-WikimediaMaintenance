@@ -49,11 +49,11 @@ class GetJobQueueLengths extends WikimediaMaintenance {
 			if ( !$this->hasOption( 'nototal' ) ) {
 				$this->output( "Total $total\n" );
 			}
-		}
 
-		if ( $this->hasOption( 'report' ) ) {
-			$stats = RequestContext::getMain()->getStats();
-			$stats->gauge( 'jobqueue.size', $total );
+			if ( $this->hasOption( 'report' ) ) {
+				$stats = RequestContext::getMain()->getStats();
+				$stats->gauge( 'jobqueue.size', $total );
+			}
 		}
 	}
 }
