@@ -11,7 +11,7 @@ class unsuppressCrossWiki extends WikimediaMaintenance {
 	public function execute() {
 		$userName = 'The Thing That Should Not Be'; // <- targer username
 
-		$user = new CentralAuthUser( $userName );
+		$user = new CentralAuthUser( $userName, CentralAuthUser::READ_LATEST );
 		if ( !$user->exists() ) {
 			echo "Cannot unsuppress non-existent user {$userName}!\n";
 			exit( 0 );
