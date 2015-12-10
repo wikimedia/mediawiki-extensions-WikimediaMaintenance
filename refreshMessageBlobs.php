@@ -7,8 +7,8 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  */
 class RefreshMessageBlobs extends Maintenance {
 	public function execute() {
-		MessageBlobStore::clear();
-		wfWaitForSlaves();
+		$blobStore = new MessageBlobStore();
+		$blobStore->clear();
 	}
 }
 
