@@ -56,12 +56,12 @@ class FixOrphans extends Maintenance {
 				'log_title', 'rev_id', 'ar_rev_match', 'ar_text_match' ), $parts );
 			$revId = $info['rev_id'];
 
-			$dbw->begin();
+			$this->beginTransaction( $dbw, __METHOD__ );
 			$revRow = $dbw->selectRow( 'revision', '*', array( 'rev_id' => $revId ),
 				__METHOD__, array( 'FOR UPDATE' ) );
 			if ( !$revRow ) {
 				$this->error( "$revId: ERROR revision row has disappeared!" );
-				$dbw->commit();
+				$this->commitTransaction( $dbw, __METHOD__ );
 				continue;
 			}
 
@@ -116,7 +116,7 @@ class FixOrphans extends Maintenance {
 			}
 
 			if ( $dryRun ) {
-				$dbw->commit();
+				$this->commitTransaction( $dbw, __METHOD__ );
 				continue;
 			}
 
@@ -147,7 +147,7 @@ class FixOrphans extends Maintenance {
 					__METHOD__ );
 				$dbw->delete( 'revision', array( 'rev_id' => $revId ), __METHOD__ );
 			}
-			$dbw->commit();
+			$this->commitTransaction( $dbw, __METHOD__ );
 
 			if ( $lineNumber % 100 == 1 ) {
 				wfWaitForSlaves();

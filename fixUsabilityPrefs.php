@@ -15,13 +15,13 @@ class FixUsabilityPrefs extends Maintenance {
 		$batchSize = 100;
 		$allIds = array();
 		while ( true ) {
-			$dbw->begin();
+			$this->beginTransaction( $dbw, __METHOD__ );
 			$res = $dbw->select( 'user_properties', array( 'up_user' ),
 				array( 'up_property' => 'usebetatoolbar', 'up_value' => '' ),
 				__METHOD__,
 				array( 'LIMIT' => $batchSize, 'FOR UPDATE' ) );
 			if ( !$res->numRows() ) {
-				$dbw->commit();
+				$this->commitTransaction( $dbw, __METHOD__ );
 				break;
 			}
 
@@ -32,7 +32,7 @@ class FixUsabilityPrefs extends Maintenance {
 			$dbw->delete( 'user_properties',
 				array( 'up_property' => 'usebetatoolbar', 'up_user' => $ids ),
 				__METHOD__ );
-			$dbw->commit();
+			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
 			wfWaitForSlaves( 10 );
 		}
@@ -41,13 +41,13 @@ class FixUsabilityPrefs extends Maintenance {
 
 		$likeWikieditor = $dbw->buildLike( 'wikieditor-', $dbw->anyString() );
 		while ( true ) {
-			$dbw->begin();
+			$this->beginTransaction( $dbw, __METHOD__ );
 			$res = $dbw->select( 'user_properties', array( 'DISTINCT up_user' ),
 				array(  "up_property $likeWikieditor" ),
 				__METHOD__,
 				array( 'LIMIT' => $batchSize, 'FOR UPDATE' ) );
 			if ( !$res->numRows() ) {
-				$dbw->commit();
+				$this->commitTransaction( $dbw, __METHOD__ );
 				break;
 			}
 
@@ -58,7 +58,7 @@ class FixUsabilityPrefs extends Maintenance {
 			$dbw->delete( 'user_properties',
 				array( "up_property $likeWikieditor", 'up_user' => $ids ),
 				__METHOD__ );
-			$dbw->commit();
+			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
 			wfWaitForSlaves( 10 );
 		}
@@ -72,9 +72,9 @@ class FixUsabilityPrefs extends Maintenance {
 			if ( !$user->isLoggedIn() ) {
 				continue;
 			}
-			$dbw->begin();
+			$this->beginTransaction( $dbw, __METHOD__ );
 			$user->invalidateCache();
-			$dbw->commit();
+			$this->commitTransaction( $dbw, __METHOD__ );
 			$i++;
 			if ( $i % 1000 == 0 ) {
 				wfWaitForSlaves( 10 );
