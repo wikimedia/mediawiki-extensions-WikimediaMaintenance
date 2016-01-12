@@ -82,7 +82,7 @@ while ( !feof( $file ) ) {
 		}
 	}
 
-	$dbw->commit();
+	$dbw->commit( 'cleanupMI' );
 	sleep( 1 );
 	wfWaitForSlaves( 5 );
 }
