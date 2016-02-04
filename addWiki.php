@@ -195,7 +195,7 @@ class AddWiki extends Maintenance {
 		$searchIndex->execute();
 
 		# Populate sites table
-		$sitesPopulation = $this->runChild( 'PopulateSitesTable' );
+		$sitesPopulation = $this->runChild( 'Wikibase\PopulateSitesTable' );
 		$sitesPopulation->mOptions[ 'site-group' ] = $site;
 		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
 		$sitesPopulation->execute();
