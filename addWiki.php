@@ -128,7 +128,7 @@ class AddWiki extends Maintenance {
 				break;
 		}
 
-		if ( $site !== 'wikimedia' ) {
+		if ( in_array( $dbName, MWWikiversions::readDbListFile( 'wikidataclient' ) ) ) {
 			$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
 		}
 
