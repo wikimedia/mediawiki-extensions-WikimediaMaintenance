@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../WikimediaMaintenance.php';
 
 class SetZoneAccess extends Maintenance {
-	public function construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->addOption( 'backend', 'Name of the file backend', true, true );
 		$this->addOption( 'private', 'Make all containers private' );
