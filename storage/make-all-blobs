@@ -16,9 +16,10 @@ else
 	FILE="$MEDIAWIKI_STAGING_DIR/dblists/all.dblist"
 fi
 
-# Note, wikiadmin_pass no longer exists, so the password has to be set manually.
-for db in `<$FILE`;do
-	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u wikiadmin -p`wikiadmin_pass` -h $server && \
-	sed "s/blobs\>/$table/" blobs.sql | mysql -u wikiadmin -p`wikiadmin_pass` -h $server $db
-done
+# Assumes password is the same everywhere
+pass=$(echo 'echo $wgDBadminpassword;' | mwscript eval.php --wiki="enwiki");
 
+for db in `<$FILE`;do
+	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u wikiadmin "-p$pass" -h $server && \
+	sed "s/blobs\>/$table/" blobs.sql | mysql -u wikiadmin "-p$pass" -h $server $db
+done
