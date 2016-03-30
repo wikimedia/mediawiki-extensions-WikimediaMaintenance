@@ -2,7 +2,7 @@
 
 require_once( __DIR__ . '/WikimediaMaintenance.php' );
 
-class MakeDumpList extends WikimediaMaintenance {
+class MakeDumpList extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'From a list of page titles, generate a list of titles needed to render those pages, including templates and the pages themselves.';
