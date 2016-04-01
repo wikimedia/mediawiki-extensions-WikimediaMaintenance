@@ -53,7 +53,7 @@ while ( !feof( $file ) ) {
 		echo "Cannot load text: $line\n";
 		continue;
 	}
-	$redir = Title::newFromRedirect( $text );
+	$redir = ContentHandler::makeContent( $text, null, CONTENT_MODEL_WIKITEXT )->getRedirectTarget();
 	if ( !$redir ) {
 		echo "Not a redirect: $line\n";
 		continue;
