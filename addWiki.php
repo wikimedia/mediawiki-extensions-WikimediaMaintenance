@@ -87,7 +87,6 @@ class AddWiki extends Maintenance {
 			__METHOD__,
 			array( $this, 'noExecuteCommands' )
 		);
-		$dbw->sourceFile( "$IP/extensions/OAI/sql/update_table.sql" );
 		$dbw->sourceFile( "$IP/extensions/AntiSpoof/sql/patch-antispoof.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_changes.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_log.sql" );
