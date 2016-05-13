@@ -7,10 +7,7 @@ if ( !$file ) {
 	exit( 1 );
 }
 
-$wgUser = User::newFromName( 'Malayalam cleanup script' );
-if ( $wgUser->isAnon() ) {
-	$wgUser->addToDatabase();
-}
+$wgUser = User::newSystemUser( 'Malayalam cleanup script', [ 'steal' => true ] );
 
 $dbw = wfGetDB( DB_MASTER );
 
