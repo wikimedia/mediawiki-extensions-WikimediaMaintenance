@@ -84,6 +84,14 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/WikiLove/patches";
 				break;
 
+			case 'ores':
+				$files = array(
+					'ores_model.sql',
+					'ores_classification.sql',
+				);
+				$path = "$IP/extensions/ORES/sql";
+				break;
+
 			default:
 				$this->error( "This script is not configured to create tables for $extension\n", 1 );
 		}
