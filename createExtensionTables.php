@@ -79,6 +79,14 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Translate/sql";
 				break;
 
+			case 'pageassessments':
+				$files = array(
+					'addProjectsTable.sql',
+					'addReviewsTable.sql',
+				);
+				$path = "$IP/extensions/PageAssessments/db";
+				break;
+
 			case 'wikilove':
 				$files = array( 'WikiLoveLog.sql' );
 				$path = "$IP/extensions/WikiLove/patches";
