@@ -213,6 +213,7 @@ class DumpInterwiki extends Maintenance {
 		$this->addOption( 'dblist', 'File with one db per line', false, true );
 		$this->addOption( 'specialdbs', "File with one 'special' db per line", false, true );
 		$this->addOption( 'o', 'Cdb output file', false, true );
+		$this->addOption( 'insecure', 'Output wikimedia interwiki urls using HTTP instead of HTTPS', false, false );
 
 		global $wmfRealm;
 		if ( $wmfRealm === 'labs' ) {
@@ -248,8 +249,11 @@ class DumpInterwiki extends Maintenance {
 			$this->output( "return [\n" );
 		}
 
-		// everything is HTTPS nowadays
-		$this->urlprotocol = 'https:';
+		if ( $this->hasOption( 'insecure' ) ) {
+			$this->urlprotocol = 'http:';
+		} else {
+			$this->urlprotocol = 'https:';
+		}
 
 		$this->getRebuildInterwikiDump();
 	}
