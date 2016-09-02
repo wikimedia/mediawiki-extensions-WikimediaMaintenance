@@ -189,9 +189,13 @@ class AddWiki extends Maintenance {
 		$this->setFundraisingLink( $domain, $lang );
 
 		# Create new search index
-		$searchIndex = $this->runChild( 'CirrusSearch\Maintenance\UpdateSearchIndexConfig' );
-		$searchIndex->mOptions[ 'baseName' ] = $dbName;
-		$searchIndex->execute();
+		global $wgCirrusSearchWriteClusters;
+		foreach ( $wgCirrusSearchWriteClusters as $cluster ) {
+			$searchIndex = $this->runChild( 'CirrusSearch\Maintenance\UpdateSearchIndexConfig' );
+			$searchIndex->mOptions[ 'baseName' ] = $dbName;
+			$searchIndex->mOptions[ 'cluster' ] = $cluster;
+			$searchIndex->execute();
+		}
 
 		# Populate sites table
 		$sitesPopulation = $this->runChild(
