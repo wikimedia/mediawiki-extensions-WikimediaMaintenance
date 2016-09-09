@@ -32,7 +32,7 @@ class CreateExtensionTables extends Maintenance {
 	}
 
 	function execute() {
-		global $IP, $wgEchoCluster;
+		global $IP, $wgEchoCluster, $wgFlowDefaultWikiDb;
 		$dbw = $this->getDB( DB_MASTER );
 		$extension = $this->getArg( 0 );
 
@@ -56,6 +56,14 @@ class CreateExtensionTables extends Maintenance {
 			case 'flaggedrevs':
 				$files = array( 'FlaggedRevs.sql' );
 				$path = "$IP/extensions/FlaggedRevs/backend/schema/mysql";
+				break;
+
+			case 'flow':
+				if ( $wgFlowDefaultWikiDb !== false ) {
+					$this->error( "This wiki uses $wgFlowDefaultWikiDb for Flow tables. They don't need to be created on the project database, which is the scope of this script.", 1 );
+				}
+				$files = array( 'flow.sql' );
+				$path = "$IP/extensions/Flow";
 				break;
 
 			case 'moodbar':
