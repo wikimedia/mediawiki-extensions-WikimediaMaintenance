@@ -40,6 +40,10 @@ class CreateExtensionTables extends Maintenance {
 		$path = '';
 
 		switch ( strtolower( $extension ) ) {
+			case 'babel':
+				$files = [ 'babel.sql' ];
+				$path = "$IP/extensions/Babel";
+				break;
 			case 'echo':
 				if ( $wgEchoCluster !== false ) {
 					$this->error( "Cannot create Echo tables on $wgEchoCluster using this script.", 1 );
