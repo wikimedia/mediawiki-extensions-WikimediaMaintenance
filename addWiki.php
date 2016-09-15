@@ -185,7 +185,11 @@ class AddWiki extends Maintenance {
 		$article = WikiPage::factory( $title );
 		$ucsite = ucfirst( $site );
 
-		$article->doEdit( $this->getFirstArticle( $ucsite, $name ), '', EDIT_NEW | EDIT_AUTOSUMMARY );
+		$article->doEditContent(
+			ContentHandler::makeContent( $this->getFirstArticle( $ucsite, $name ), $title ),
+			'',
+			EDIT_NEW | EDIT_AUTOSUMMARY
+		);
 
 		$this->setFundraisingLink( $domain, $lang );
 
@@ -269,7 +273,11 @@ EOT;
 			"uselang" => $language
 		) );
 
-		return $article->doEdit( $linkurl, 'Setting sidebar link', EDIT_NEW );
+		return $article->doEditContent(
+			ContentHandler::makeContent( $linkurl, $title ),
+			'Setting sidebar link',
+			EDIT_NEW
+		);
 	}
 }
 
