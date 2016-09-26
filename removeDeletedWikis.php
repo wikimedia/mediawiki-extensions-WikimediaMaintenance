@@ -51,7 +51,7 @@ class RemoveDeletedWikis extends Maintenance {
 	}
 
 	/**
-	 * @param DatabaseBase $dbw
+	 * @param IDatabase $dbw
 	 * @param string $table
 	 * @param string $column
 	 * @param string $wiki

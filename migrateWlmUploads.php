@@ -41,12 +41,12 @@ class MigrateWlmUploads extends Maintenance {
 		$tmpDir,
 		$deletingUser;
 
-	/* @var DatabaseBase */
+	/* @var IDatabase */
 	private $commonsDbw;
 
 	public function __construct() {
 		parent::__construct();
-		$this->addDescription = 'Migrate botched up uploads from testwiki to Commons';
+		$this->addDescription( 'Migrate botched up uploads from testwiki to Commons' );
 		$this->addOption( 'do-it', 'Actually perform the migration (otherwise a dry run will be performed)' );
 	}
 
