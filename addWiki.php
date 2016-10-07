@@ -82,8 +82,8 @@ class AddWiki extends Maintenance {
 		$this->output( "Initialising tables\n" );
 		$dbw->sourceFile(
 			$this->getDir() . '/tables.sql',
-			false,
-			false,
+			null,
+			null,
 			__METHOD__,
 			array( $this, 'noExecuteCommands' )
 		);
