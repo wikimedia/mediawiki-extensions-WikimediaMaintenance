@@ -32,7 +32,7 @@ class CreateExtensionTables extends Maintenance {
 	}
 
 	function execute() {
-		global $IP, $wgEchoCluster, $wgFlowDefaultWikiDb;
+		global $IP, $wgFlowDefaultWikiDb;
 		$dbw = $this->getDB( DB_MASTER );
 		$extension = $this->getArg( 0 );
 
@@ -45,9 +45,11 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Babel";
 				break;
 			case 'echo':
-				if ( $wgEchoCluster !== false ) {
-					$this->error( "Cannot create Echo tables on $wgEchoCluster using this script.", 1 );
-				}
+				$this->output( "Using special database connection for Echo" );
+				$dbw = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
+				$dbw->query( "SET storage_engine=InnoDB" );
+				$dbw->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID() );
+				$dbw->selectDB( wfWikiID() );
 				$files = array( 'echo.sql' );
 				$path = "$IP/extensions/Echo";
 				break;
