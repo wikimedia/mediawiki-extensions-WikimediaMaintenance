@@ -80,6 +80,21 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/MoodBar/sql";
 				break;
 
+			case 'oathauth':
+				$files = array(
+					'tables.sql',
+				);
+				$path = "$IP/extensions/OATHAuth/sql/mysql";
+				break;
+
+			case 'ores':
+				$files = array(
+					'ores_model.sql',
+					'ores_classification.sql',
+				);
+				$path = "$IP/extensions/ORES/sql";
+				break;
+
 			case 'translate':
 				$files = array(
 					'revtag.sql',
@@ -104,14 +119,6 @@ class CreateExtensionTables extends Maintenance {
 			case 'wikilove':
 				$files = array( 'WikiLoveLog.sql' );
 				$path = "$IP/extensions/WikiLove/patches";
-				break;
-
-			case 'ores':
-				$files = array(
-					'ores_model.sql',
-					'ores_classification.sql',
-				);
-				$path = "$IP/extensions/ORES/sql";
 				break;
 
 			default:
