@@ -95,6 +95,21 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/ORES/sql";
 				break;
 
+			case 'pageassessments':
+				$files = array(
+					'addProjectsTable.sql',
+					'addReviewsTable.sql',
+				);
+				$path = "$IP/extensions/PageAssessments/db";
+				break;
+
+			case 'shorturl':
+				$files = array(
+					'shorturls.sql',
+				);
+				$path = "$IP/extensions/ShortUrl/schemas";
+				break;
+
 			case 'translate':
 				$files = array(
 					'revtag.sql',
@@ -106,14 +121,6 @@ class CreateExtensionTables extends Maintenance {
 					'translate_reviews.sql',
 				);
 				$path = "$IP/extensions/Translate/sql";
-				break;
-
-			case 'pageassessments':
-				$files = array(
-					'addProjectsTable.sql',
-					'addReviewsTable.sql',
-				);
-				$path = "$IP/extensions/PageAssessments/db";
 				break;
 
 			case 'wikilove':
