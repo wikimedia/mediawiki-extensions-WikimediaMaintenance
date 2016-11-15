@@ -130,6 +130,10 @@ class AddWiki extends Maintenance {
 				break;
 		}
 
+		if ( self::isPrivateOrFishbowl( $dbName ) ) {
+			$dbw->sourceFile( "$IP/extensions/OATHAuth/sql/mysql/tables.sql" );
+		}
+
 		if ( in_array( $dbName, MWWikiversions::readDbListFile( 'wikidataclient' ) ) ) {
 			$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
 		}
@@ -281,6 +285,14 @@ class AddWiki extends Maintenance {
 See Wikimedia's [[m:|Meta-Wiki]] for the coordination of these projects.
 
 EOT;
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function isPrivateOrFishbowl ( $dbName ) {
+		return in_array( $dbName, MWWikiversions::readDbListFile( 'private' ) ) ||
+		       in_array( $dbName, MWWikiversions::readDbListFile( 'fishbowl' ) );
 	}
 
 	private function setFundraisingLink( $domain, $language ) {
