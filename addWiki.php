@@ -149,6 +149,18 @@ class AddWiki extends Maintenance {
 		} else {
 			$stores = array();
 		}
+
+		// Flow External Store (may be the same, so there is an array_unique)
+		if ( is_array( $wgFlowExternalStore ) ) {
+			$flowStores = $wgFlowExternalStore;
+		} elseif ( $wgFlowExternalStore ) {
+			$flowStores = array( $wgFlowExternalStore );
+		} else {
+			$flowStores = array();
+		}
+
+		$stores = array_unique( array_merge( $stores, $flowStores ) );
+
 		if ( count( $stores ) ) {
 			global $wgDBuser, $wgDBpassword, $wgExternalServers;
 			foreach ( $stores as $storeURL ) {
@@ -167,7 +179,10 @@ class AddWiki extends Maintenance {
 				$store = new ExternalStoreDB;
 				$extdb = $store->getMaster( $cluster );
 				$extdb->query( "SET default_storage_engine=InnoDB" );
-				$extdb->query( "CREATE DATABASE $dbName" );
+
+				// IF NOT EXISTS because two External Store clusters
+				// can use the same DB, but different blobs table entries.
+				$extdb->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
 				$extdb->selectDB( $dbName );
 
 				# Hack x2
