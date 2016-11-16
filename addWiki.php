@@ -134,12 +134,14 @@ class AddWiki extends Maintenance {
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 
-		// Initialise extension1 cluster (Echo)
-		$x1w = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
-		$x1w->query( "SET storage_engine=InnoDB" );
-		$x1w->query( "CREATE DATABASE $dbName" );
-		$x1w->selectDB( $dbName );
-		$x1w->sourceFile( "$IP/extensions/Echo/echo.sql" );
+		// Initialise Echo cluster if applicable.
+		// It will create the Echo tables in the main database if
+		// extension1 is not in use.
+		$echoDbW = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
+		$echoDbW->query( "SET storage_engine=InnoDB" );
+		$echoDbW->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+		$echoDbW->selectDB( $dbName );
+		$echoDbW->sourceFile( "$IP/extensions/Echo/echo.sql" );
 
 		# Initialise external storage
 		if ( is_array( $wgDefaultExternalStore ) ) {
