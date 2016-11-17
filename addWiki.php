@@ -54,7 +54,9 @@ class AddWiki extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgDefaultExternalStore, $wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender;
+		global $IP, $wgDefaultExternalStore, $wgFlowExternalStore,
+			$wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender;
+
 		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
 			$this->error( '$wmgVersionNumber is not set, please use MWScript.php wrapper.', true );
 		}
@@ -211,8 +213,14 @@ class AddWiki extends Maintenance {
 		$this->setFundraisingLink( $domain, $lang );
 
 		# Create new search index
-		global $wgCirrusSearchWriteClusters;
-		foreach ( $wgCirrusSearchWriteClusters as $cluster ) {
+		global $wgCirrusSearchWriteClusters, $wgCirrusSearchClusters;
+
+		$writableClusters = $wgCirrusSearchWriteClusters;
+		if ( is_null( $writableClusters ) ) {
+			$writableClusters = array_keys( $wgCirrusSearchClusters );
+		}
+
+		foreach ( $writableClusters as $cluster ) {
 			$searchIndex = $this->runChild( 'CirrusSearch\Maintenance\UpdateSearchIndexConfig' );
 			$searchIndex->mOptions[ 'baseName' ] = $dbName;
 			$searchIndex->mOptions[ 'cluster' ] = $cluster;
