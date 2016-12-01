@@ -104,6 +104,9 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/create_counts.sql" );
 		$dbw->sourceFile( "$IP/extensions/SecurePoll/SecurePoll.sql" );
 
+		// most wikis are wikibase client wikis and no harm to adding this everywhere
+		$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
+
 		// Add project specific extension table additions here
 		switch ( $site ) {
 			case 'wikipedia':
@@ -132,10 +135,6 @@ class AddWiki extends Maintenance {
 
 		if ( self::isPrivateOrFishbowl( $dbName ) ) {
 			$dbw->sourceFile( "$IP/extensions/OATHAuth/sql/mysql/tables.sql" );
-		}
-
-		if ( in_array( $dbName, MWWikiversions::readDbListFile( 'wikidataclient' ) ) ) {
-			$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
 		}
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
