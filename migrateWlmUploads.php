@@ -150,7 +150,8 @@ class MigrateWlmUploads extends Maintenance {
 
 		$title = Title::makeTitle( NS_FILE, $fileName );
 		$rev = Revision::newFromTitle( $title, 0, Revision::READ_LATEST );
-		$text = $rev->getText() . "\n{{WLM image from testwiki}}";
+		$content = $rev->getContent();
+		$text = ContentHandler::getContentText( $content ) . "\n{{WLM image from testwiki}}";
 		$descFile = "{$this->tmpDir}/desc.txt";
 
 		// Because uploading directly to Commons requires manipulation with globals and other scary stuff,

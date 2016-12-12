@@ -45,7 +45,8 @@ while ( !feof( $file ) ) {
 		echo "Does not exist: $line\n";
 		continue;
 	}
-	$text = $revision->getText();
+	$content = $revision->getContent();
+	$text = ContentHandler::getContentText( $content );
 	if ( $text === false ) {
 		echo "Cannot load text: $line\n";
 		continue;
