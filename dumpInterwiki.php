@@ -222,13 +222,19 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	function execute() {
-		$default_all_dblist = getRealmSpecificFilename( '/srv/mediawiki/dblists/all.dblist' );
-		$default_special_dblist = getRealmSpecificFilename( '/srv/mediawiki/dblists/special.dblist' );
+		$root = getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki';
+
+		if ( !file_exists( "$root/dblists" ) ) {
+			throw new Exception( "Can't run script: MEDIAWIKI_DEPLOYMENT_DIR environment variable must be set to MediaWiki root directory." );
+		}
+
+		$default_all_dblist = getRealmSpecificFilename( "$root/dblists/all.dblist" );
+		$default_special_dblist = getRealmSpecificFilename( "$root/dblists/special.dblist" );
 
 		// List of language prefixes likely to be found in multi-language sites
 		$this->langlist = array_map( "trim", file( $this->getOption(
 			'langlist',
-			getRealmSpecificFilename( "/srv/mediawiki/langlist" )
+			getRealmSpecificFilename( "$root/langlist" )
 		) ) );
 
 		// List of all database names
