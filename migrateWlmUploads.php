@@ -174,7 +174,7 @@ class MigrateWlmUploads extends Maintenance {
 		copy( $localCopy->getPath(), $tempFile );
 
 		$retval = 0;
-		$output = wfShellExec( $cmd, $retval, array(), array( 'memory' => 1024*512 ) );
+		$output = wfShellExec( $cmd, $retval, array(), array( 'memory' => 1024 * 512 ) );
 		if ( $output ) {
 			$this->output( $output . "\n" );
 		}

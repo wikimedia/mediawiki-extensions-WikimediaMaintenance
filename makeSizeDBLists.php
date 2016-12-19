@@ -27,7 +27,7 @@ class MakeSizeDBLists extends Maintenance {
 			$count = intval( $db->selectField( 'site_stats', 'ss_total_pages', '', __METHOD__ ) );
 			if ( $count < self::DB_SMALL ) {
 				$small[] = $wiki;
-			} elseif( $count < self::DB_MEDIUM ) {
+			} elseif ( $count < self::DB_MEDIUM ) {
 				$medium[] = $wiki;
 			} else {
 				$large[] = $wiki;

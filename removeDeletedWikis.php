@@ -64,12 +64,12 @@ class RemoveDeletedWikis extends Maintenance {
 		$count = 0;
 		do {
 			// https://bugzilla.wikimedia.org/show_bug.cgi?id=52868
-			//$dbw->delete(
+			// $dbw->delete(
 			//	$table,
 			//	array( $column => $wiki ),
 			//	__METHOD__,
 			//	array( 'LIMIT' => 500 ),
-			//);
+			// );
 			$wikiQuoted = $dbw->addQuotes( $wiki );
 			$dbw->query(
 				"DELETE FROM $table WHERE $column=$wikiQuoted LIMIT 500",

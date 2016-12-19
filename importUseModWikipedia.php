@@ -22,7 +22,7 @@ class ImportUseModWikipedia extends Maintenance {
 		'PythagoreanTheorem' => 985225545,
 		'TheCanonofScripture' => 985368223,
 		'TaoTehChing' => 985368222,
-		//'TheMostRemarkableFormulaInTheWorld' => 985368221,
+		// 'TheMostRemarkableFormulaInTheWorld' => 985368221,
 		'TheRecorder' => 985368220,
 		'GladstoneOregon' => 985368219,
 		'PacificBeach' => '?',
@@ -126,7 +126,7 @@ class ImportUseModWikipedia extends Maintenance {
 0x9c => 0x0153,
 0x9d => 0x009d,
 0x9e => 0x017e,
-0x9f => 0x0178);
+0x9f => 0x0178 );
 
 	public function __construct() {
 		parent::__construct();
@@ -135,8 +135,8 @@ class ImportUseModWikipedia extends Maintenance {
 		$this->initLinkPatterns();
 
 		$this->encodeMap = $this->decodeMap = array();
-		
-		for ($source = 0; $source <= 0xff; $source++) {
+
+		for ( $source = 0; $source <= 0xff; $source++ ) {
 			if ( isset( $this->cp1252Table[$source] ) ) {
 				$dest = $this->cp1252Table[$source];
 			} else {
@@ -281,7 +281,7 @@ EOT
 				$drTime = $deepRenames[$params['old']];
 				if ( $drTime !== '?' ) {
 					if ( ( !isset( $params['endTime'] ) || $drTime < $params['endTime'] )
-						&& $drTime > $params['startTime'] ) 
+						&& $drTime > $params['startTime'] )
 					{
 						$this->moveLog[$newTitle]['timestamp'] = $drTime;
 						$this->moveLog[$newTitle]['deep'] = true;
@@ -303,10 +303,10 @@ EOT
 				unset( $deepRenames[$params['old']] );
 			}
 			if ( isset( $params['endTime'] ) ) {
-				$this->printLatin1( "{$params['old']} -> $newTitle between " . 
+				$this->printLatin1( "{$params['old']} -> $newTitle between " .
 					"{$params['startTime']} and {$params['endTime']}\n" );
 			} else {
-				$this->printLatin1( "{$params['old']} -> $newTitle after " . 
+				$this->printLatin1( "{$params['old']} -> $newTitle after " .
 					"{$params['startTime']}\n" );
 			}
 		}
@@ -314,7 +314,7 @@ EOT
 		// Write the move log to the XML file
 		$id = 1;
 		foreach ( $this->moveLog as $newTitle => $params ) {
-			$out = "<logitem>\n" . 
+			$out = "<logitem>\n" .
 				$this->element( 'id', $id++ ) .
 				$this->element( 'timestamp', wfTimestamp( TS_ISO_8601, $params['timestamp'] ) ) .
 				"<contributor>\n" .
@@ -414,7 +414,7 @@ EOT
 		$params['text'] = $text;
 		$this->saveRevision( $params );
 		$this->numGoodRevs++;
-		#$this->printLatin1( "$editTime $title\n" );
+		# $this->printLatin1( "$editTime $title\n" );
 	}
 
 	function doPendingOps( $editTime ) {
@@ -457,7 +457,7 @@ EOT
 	function patch( $source, $diff ) {
 		file_put_contents( $this->articleFileName, $source );
 		file_put_contents( $this->patchFileName, $diff );
-		$error = wfShellExec( 
+		$error = wfShellExec(
 			wfEscapeShellArg(
 				'patch',
 				'-n',
@@ -702,7 +702,7 @@ EOT
 		$this->textCache[$params['rctitle']] = $params['text'];
 
 		$out = "<page>\n" .
-			$this->element( 'title', $params['rctitle'] ) . 
+			$this->element( 'title', $params['rctitle'] ) .
 			"<revision>\n" .
 			$this->element( 'id', $this->revId ++ ) .
 			$this->element( 'timestamp', wfTimestamp( TS_ISO_8601, $params['timestamp'] ) ) .
@@ -719,10 +719,10 @@ EOT
 		$out .=
 			"</contributor>\n" .
 			$this->element( 'comment', $params['summary'] ) .
-			"<text xml:space=\"preserve\">" . 
+			"<text xml:space=\"preserve\">" .
 			htmlspecialchars( $this->encode( $params['text'] ) ) .
 			"</text>\n" .
-			"</revision>\n" . 
+			"</revision>\n" .
 			"</page>\n";
 		fwrite( $this->outFile, $out );
 	}
@@ -734,7 +734,7 @@ EOT
 
 		foreach ( $this->textCache as $title => $oldText ) {
 			if ( $newWithUnderscores === $title
-				&& in_array( $title, $this->skipSelfSubstitution ) ) 
+				&& in_array( $title, $this->skipSelfSubstitution ) )
 			{
 				// Hack to make Pythagorean_Theorem etc. work
 				continue;
@@ -760,29 +760,29 @@ EOT
 		$this->new = $new;
 
 		$text = str_replace( $this->FS, '', $text ); # Remove separators (paranoia)
-		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is', 
+		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is',
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is', 
+		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is',
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( '/(<nowiki>(.*?)<\/nowiki>)/s', 
+		$text = preg_replace_callback( '/(<nowiki>(.*?)<\/nowiki>)/s',
 			array( $this, 'storeRaw' ), $text );
 
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\|([^\]]+)\]\]/",
 			array( $this, 'subFreeLink' ), $text );
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\]\]/",
 			array( $this, 'subFreeLink' ), $text );
-		$text = preg_replace_callback( "/(\[{$this->UrlPattern}\s+([^\]]+?)\])/", 
+		$text = preg_replace_callback( "/(\[{$this->UrlPattern}\s+([^\]]+?)\])/",
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( "/(\[{$this->InterLinkPattern}\s+([^\]]+?)\])/", 
+		$text = preg_replace_callback( "/(\[{$this->InterLinkPattern}\s+([^\]]+?)\])/",
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( "/(\[?{$this->UrlPattern}\]?)/", 
+		$text = preg_replace_callback( "/(\[?{$this->UrlPattern}\]?)/",
 			array( $this, 'storeRaw' ), $text );
 		$text = preg_replace_callback( "/(\[?{$this->InterLinkPattern}\]?)/",
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( "/{$this->LinkPattern}/", 
+		$text = preg_replace_callback( "/{$this->LinkPattern}/",
 			array( $this, 'subWikiLink' ), $text );
 
-		$text = preg_replace_callback( "/{$this->FS}(\d+){$this->FS}/", 
+		$text = preg_replace_callback( "/{$this->FS}(\d+){$this->FS}/",
 			array( $this, 'restoreRaw' ), $text );   # Restore saved text
 		return $text;
 	}
@@ -792,26 +792,26 @@ EOT
 		$this->linkList = array();
 
 		$text = str_replace( $this->FS, '', $text ); # Remove separators (paranoia)
-		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is', 
+		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is',
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is', 
+		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is',
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( '/(<nowiki>(.*?)<\/nowiki>)/s', 
+		$text = preg_replace_callback( '/(<nowiki>(.*?)<\/nowiki>)/s',
 			array( $this, 'storeRaw' ), $text );
 
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\|([^\]]+)\]\]/",
 			array( $this, 'storeLink' ), $text );
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\]\]/",
 			array( $this, 'storeLink' ), $text );
-		$text = preg_replace_callback( "/(\[{$this->UrlPattern}\s+([^\]]+?)\])/", 
+		$text = preg_replace_callback( "/(\[{$this->UrlPattern}\s+([^\]]+?)\])/",
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( "/(\[{$this->InterLinkPattern}\s+([^\]]+?)\])/", 
+		$text = preg_replace_callback( "/(\[{$this->InterLinkPattern}\s+([^\]]+?)\])/",
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( "/(\[?{$this->UrlPattern}\]?)/", 
+		$text = preg_replace_callback( "/(\[?{$this->UrlPattern}\]?)/",
 			array( $this, 'storeRaw' ), $text );
 		$text = preg_replace_callback( "/(\[?{$this->InterLinkPattern}\]?)/",
 			array( $this, 'storeRaw' ), $text );
-		$text = preg_replace_callback( "/{$this->LinkPattern}/", 
+		$text = preg_replace_callback( "/{$this->LinkPattern}/",
 			array( $this, 'storeLink' ), $text );
 
 		return $this->linkList;
@@ -819,7 +819,7 @@ EOT
 
 	function storeRaw( $m ) {
 		$this->saveUrl[] = $m[1];
-		return $this->FS . (count( $this->saveUrl ) - 1) . $this->FS;
+		return $this->FS . ( count( $this->saveUrl ) - 1 ) . $this->FS;
 	}
 
 	function subFreeLink( $m ) {
@@ -881,7 +881,7 @@ EOT
 		$parts = explode( $sep, $s );
 		$result = array();
 		for ( $i = 0; $i < count( $parts ); $i += 2 ) {
-			$result[$parts[$i]] = $parts[$i+1];
+			$result[$parts[$i]] = $parts[$i + 1];
 		}
 		return $result;
 	}

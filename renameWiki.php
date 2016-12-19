@@ -48,7 +48,7 @@ class RenameWiki extends Maintenance {
 		sleep( 5 );
 
 		$dbw = wfGetDB( DB_MASTER );
-		foreach( $dbw->tableNames() as $table ) {
+		foreach ( $dbw->tableNames() as $table ) {
 			$dbw->query( "ALTER TABLE {$from}.{$table} RENAME TO {$to}.{$table}" );
 		}
 

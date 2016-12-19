@@ -84,7 +84,7 @@ class passwordAudit extends Maintenance {
 			$this->output(
 				"Finished '$username', averaging: " .
 				( microtime( true ) - $startts ) / $cnt .
-				" seconds/account, ".( microtime( true ) - $startts ) / $hcnt .
+				" seconds/account, " . ( microtime( true ) - $startts ) / $hcnt .
 				" sec/hash\n"
 			);
 		}

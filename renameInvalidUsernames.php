@@ -144,7 +144,7 @@ class RenameInvalidUsernames extends Maintenance {
 
 	protected function getCurrentRenameCount() {
 		$row = CentralAuthUser::getCentralDB()->selectRow(
-			array( 'renameuser_status'),
+			array( 'renameuser_status' ),
 			array( 'COUNT(*) as count' ),
 			array(),
 			__METHOD__

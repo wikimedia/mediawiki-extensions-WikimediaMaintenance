@@ -138,7 +138,7 @@ class CreateExtensionTables extends Maintenance {
 		}
 
 		$this->output( "Creating $extension tables..." );
-		foreach( $files as $file ) {
+		foreach ( $files as $file ) {
 			$dbw->sourceFile( "$path/$file" );
 		}
 		$this->output( "done!\n" );

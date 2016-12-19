@@ -32,9 +32,9 @@ class CleanupBug41615 extends Maintenance {
 		$buffer = '';
 		$inQuote = false;
 		$binraw = trim( file_get_contents( $this->getOption( 'binlogdump' ) ) );
-		for ( $i=0; $i < strlen( $binraw ); ++$i ) {
+		for ( $i = 0; $i < strlen( $binraw ); ++$i ) {
 			$ch = $binraw[$i];
-			if ( $ch === "'" && ( $i <= 0 || $binraw[$i-1] !== "\\" ) ) {
+			if ( $ch === "'" && ( $i <= 0 || $binraw[$i -1] !== "\\" ) ) {
 				$inQuote = !$inQuote; // unescaped quote
 			}
 			if ( $ch === "\n" && !$inQuote ) {

@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ .'/WikimediaCommandLine.inc';
+require_once __DIR__ . '/WikimediaCommandLine.inc';
 
-foreach ($wgLocalDatabases as $db) {
+foreach ( $wgLocalDatabases as $db ) {
 print "$db\n";
 }

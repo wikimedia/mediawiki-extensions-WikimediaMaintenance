@@ -52,7 +52,7 @@ class FixOrphans extends Maintenance {
 				$this->error( "XXX: ERROR Invalid line $lineNumber\n" );
 				continue;
 			}
-			$info = array_combine( array( 'up_page', 'up_timestamp', 'log_namespace', 
+			$info = array_combine( array( 'up_page', 'up_timestamp', 'log_namespace',
 				'log_title', 'rev_id', 'ar_rev_match', 'ar_text_match' ), $parts );
 			$revId = $info['rev_id'];
 

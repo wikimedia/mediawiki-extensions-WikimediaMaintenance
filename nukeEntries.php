@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ .'/WikimediaCommandLine.inc';
+require_once __DIR__ . '/WikimediaCommandLine.inc';
 
 $i = 1000;
 
