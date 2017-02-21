@@ -40,7 +40,7 @@ class SetZoneAccess extends Maintenance {
 		}
 		$this->output( "done.\n" );
 		if ( !$status->isOK() ) {
-			print_r( array_merge( $status->getErrorsArray(), $status->getWarningsArray() ) );
+			print_r( $status->getErrors() );
 		}
 	}
 }
