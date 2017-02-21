@@ -142,6 +142,7 @@ class AddWiki extends Maintenance {
 		// Initialise Echo cluster if applicable.
 		// It will create the Echo tables in the main database if
 		// extension1 is not in use.
+		/** @var Database $echoDbW */
 		$echoDbW = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
 		$echoDbW->query( "SET storage_engine=InnoDB" );
 		$echoDbW->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
@@ -233,12 +234,24 @@ class AddWiki extends Maintenance {
 		# Populate sites table
 		$sitesPopulation = $this->runChild(
 			'Wikibase\PopulateSitesTable',
-			__DIR__ . '/../Wikidata/extensions/Wikibase/lib/maintenance/populateSitesTable.php'
+			"$IP/extensions/Wikidata/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
 		);
 
 		$sitesPopulation->mOptions[ 'site-group' ] = $site;
 		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
 		$sitesPopulation->execute();
+
+		// Sets up the filebackend zones
+		$setZones = $this->runChild(
+			'SetZoneAccess',
+			"$IP/extensions/WikimediaMaintenance/filebackend/setZoneAccess.php"
+		);
+
+		$setZones->mOptions['backend'] = 'local-multiwrite';
+		if ( $this->isPrivate( $dbName ) ) {
+			$setZones->mOptions['private'] = 1;
+		}
+		$setZones->execute();
 
 		# Clear MassMessage cache (bug 60075)
 		global $wgMemc, $wgConf;
@@ -257,6 +270,11 @@ class AddWiki extends Maintenance {
 		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration" );
 	}
 
+	/**
+	 * @param string $ucsite
+	 * @param string $name
+	 * @return string
+	 */
 	private function getFirstArticle( $ucsite, $name ) {
 		return <<<EOT
 ==This subdomain is reserved for the creation of a [[wikimedia:Our projects|$ucsite]] in '''[[w:en:{$name}|{$name}]]''' language==
@@ -287,13 +305,27 @@ EOT;
 	}
 
 	/**
+	 * @param string $dbName
 	 * @return bool
 	 */
-	private function isPrivateOrFishbowl ( $dbName ) {
-		return in_array( $dbName, MWWikiversions::readDbListFile( 'private' ) ) ||
-		       in_array( $dbName, MWWikiversions::readDbListFile( 'fishbowl' ) );
+	private function isPrivateOrFishbowl( $dbName ) {
+		return $this->isPrivate( $dbName ) ||
+			in_array( $dbName, MWWikiversions::readDbListFile( 'fishbowl' ) );
 	}
 
+	/**
+	 * @param string $dbName
+	 * @return bool
+	 */
+	private function isPrivate( $dbName ) {
+		return in_array( $dbName, MWWikiversions::readDbListFile( 'private' ) );
+	}
+
+	/**
+	 * @param string $domain
+	 * @param string $language
+	 * @return Status
+	 */
 	private function setFundraisingLink( $domain, $language ) {
 
 		$title = Title::newFromText( "Mediawiki:Sitesupport-url" );
@@ -302,12 +334,14 @@ EOT;
 
 		// There is likely a better way to create the link, but it seems like one
 		// cannot count on interwiki links at this point
-		$linkurl = "https://donate.wikimedia.org/?" . http_build_query( array(
-			"utm_source" => "donate",
-			"utm_medium" => "sidebar",
-			"utm_campaign" => $domain,
-			"uselang" => $language
-		) );
+		$linkurl = "https://donate.wikimedia.org/?" . http_build_query(
+			[
+				"utm_source" => "donate",
+				"utm_medium" => "sidebar",
+				"utm_campaign" => $domain,
+				"uselang" => $language
+			]
+		);
 
 		return $article->doEditContent(
 			ContentHandler::makeContent( $linkurl, $title ),
