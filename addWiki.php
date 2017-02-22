@@ -76,7 +76,7 @@ class AddWiki extends Maintenance {
 
 		$this->output( "Creating database $dbName for $lang.$site ($name)\n" );
 
-		# Set up the database
+		// Set up the database
 		$dbw->query( "SET storage_engine=InnoDB" );
 		$dbw->query( "CREATE DATABASE $dbName" );
 		$dbw->selectDB( $dbName );
@@ -149,7 +149,7 @@ class AddWiki extends Maintenance {
 		$echoDbW->selectDB( $dbName );
 		$echoDbW->sourceFile( "$IP/extensions/Echo/echo.sql" );
 
-		# Initialise external storage
+		// Initialise external storage
 		if ( is_array( $wgDefaultExternalStore ) ) {
 			$stores = $wgDefaultExternalStore;
 		} elseif ( $wgDefaultExternalStore ) {
@@ -180,7 +180,7 @@ class AddWiki extends Maintenance {
 				$cluster = $m[1];
 				$this->output( "Initialising external storage $cluster...\n" );
 
-				# Hack
+				// Hack
 				$wgExternalServers[$cluster][0]['user'] = $wgDBuser;
 				$wgExternalServers[$cluster][0]['password'] = $wgDBpassword;
 
@@ -193,7 +193,7 @@ class AddWiki extends Maintenance {
 				$extdb->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
 				$extdb->selectDB( $dbName );
 
-				# Hack x2
+				// Hack x2
 				$blobsTable = $store->getTable( $extdb );
 				$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " . $this->getDir() . "/storage/blobs.sql";
 				$blobsFile = popen( $sedCmd, 'r' );
@@ -216,7 +216,7 @@ class AddWiki extends Maintenance {
 
 		$this->setFundraisingLink( $domain, $lang );
 
-		# Create new search index
+		// Create new search index
 		global $wgCirrusSearchWriteClusters, $wgCirrusSearchClusters;
 
 		$writableClusters = $wgCirrusSearchWriteClusters;
@@ -231,7 +231,7 @@ class AddWiki extends Maintenance {
 			$searchIndex->execute();
 		}
 
-		# Populate sites table
+		// Populate sites table
 		$sitesPopulation = $this->runChild(
 			'Wikibase\PopulateSitesTable',
 			"$IP/extensions/Wikidata/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
@@ -253,7 +253,7 @@ class AddWiki extends Maintenance {
 		}
 		$setZones->execute();
 
-		# Clear MassMessage cache (bug 60075)
+		// Clear MassMessage cache (bug 60075)
 		global $wgMemc, $wgConf;
 		// Even if the dblists have been updated, it's not in $wgConf yet
 		$wgConf->wikis[] = $dbName;
