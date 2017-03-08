@@ -9,7 +9,8 @@
  */
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
-require_once "$IP/includes/libs/normal/UtfNormalUtil.php";
+
+use UtfNormal\Utils;
 
 class ImportUseModWikipedia extends Maintenance {
 	public $encodeMap, $decodeMap;
@@ -143,7 +144,7 @@ class ImportUseModWikipedia extends Maintenance {
 				$dest = $source;
 			}
 			$sourceChar = chr( $source );
-			$destChar = codepointToUtf8( $dest );
+			$destChar = Utils::codepointToUtf8( $dest );
 			$this->encodeMap[$sourceChar] = $destChar;
 			$this->decodeMap[$destChar] = $sourceChar;
 		}
