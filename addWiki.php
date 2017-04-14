@@ -103,6 +103,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/AccountAudit/accountaudit.sql" );
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/create_counts.sql" );
 		$dbw->sourceFile( "$IP/extensions/SecurePoll/SecurePoll.sql" );
+		$dbw->sourceFile( "$IP/extensions/Linter/linter.sql" );
 
 		// most wikis are wikibase client wikis and no harm to adding this everywhere
 		$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
