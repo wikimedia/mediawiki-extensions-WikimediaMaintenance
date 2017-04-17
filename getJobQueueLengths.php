@@ -6,6 +6,8 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 class GetJobQueueLengths extends Maintenance {
 	function __construct() {
 		parent::__construct();
@@ -51,8 +53,8 @@ class GetJobQueueLengths extends Maintenance {
 			}
 
 			if ( $this->hasOption( 'report' ) ) {
-				$stats = RequestContext::getMain()->getStats();
-				$stats->gauge( 'jobqueue.size', $total );
+				MediaWikiServices::getInstance()->getStatsdDataFactory()
+					->gauge( 'jobqueue.size', $total );
 			}
 		}
 	}
