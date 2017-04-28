@@ -307,17 +307,17 @@ class DumpInterwiki extends Maintenance {
 
 				if ( empty( $reserved[$prefix] ) ) {
 					$imap  = array( "iw_prefix" => $prefix, "iw_url" => $url, "iw_local" => $local );
-					$this->makeLink ( $imap, "__global" );
+					$this->makeLink( $imap, "__global" );
 				}
 			}
 		}
 
 		// Exclude Wikipedia for Wikipedia
-		$this->makeLink ( array ( 'iw_prefix' => 'wikipedia', 'iw_url' => null ), "_wiki" );
+		$this->makeLink( array( 'iw_prefix' => 'wikipedia', 'iw_url' => null ), "_wiki" );
 
 		// Multilanguage sites
 		foreach ( $sites as $site ) {
-			$this->makeLanguageLinks ( $site, "_" . $site->suffix );
+			$this->makeLanguageLinks( $site, "_" . $site->suffix );
 		}
 
 		foreach ( $this->dblist as $db ) {
@@ -391,7 +391,6 @@ class DumpInterwiki extends Maintenance {
 		// List prefixes for each source
 		foreach ( $this->prefixLists as $source => $hash ) {
 			$list = array_keys( $hash );
-			sort( $list );
 			if ( $this->dbFile ) {
 				try {
 					$this->dbFile->set( "__list:{$source}", implode( ' ', $list ) );
