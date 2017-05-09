@@ -88,7 +88,7 @@ class RenameWiki extends Maintenance {
 
 				$store = new ExternalStoreDB;
 				$extdb =& $store->getMaster( $cluster );
-				$extdb->query( "SET table_type=InnoDB" );
+				$extdb->query( "SET default_storage_engine=InnoDB" );
 				$extdb->query( "CREATE DATABASE {$to}" );
 				$extdb->query( "ALTER TABLE {$from}.blobs RENAME TO {$to}.blobs" );
 				$extdb->selectDB( $from );
