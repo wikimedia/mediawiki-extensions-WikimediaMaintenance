@@ -1,4 +1,11 @@
 {
 	"name": "WikimediaMaintenance",
-	"manifest_version": 1
+	"manifest_version": 1,
+	"license-name": "GPL-2.0+",
+	"descriptionmsg": "wikimediamaintenance-desc",
+	"MessagesDirs": {
+		"WikimediaMaintenance": [
+			"i18n"
+		]
+	}
 }

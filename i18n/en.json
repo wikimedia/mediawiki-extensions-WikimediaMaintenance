@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"MtDu"
+		],
+		"message-documentation": "qqq"
+	},
+	"wikimediamaintenance-desc": "Provides a collection of scripts that is mainly used by Wikimedia"
+}
