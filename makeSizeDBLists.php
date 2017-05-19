@@ -22,8 +22,13 @@ class MakeSizeDBLists extends Maintenance {
 		$medium = array();
 		$large = array();
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
-			$lb = wfGetLB( $wiki );
-			$db = $lb->getConnection( DB_MASTER, array(), $wiki );
+			try {
+				$lb = wfGetLB( $wiki );
+				$db = $lb->getConnection( DB_MASTER, array(), $wiki );
+			} catch ( Exception $e ) {
+				// Probably just wikitech etc, skip!
+				continue;
+			}
 			$count = intval( $db->selectField( 'site_stats', 'ss_total_pages', '', __METHOD__ ) );
 			if ( $count < self::DB_SMALL ) {
 				$small[] = $wiki;
