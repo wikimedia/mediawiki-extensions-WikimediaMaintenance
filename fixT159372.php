@@ -36,7 +36,12 @@ class FixT159372 extends Maintenance {
 		foreach ( $iterator as $batch ) {
 			foreach ( $batch as $row ) {
 				try {
-					$reserialized = serialize( unserialize( $row->event_extra ) );
+					$unserialized = unserialize( $row->event_extra );
+					if ( !$unserialized ) {
+						$this->output( "Failed to unserialize event_id {$row->event_id}\n" );
+						continue;
+					}
+					$reserialized = serialize( $unserialized );
 					$dbw->update(
 						'echo_event',
 						[ 'event_extra' => $reserialized ],
@@ -44,7 +49,7 @@ class FixT159372 extends Maintenance {
 					);
 					$processed += $dbw->affectedRows();
 				} catch ( Exception $e ) {
-					$this->output( "Failed to reserialize event_id {$row->event_id}" );
+					$this->output( "Failed to reserialize event_id {$row->event_id}\n" );
 				}
 			}
 			$this->output( "Reserialized $processed events.\n" );
