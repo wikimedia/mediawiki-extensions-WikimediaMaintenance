@@ -242,6 +242,16 @@ class AddWiki extends Maintenance {
 		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
 		$sitesPopulation->execute();
 
+		// Repopulate Cognate sites table
+		if ( $site === 'wiktionary' ) {
+			$cognateSitesPopulation = $this->runChild(
+				'Cognate\PopulateCognateSites',
+				"$IP/extensions/Cognate/maintenance/populateCognateSites.php"
+			);
+			$cognateSitesPopulation->mOptions[ 'site-group' ] = $site;
+			$cognateSitesPopulation->execute();
+		}
+
 		// Sets up the filebackend zones
 		$setZones = $this->runChild(
 			'SetZoneAccess',
