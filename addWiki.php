@@ -100,7 +100,6 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/TimedMediaHandler.sql" );
 		$dbw->sourceFile( "$IP/maintenance/archives/patch-filejournal.sql" );
 		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" ); // Not actually enabled everywhere, but this is easier
-		$dbw->sourceFile( "$IP/extensions/AccountAudit/accountaudit.sql" );
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/create_counts.sql" );
 		$dbw->sourceFile( "$IP/extensions/SecurePoll/SecurePoll.sql" );
 		$dbw->sourceFile( "$IP/extensions/Linter/linter.sql" );
