@@ -277,7 +277,7 @@ class AddWiki extends Maintenance {
 			"A new wiki was created by $user at $time for a $ucsite in $name ($lang).\nOnce the wiki is fully set up, it'll be visible at https://$domain"
 		);
 
-		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration" );
+		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration\n" );
 	}
 
 	/**
