@@ -8,11 +8,11 @@ function fixBug41778() {
 	$maxLength = $dbw->selectField(
 		'information_schema.columns',
 		'CHARACTER_MAXIMUM_LENGTH',
-		array(
+		[
 			'table_schema' => $dbw->getDBname(),
 			'table_name' => 'ipblocks',
 			'column_name' => 'ipb_range_start'
-		),
+		],
 		__METHOD__ );
 
 	print "Existing field length: $maxLength\n";
@@ -52,7 +52,7 @@ function fixBug41778() {
 	wfWaitForSlaves();
 
 	print "Regenerating field values\n";
-	$res = $dbw->select( 'ipblocks', '*', array( 'ipb_range_start LIKE \'v6-%\'' ), __METHOD__ );
+	$res = $dbw->select( 'ipblocks', '*', [ 'ipb_range_start LIKE \'v6-%\'' ], __METHOD__ );
 	foreach ( $res as $i => $row ) {
 		list( $start, $end ) = IP::parseRange( $row->ipb_address );
 		if ( substr( $start, 0, 3 ) !== 'v6-' || substr( $end, 0, 3 ) !== 'v6-' ) {
@@ -60,13 +60,13 @@ function fixBug41778() {
 			continue;
 		}
 		$dbw->update( 'ipblocks',
-			/* SET */ array(
+			/* SET */ [
 				'ipb_range_start' => $start,
 				'ipb_range_end' => $end,
-			),
-			/* WHERE */ array(
+			],
+			/* WHERE */ [
 				'ipb_id' => $row->ipb_id,
-			)
+			]
 		);
 		if ( $i % 100 === 0 ) {
 			wfWaitForSlaves();

@@ -6,9 +6,9 @@ function purgeStaleMemcachedText() {
 	global $wgMemc, $wgDBname;
 	$db = wfGetDB( DB_MASTER );
 	$maxTextId = $db->selectField( 'text', 'max(old_id)' );
-	$latestReplicatedTextId = $db->selectField( array( 'recentchanges', 'revision' ), 'rev_text_id',
-		array( 'rev_id = rc_this_oldid', "rc_timestamp < '20101225183000'" ),  'purgeStaleMemcachedText',
-		array( 'ORDER BY' => 'rc_timestamp DESC' ) );
+	$latestReplicatedTextId = $db->selectField( [ 'recentchanges', 'revision' ], 'rev_text_id',
+		[ 'rev_id = rc_this_oldid', "rc_timestamp < '20101225183000'" ],  'purgeStaleMemcachedText',
+		[ 'ORDER BY' => 'rc_timestamp DESC' ] );
 	$latestReplicatedTextId -= 100; # A bit of paranoia
 
 	echo "Going to purge text entries from $latestReplicatedTextId to $maxTextId in $wgDBname\n";
@@ -31,4 +31,3 @@ function purgeStaleMemcachedText() {
 }
 
 purgeStaleMemcachedText();
-

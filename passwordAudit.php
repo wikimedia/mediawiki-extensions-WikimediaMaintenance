@@ -48,7 +48,7 @@ class passwordAudit extends Maintenance {
 				$hash = $dbr->selectField(
 					'globaluser',
 					'gu_password',
-					array( 'gu_name' => $username ),
+					[ 'gu_name' => $username ],
 					__METHOD__
 				);
 
@@ -56,7 +56,7 @@ class passwordAudit extends Maintenance {
 				$hash = $dbr->selectField(
 					'user',
 					'user_password',
-					array( 'user_name' => $username ),
+					[ 'user_name' => $username ],
 					__METHOD__
 				);
 			}
@@ -101,7 +101,7 @@ class passwordAudit extends Maintenance {
 		$pieces = explode( ':', $hash );
 		$salt = base64_decode( $pieces[5] );
 		$roundTotal = $lastRound = hash_hmac( 'sha256', $salt . pack( 'N', 1 ), $test, true );
-		for ( $j = 1; $j < (int) $pieces[3]; ++$j ) {
+		for ( $j = 1; $j < (int)$pieces[3]; ++$j ) {
 			$lastRound = hash_hmac( 'sha256', $lastRound, $test, true );
 			$roundTotal ^= $lastRound;
 		}

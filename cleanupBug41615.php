@@ -28,7 +28,7 @@ class CleanupBug41615 extends Maintenance {
 		}
 
 		# Mangle throw the log as log_comment can have newlines and such...
-		$binlog = array(); // lines
+		$binlog = []; // lines
 		$buffer = '';
 		$inQuote = false;
 		$binraw = trim( file_get_contents( $this->getOption( 'binlogdump' ) ) );
@@ -53,16 +53,16 @@ class CleanupBug41615 extends Maintenance {
 		}
 		$binlog = array_chunk( $binlog, 2 ); // there should be pairs of corresponding logs
 
-		$deletedPages = array();
+		$deletedPages = [];
 		foreach ( $binlog as $entries ) {
 			list( $dEntry, $iEntry ) = $entries;
-			$m = array();
+			$m = [];
 			// 1351692955 itwiki DELETE /* WikiPage::doDeleteArticleReal Guidomac */
 			// FROM `page` WHERE page_id = '4258611'
 			if ( !preg_match( "!^\d+ (\w+) DELETE .* WHERE page_id = '(\d+)'!", $dEntry, $m ) ) {
 				$this->error( "Could not parse '$dEntry'.", 1 );
 			}
-			$info = array( 'wiki' => $m[1], 'page_id' => $m[2] );
+			$info = [ 'wiki' => $m[1], 'page_id' => $m[2] ];
 			// 1351692955 itwiki INSERT /* ManualLogEntry::insert Guidomac */  INTO `logging`
 			// (log_id,log_type,log_action,log_timestamp,log_user,log_user_text,log_namespace,log_title,log_page,log_comment,log_params)
 			// VALUES (NULL,'delete','delete','20121031141555','276491','Guidomac','0','Doesn\'t_Matter','0','([[WP:IMMEDIATA|C1]]) Pagina o sottopagina vuota, di prova, senza senso o tautologica','a:0:{}')
@@ -92,15 +92,15 @@ class CleanupBug41615 extends Maintenance {
 			$this->output( "Inspecting {$title->getPrefixedText()}\n" );
 
 			$count = $dbw->selectField( 'revision',
-				'COUNT(*)', array( 'rev_page' => $info['page_id'] ) );
+				'COUNT(*)', [ 'rev_page' => $info['page_id'] ] );
 
 			if ( $count > 0 ) { // number of affected revs for this page ID
 				$article = WikiPage::factory( $title );
 				$lastRev = Revision::newFromRow( $dbw->selectRow( 'revision',
 					'*',
-					array( 'rev_page' => $info['page_id'] ),
+					[ 'rev_page' => $info['page_id'] ],
 					__METHOD__,
-					array( 'ORDER BY' => 'rev_timestamp DESC' )
+					[ 'ORDER BY' => 'rev_timestamp DESC' ]
 				) );
 				// Revisions were restored using ar_page_id, not the new page created on restore.
 				// We need to move this to the new page_id created for the old title.
@@ -119,8 +119,8 @@ class CleanupBug41615 extends Maintenance {
 				}
 				if ( $this->hasOption( 'fix' ) ) {
 					$dbw->update( 'revision',
-						array( 'rev_page' => $newID ),
-						array( 'rev_page' => $info['page_id'] ),
+						[ 'rev_page' => $newID ],
+						[ 'rev_page' => $info['page_id'] ],
 						__METHOD__
 					);
 					$article->updateIfNewerOn( $dbw, $lastRev ); // fix page_latest

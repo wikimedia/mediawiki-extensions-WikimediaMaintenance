@@ -50,30 +50,29 @@ class RenameInvalidUsernames extends Maintenance {
 			}
 		}
 		fclose( $file );
-
 	}
 
 	protected function rename( $userId, $wiki ) {
-		$dbw = wfGetDB( DB_MASTER, array(), $wiki );
-		$row = $dbw->selectRow( 'user', User::selectFields(), array( 'user_id' => $userId ), __METHOD__ );
+		$dbw = wfGetDB( DB_MASTER, [], $wiki );
+		$row = $dbw->selectRow( 'user', User::selectFields(), [ 'user_id' => $userId ], __METHOD__ );
 
 		$oldUser = User::newFromRow( $row );
 
 		$reason = '[[m:Special:MyLanguage/Single User Login finalisation announcement|SUL finalization]] - [[phab:T5507]]';
 		$caUser = new CentralAuthUser( $oldUser->getName(), CentralAuthUser::READ_LATEST );
 		$maintScript = User::newFromName( 'Maintenance script' );
-		$session = array(
+		$session = [
 			'userId' => $maintScript->getId(),
 			'ip' => '127.0.0.1',
 			'sessionId' => '0',
-			'headers' => array(),
-		);
-		$data = array(
+			'headers' => [],
+		];
+		$data = [
 			'movepages' => true,
 			'suppressredirects' => true,
 			'reason' => $reason,
 			'force' => true,
-		);
+		];
 
 		if ( $caUser->exists() && $caUser->isAttached() ) {
 			$newUser = User::newFromName( 'Invalid username ' . (string)$caUser->getId(), 'usable' );
@@ -107,12 +106,12 @@ class RenameInvalidUsernames extends Maintenance {
 				return;
 			}
 			$statuses = new GlobalRenameUserStatus( $oldUser->getName() );
-			$success = $statuses->setStatuses( array( array(
+			$success = $statuses->setStatuses( [ [
 				'ru_wiki' => $wiki,
 				'ru_oldname' => $oldUser->getName(),
 				'ru_newname' => $newCAUser->getName(),
 				'ru_status' => 'queued'
-			) ) );
+			] ] );
 
 			if ( !$success ) {
 				$this->output( "WARNING: Race condition, renameuser_status already set for {$newCAUser->getName()}. Skipping.\n" );
@@ -123,7 +122,7 @@ class RenameInvalidUsernames extends Maintenance {
 
 			$job = new LocalRenameUserJob(
 				Title::newFromText( 'Global rename job' ),
-				array(
+				[
 					'from' => $oldUser->getName(),
 					'to' => $newCAUser->getName(),
 					'renamer' => 'Maintenance script',
@@ -132,7 +131,7 @@ class RenameInvalidUsernames extends Maintenance {
 					'promotetoglobal' => true,
 					'reason' => $reason,
 					'force' => true,
-				)
+				]
 			);
 
 			JobQueueGroup::singleton( $wiki )->push( $job );
@@ -144,9 +143,9 @@ class RenameInvalidUsernames extends Maintenance {
 
 	protected function getCurrentRenameCount() {
 		$row = CentralAuthUser::getCentralDB()->selectRow(
-			array( 'renameuser_status' ),
-			array( 'COUNT(*) as count' ),
-			array(),
+			[ 'renameuser_status' ],
+			[ 'COUNT(*) as count' ],
+			[],
 			__METHOD__
 		);
 		return (int)$row->count;

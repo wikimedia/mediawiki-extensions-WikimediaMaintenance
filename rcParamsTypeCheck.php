@@ -17,7 +17,7 @@ class GetJobQueueLengths extends Maintenance {
 		$count = 0;
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			$lb = wfGetLB( $wiki );
-			$db = $lb->getConnection( DB_MASTER, array(), $wiki );
+			$db = $lb->getConnection( DB_MASTER, [], $wiki );
 			$field = $db->fieldInfo( 'recentchanges', 'rc_params' );
 			if ( $field->type() !== "blob" ) {
 				echo $wiki . "\n";
@@ -30,4 +30,4 @@ class GetJobQueueLengths extends Maintenance {
 }
 
 $maintClass = 'GetJobQueueLengths';
-require_once( DO_MAINTENANCE );
+require_once DO_MAINTENANCE;

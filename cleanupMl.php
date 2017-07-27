@@ -57,7 +57,6 @@ while ( !feof( $file ) ) {
 		continue;
 	}
 
-
 	if ( $unbrokenTitle->exists() ) {
 		# Exists already, just delete this redirect
 		$article = new Article( $brokenTitle );

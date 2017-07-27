@@ -5,10 +5,10 @@ $bad = 0;
 $good = 0;
 foreach ( $wgLocalDatabases as $wiki ) {
 	$lb = wfGetLB( $wiki );
-	$db = $lb->getConnection( DB_SLAVE, array(), $wiki );
+	$db = $lb->getConnection( DB_SLAVE, [], $wiki );
 	if ( $db->tableExists( 'blob_tracking' ) ) {
 		$notDone = $db->selectField( 'blob_tracking', '1',
-			array( 'bt_moved' => 0 ) );
+			[ 'bt_moved' => 0 ] );
 		if ( $notDone ) {
 			$bad++;
 			echo "$wiki\n";

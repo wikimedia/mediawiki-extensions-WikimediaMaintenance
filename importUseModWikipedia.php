@@ -15,7 +15,7 @@ use UtfNormal\Utils;
 class ImportUseModWikipedia extends Maintenance {
 	public $encodeMap, $decodeMap;
 
-	public $deepRenames = array(
+	public $deepRenames = [
 		'JimboWales' => 983862286,
 		'TexaS' => 983918410,
 		'HistoryOfUnitedStatesTalk' => 984795423,
@@ -28,74 +28,74 @@ class ImportUseModWikipedia extends Maintenance {
 		'GladstoneOregon' => 985368219,
 		'PacificBeach' => '?',
 		'AaRiver' => '?',
-	);
+	];
 
-	public $replacements = array();
+	public $replacements = [];
 
-	public $renameTextLinksOps = array(
-		983846265 => array(
+	public $renameTextLinksOps = [
+		983846265 => [
 			'TestIgnore' => 'IgnoreTest',
-		),
-		983848080 => array(
+		],
+		983848080 => [
 			'UnitedLocomotiveWorks' => 'Atlas Shrugged/United Locomotive Works'
-		),
-		983856376 => array(
+		],
+		983856376 => [
 			'WikiPedia' => 'Wikipedia',
-		),
-		983896152 => array(
+		],
+		983896152 => [
 			'John_F_Kennedy' => 'John_F._Kennedy',
-		),
-		983905871 => array(
+		],
+		983905871 => [
 			'LarrySanger' => 'Larry_Sanger'
-		),
-		984697068 => array(
+		],
+		984697068 => [
 			'UnitedStates' => 'United States',
-		),
-		984792748 => array(
+		],
+		984792748 => [
 			'LibertarianisM' => 'Libertarianism'
-		),
-		985327832 => array(
+		],
+		985327832 => [
 			'AnarchisM' => 'Anarchism',
-		),
-		985290063 => array(
+		],
+		985290063 => [
 			'HistoryOfUnitedStatesDiscussion' => 'History_Of_United_States_Discussion'
-		),
-		985290091 => array(
+		],
+		985290091 => [
 			'BritishEmpire' => 'British Empire'
-		),
+		],
 		/*
 		985468958 => array(
 			'ScienceFiction' => 'Science fiction',
 		),*/
-	);
+	];
 
 	/**
 	 * Hack for observed substitution issues
 	 */
-	public $skipSelfSubstitution = array(
+	public $skipSelfSubstitution = [
 		'Pythagorean_Theorem',
 		'The_Most_Remarkable_Formula_In_The_World',
 		'Wine',
-	);
+	];
 
-	public $unixLineEndingsOps = array(
+	public $unixLineEndingsOps = [
 		987743732 => 'Wikipedia_FAQ'
-	);
+	];
 
-	public $replacementsDone = array();
+	public $replacementsDone = [];
 
-	public $moveLog = array();
-	public $moveDests = array();
+	public $moveLog = [];
+	public $moveDests = [];
 	public $revId;
 
-	public $rc = array();
-	public $textCache = array();
-	public $blacklist = array();
+	public $rc = [];
+	public $textCache = [];
+	public $blacklist = [];
 
 	public $FS, $FS1, $FS2, $FS3;
 	public $FreeLinkPattern, $UrlPattern, $LinkPattern, $InterLinkPattern;
 
-	public $cp1252Table = array(
+	public $cp1252Table = [
 0x80 => 0x20ac,
 0x81 => 0x0081,
 0x82 => 0x201a,
@@ -127,7 +127,7 @@ class ImportUseModWikipedia extends Maintenance {
 0x9c => 0x0153,
 0x9d => 0x009d,
 0x9e => 0x017e,
-0x9f => 0x0178 );
+0x9f => 0x0178 ];
 
 	public function __construct() {
 		parent::__construct();
@@ -135,7 +135,7 @@ class ImportUseModWikipedia extends Maintenance {
 		$this->addOption( 'outfile', 'the name of the output XML file', true, true );
 		$this->initLinkPatterns();
 
-		$this->encodeMap = $this->decodeMap = array();
+		$this->encodeMap = $this->decodeMap = [];
 
 		for ( $source = 0; $source <= 0xff; $source++ ) {
 			if ( isset( $this->cp1252Table[$source] ) ) {
@@ -161,7 +161,9 @@ class ImportUseModWikipedia extends Maintenance {
 		$LowerLetter = "[a-z";
 		$AnyLetter   = "[A-Za-z";
 		$AnyLetter .= "_0-9";
-		$UpperLetter .= "]"; $LowerLetter .= "]"; $AnyLetter .= "]";
+		$UpperLetter .= "]";
+$LowerLetter .= "]";
+$AnyLetter .= "]";
 
 		# Main link pattern: lowercase between uppercase, then anything
 		$LpA = $UpperLetter . "+" . $LowerLetter . "+" . $UpperLetter
@@ -250,15 +252,15 @@ EOT
 				echo "Error reading rclog\n";
 				return;
 			}
-			$params = array(
+			$params = [
 				'timestamp' => $bits[0],
 				'rctitle' => $bits[1],
 				'summary' => $bits[2],
 				'minor' => $bits[3],
 				'host' => $bits[4],
 				'kind' => $bits[5],
-				'extra' => array()
-			);
+				'extra' => []
+			];
 			$extraList = explode( $this->FS2, $bits[6] );
 
 			for ( $i = 0; $i < count( $extraList ); $i += 2 ) {
@@ -269,10 +271,10 @@ EOT
 	}
 
 	function writeMoveLog() {
-		$this->moveLog = array();
+		$this->moveLog = [];
 		$deepRenames = $this->deepRenames;
 		echo "Calculating move log...\n";
-		$this->processDiffFile( array( $this, 'moveLogCallback' ) );
+		$this->processDiffFile( [ $this, 'moveLogCallback' ] );
 
 		// We have the timestamp intervals, now make a guess at the actual timestamp
 		foreach ( $this->moveLog as $newTitle => $params ) {
@@ -282,8 +284,7 @@ EOT
 				$drTime = $deepRenames[$params['old']];
 				if ( $drTime !== '?' ) {
 					if ( ( !isset( $params['endTime'] ) || $drTime < $params['endTime'] )
-						&& $drTime > $params['startTime'] )
-					{
+						&& $drTime > $params['startTime'] ) {
 						$this->moveLog[$newTitle]['timestamp'] = $drTime;
 						$this->moveLog[$newTitle]['deep'] = true;
 
@@ -338,7 +339,6 @@ EOT
 				implode( "\n", array_keys( $deepRenames ) ) .
 				"\n\n";
 		}
-
 	}
 
 	function element( $name, $value ) {
@@ -352,17 +352,16 @@ EOT
 
 		if ( $rctitle === $title ) {
 			if ( isset( $this->moveLog[$rctitle] )
-				&& !isset( $this->moveLog[$rctitle]['endTime'] ) )
-			{
+				&& !isset( $this->moveLog[$rctitle]['endTime'] ) ) {
 				// This is the latest time that the page could have been moved
 				$this->moveLog[$rctitle]['endTime'] = $entry['timestamp'];
 			}
 		} else {
 			if ( !isset( $this->moveLog[$rctitle] ) ) {
 				// Initialise the move log entry
-				$this->moveLog[$rctitle] = array(
+				$this->moveLog[$rctitle] = [
 					'old' => $title
-				);
+				];
 			}
 			// Update the earliest time the page could have been moved
 			$this->moveLog[$rctitle]['startTime'] = $entry['timestamp'];
@@ -372,7 +371,7 @@ EOT
 	function writeRevisions() {
 		$this->numGoodRevs = 0;
 		$this->revId = 1;
-		$this->processDiffFile( array( $this, 'revisionCallback' ) );
+		$this->processDiffFile( [ $this, 'revisionCallback' ] );
 		echo "\n\nImported {$this->numGoodRevs} out of {$this->numRevs}\n";
 	}
 
@@ -443,13 +442,13 @@ EOT
 				$this->printLatin1( "$fixTime $title FIXING LINE ENDINGS\n" );
 				$text = $this->getText( $title );
 				$text = str_replace( "\r", '', $text );
-				$this->saveRevision( array(
+				$this->saveRevision( [
 					'rctitle' => $title,
 					'timestamp' => $fixTime,
-					'extra' => array( 'name' => 'UseModWiki admin' ),
+					'extra' => [ 'name' => 'UseModWiki admin' ],
 					'text' => $text,
 					'summary' => 'Fixing line endings',
-				) );
+				] );
 				unset( $this->unixLineEndingsOps[$fixTime] );
 			}
 		}
@@ -479,7 +478,7 @@ EOT
 	}
 
 	function resolveFailedDiff( $origText, $diff ) {
-		$context = array();
+		$context = [];
 		$diffLines = explode( "\n", $diff );
 		for ( $i = 0; $i < count( $diffLines ); $i++ ) {
 			$diffLine = $diffLines[$i];
@@ -497,7 +496,7 @@ EOT
 			$i--;
 		}
 
-		$changedLinks = array();
+		$changedLinks = [];
 		$origLines = explode( "\n", $origText );
 		foreach ( $context as $i => $contextLine ) {
 			$origLine = isset( $origLines[$i] ) ? $origLines[$i] : '';
@@ -517,7 +516,7 @@ EOT
 	}
 
 	function resolveTextChange( $source, $dest ) {
-		$changedLinks = array();
+		$changedLinks = [];
 		$sourceLinks = $this->getLinkList( $source );
 		$destLinks = $this->getLinkList( $dest );
 		$newLinks = array_diff( $destLinks, $sourceLinks );
@@ -536,8 +535,8 @@ EOT
 			}
 			if ( $bestRemovedLink !== false ) {
 				$changedLinks[$bestRemovedLink] = $newLink;
-				$newLinks = array_diff( $newLinks, array( $newLink ) );
-				$removedLinks = array_diff( $removedLinks, array( $bestRemovedLink ) );
+				$newLinks = array_diff( $newLinks, [ $newLink ] );
+				$removedLinks = array_diff( $removedLinks, [ $bestRemovedLink ] );
 			}
 		}
 
@@ -735,85 +734,84 @@ EOT
 
 		foreach ( $this->textCache as $title => $oldText ) {
 			if ( $newWithUnderscores === $title
-				&& in_array( $title, $this->skipSelfSubstitution ) )
-			{
+				&& in_array( $title, $this->skipSelfSubstitution ) ) {
 				// Hack to make Pythagorean_Theorem etc. work
 				continue;
 			}
 
 			$newText = $this->substituteTextLinks( $old, $new, $oldText );
 			if ( $oldText !== $newText ) {
-				$this->saveRevision( array(
+				$this->saveRevision( [
 					'rctitle' => $title,
 					'timestamp' => $timestamp,
 					'text' => $newText,
-					'extra' => array( 'name' => 'Page move link fixup script' ),
+					'extra' => [ 'name' => 'Page move link fixup script' ],
 					'summary' => '',
 					'minor' => true
-				) );
+				] );
 			}
 		}
 	}
 
 	function substituteTextLinks( $old, $new, $text ) {
-		$this->saveUrl = array();
+		$this->saveUrl = [];
 		$this->old = $old;
 		$this->new = $new;
 
 		$text = str_replace( $this->FS, '', $text ); # Remove separators (paranoia)
 		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is',
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is',
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( '/(<nowiki>(.*?)<\/nowiki>)/s',
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\|([^\]]+)\]\]/",
-			array( $this, 'subFreeLink' ), $text );
+			[ $this, 'subFreeLink' ], $text );
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\]\]/",
-			array( $this, 'subFreeLink' ), $text );
+			[ $this, 'subFreeLink' ], $text );
 		$text = preg_replace_callback( "/(\[{$this->UrlPattern}\s+([^\]]+?)\])/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/(\[{$this->InterLinkPattern}\s+([^\]]+?)\])/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/(\[?{$this->UrlPattern}\]?)/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/(\[?{$this->InterLinkPattern}\]?)/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/{$this->LinkPattern}/",
-			array( $this, 'subWikiLink' ), $text );
+			[ $this, 'subWikiLink' ], $text );
 
 		$text = preg_replace_callback( "/{$this->FS}(\d+){$this->FS}/",
-			array( $this, 'restoreRaw' ), $text );   # Restore saved text
+			[ $this, 'restoreRaw' ], $text );   # Restore saved text
 		return $text;
 	}
 
 	function getLinkList( $text ) {
-		$this->saveUrl = array();
-		$this->linkList = array();
+		$this->saveUrl = [];
+		$this->linkList = [];
 
 		$text = str_replace( $this->FS, '', $text ); # Remove separators (paranoia)
 		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is',
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is',
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( '/(<nowiki>(.*?)<\/nowiki>)/s',
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\|([^\]]+)\]\]/",
-			array( $this, 'storeLink' ), $text );
+			[ $this, 'storeLink' ], $text );
 		$text = preg_replace_callback( "/\[\[{$this->FreeLinkPattern}\]\]/",
-			array( $this, 'storeLink' ), $text );
+			[ $this, 'storeLink' ], $text );
 		$text = preg_replace_callback( "/(\[{$this->UrlPattern}\s+([^\]]+?)\])/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/(\[{$this->InterLinkPattern}\s+([^\]]+?)\])/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/(\[?{$this->UrlPattern}\]?)/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/(\[?{$this->InterLinkPattern}\]?)/",
-			array( $this, 'storeRaw' ), $text );
+			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( "/{$this->LinkPattern}/",
-			array( $this, 'storeLink' ), $text );
+			[ $this, 'storeLink' ], $text );
 
 		return $this->linkList;
 	}
@@ -843,7 +841,7 @@ EOT
 			$link .= "|$name";
 		}
 		$link .= "]]";
-		return $this->storeRaw( array( 1 => $link ) );
+		return $this->storeRaw( [ 1 => $link ] );
 	}
 
 	function subWikiLink( $m ) {
@@ -854,7 +852,7 @@ EOT
 				$link = "[[$link]]";
 			}
 		}
-		return $this->storeRaw( array( 1 => $link ) );
+		return $this->storeRaw( [ 1 => $link ] );
 	}
 
 	function restoreRaw( $m ) {
@@ -880,7 +878,7 @@ EOT
 
 	function unserializeUseMod( $s, $sep ) {
 		$parts = explode( $sep, $s );
-		$result = array();
+		$result = [];
 		for ( $i = 0; $i < count( $parts ); $i += 2 ) {
 			$result[$parts[$i]] = $parts[$i + 1];
 		}
@@ -889,4 +887,4 @@ EOT
 }
 
 $maintClass = 'ImportUseModWikipedia';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

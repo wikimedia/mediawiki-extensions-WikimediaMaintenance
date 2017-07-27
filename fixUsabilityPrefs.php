@@ -13,24 +13,24 @@ class FixUsabilityPrefs extends Maintenance {
 		echo "Fixing usebetatoolbar\n";
 
 		$batchSize = 100;
-		$allIds = array();
+		$allIds = [];
 		while ( true ) {
 			$this->beginTransaction( $dbw, __METHOD__ );
-			$res = $dbw->select( 'user_properties', array( 'up_user' ),
-				array( 'up_property' => 'usebetatoolbar', 'up_value' => '' ),
+			$res = $dbw->select( 'user_properties', [ 'up_user' ],
+				[ 'up_property' => 'usebetatoolbar', 'up_value' => '' ],
 				__METHOD__,
-				array( 'LIMIT' => $batchSize, 'FOR UPDATE' ) );
+				[ 'LIMIT' => $batchSize, 'FOR UPDATE' ] );
 			if ( !$res->numRows() ) {
 				$this->commitTransaction( $dbw, __METHOD__ );
 				break;
 			}
 
-			$ids = array();
+			$ids = [];
 			foreach ( $res as $row ) {
 				$ids[] = $row->up_user;
 			}
 			$dbw->delete( 'user_properties',
-				array( 'up_property' => 'usebetatoolbar', 'up_user' => $ids ),
+				[ 'up_property' => 'usebetatoolbar', 'up_user' => $ids ],
 				__METHOD__ );
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
@@ -42,21 +42,21 @@ class FixUsabilityPrefs extends Maintenance {
 		$likeWikieditor = $dbw->buildLike( 'wikieditor-', $dbw->anyString() );
 		while ( true ) {
 			$this->beginTransaction( $dbw, __METHOD__ );
-			$res = $dbw->select( 'user_properties', array( 'DISTINCT up_user' ),
-				array(  "up_property $likeWikieditor" ),
+			$res = $dbw->select( 'user_properties', [ 'DISTINCT up_user' ],
+				[ "up_property $likeWikieditor" ],
 				__METHOD__,
-				array( 'LIMIT' => $batchSize, 'FOR UPDATE' ) );
+				[ 'LIMIT' => $batchSize, 'FOR UPDATE' ] );
 			if ( !$res->numRows() ) {
 				$this->commitTransaction( $dbw, __METHOD__ );
 				break;
 			}
 
-			$ids = array();
+			$ids = [];
 			foreach ( $res as $row ) {
 				$ids[] = $row->up_user;
 			}
 			$dbw->delete( 'user_properties',
-				array( "up_property $likeWikieditor", 'up_user' => $ids ),
+				[ "up_property $likeWikieditor", 'up_user' => $ids ],
 				__METHOD__ );
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
@@ -86,6 +86,4 @@ class FixUsabilityPrefs extends Maintenance {
 }
 
 $maintClass = 'FixUsabilityPrefs';
-require_once( DO_MAINTENANCE );
-
-
+require_once DO_MAINTENANCE;

@@ -27,7 +27,7 @@ class GetJobQueueLengths extends Maintenance {
 		$totalOnly = $this->hasOption( 'totalonly' );
 
 		$pendingDBs = JobQueueAggregator::singleton()->getAllReadyWikiQueues();
-		$sizeByWiki = array(); // (wiki => type => count) map
+		$sizeByWiki = []; // (wiki => type => count) map
 		foreach ( $pendingDBs as $type => $wikis ) {
 			foreach ( $wikis as $wiki ) {
 				$sizeByWiki[$wiki][$type] =
@@ -61,4 +61,4 @@ class GetJobQueueLengths extends Maintenance {
 }
 
 $maintClass = 'GetJobQueueLengths';
-require_once( DO_MAINTENANCE );
+require_once DO_MAINTENANCE;

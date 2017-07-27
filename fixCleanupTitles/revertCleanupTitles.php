@@ -9,7 +9,7 @@ if ( !$lines ) {
 }
 
 $lines = array_map( 'trim', $lines );
-$opsByWiki = array();
+$opsByWiki = [];
 
 foreach ( $lines as $line ) {
 	if ( !preg_match( '/
@@ -19,29 +19,28 @@ foreach ( $lines as $line ) {
 		(\d+) \s
 		\((\d+),\'(.*?)\'\)
 		/x',
-		$line, $m ) )
-	{
+		$line, $m ) ) {
 		continue;
 	}
 
 	list( $whole, $wiki, $pageId, $ns, $dbk ) = $m;
 
-	$opsByWiki[$wiki][] = array(
+	$opsByWiki[$wiki][] = [
 		'id' => $pageId,
 		'ns' => $ns,
-		'dbk' => $dbk );
+		'dbk' => $dbk ];
 }
 
 foreach ( $opsByWiki as $wiki => $ops ) {
 	$lb = wfGetLB( $wiki );
-	$db = $lb->getConnection( DB_MASTER, array(), $wiki );
+	$db = $lb->getConnection( DB_MASTER, [], $wiki );
 
 	foreach ( $ops as $op ) {
 		$msg = "{$op['id']} -> {$op['ns']}:{$op['dbk']}";
 
 		# Sanity check
-		$row = $db->selectRow( 'page', array( 'page_namespace', 'page_title' ),
-			array( 'page_id' => $op['id'] ), __METHOD__ );
+		$row = $db->selectRow( 'page', [ 'page_namespace', 'page_title' ],
+			[ 'page_id' => $op['id'] ], __METHOD__ );
 		if ( !$row ) {
 			echo "$wiki: missing: $msg\n";
 			continue;
@@ -53,15 +52,13 @@ foreach ( $opsByWiki as $wiki => $ops ) {
 		}
 
 		$db->update( 'page',
-			/* SET */ array(
+			/* SET */ [
 				'page_namespace' => $op['ns'],
-				'page_title' => $op['dbk'] ),
-			/* WHERE */ array(
-				'page_id' => $op['id'] ),
+				'page_title' => $op['dbk'] ],
+			/* WHERE */ [
+				'page_id' => $op['id'] ],
 			__METHOD__ );
 		echo "$wiki: updated: $msg\n";
 	}
 	$lb->reuseConnection( $db );
 }
-
-

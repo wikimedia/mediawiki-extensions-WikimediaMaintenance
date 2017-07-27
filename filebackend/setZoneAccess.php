@@ -10,18 +10,18 @@ class SetZoneAccess extends Maintenance {
 
 	public function execute() {
 		$backend = FileBackendGroup::singleton()->get( $this->getOption( 'backend' ) );
-		foreach ( array( 'public', 'thumb', 'transcoded', 'temp', 'deleted' ) as $zone ) {
+		foreach ( [ 'public', 'thumb', 'transcoded', 'temp', 'deleted' ] as $zone ) {
 			$dir = $backend->getContainerStoragePath( "local-$zone" );
 			$secure = ( $zone === 'deleted' || $zone === 'temp' || $this->hasOption( 'private' ) )
-				? array( 'noAccess' => true, 'noListing' => true )
-				: array();
+				? [ 'noAccess' => true, 'noListing' => true ]
+				: [];
 			$this->prepareDirectory( $backend, $dir, $secure );
 		}
-		foreach ( array( 'timeline-render' ) as $container ) {
+		foreach ( [ 'timeline-render' ] as $container ) {
 			$dir = $backend->getContainerStoragePath( $container );
 			$secure = $this->hasOption( 'private' )
-				? array( 'noAccess' => true, 'noListing' => true )
-				: array();
+				? [ 'noAccess' => true, 'noListing' => true ]
+				: [];
 			$this->prepareDirectory( $backend, $dir, $secure );
 		}
 	}
@@ -29,14 +29,14 @@ class SetZoneAccess extends Maintenance {
 	protected function prepareDirectory( FileBackend $backend, $dir, array $secure ) {
 		// Create zone if it doesn't exist...
 		$this->output( "Making sure $dir exists..." );
-		$status = $backend->prepare( array( 'dir' => $dir ) + $secure );
+		$status = $backend->prepare( [ 'dir' => $dir ] + $secure );
 		// Make sure zone has the right ACLs...
 		if ( count( $secure ) ) { // private
 			$this->output( "making '$dir' private..." );
-			$status->merge( $backend->secure( array( 'dir' => $dir ) + $secure ) );
+			$status->merge( $backend->secure( [ 'dir' => $dir ] + $secure ) );
 		} else { // public
 			$this->output( "making '$dir' public..." );
-			$status->merge( $backend->publish( array( 'dir' => $dir, 'access' => true ) ) );
+			$status->merge( $backend->publish( [ 'dir' => $dir, 'access' => true ] ) );
 		}
 		$this->output( "done.\n" );
 		if ( !$status->isOK() ) {
@@ -45,4 +45,4 @@ class SetZoneAccess extends Maintenance {
 	}
 }
 $maintClass = 'SetZoneAccess';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

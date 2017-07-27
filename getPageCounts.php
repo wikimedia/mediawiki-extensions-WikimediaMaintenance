@@ -34,7 +34,7 @@ class GetPageCounts extends Maintenance {
 		$wikis = $wgConf->getLocalDatabases();
 		$exclude = array_flip( $this->getExcludedWikis() );
 
-		$counts = array();
+		$counts = [];
 		foreach ( $wikis as $wiki ) {
 			$wiki = trim( $wiki );
 			if ( $wiki === '' || $wiki[0] === '#' ) {
@@ -44,15 +44,15 @@ class GetPageCounts extends Maintenance {
 				continue;
 			}
 			$lb = wfGetLB( $wiki );
-			$dbr = $lb->getConnection( DB_SLAVE, array(), $wiki );
-			$row = $dbr->selectRow( 'site_stats', array( 'ss_total_pages', 'ss_good_articles' ), '', __METHOD__ );
+			$dbr = $lb->getConnection( DB_SLAVE, [], $wiki );
+			$row = $dbr->selectRow( 'site_stats', [ 'ss_total_pages', 'ss_good_articles' ], '', __METHOD__ );
 			if ( !$row ) {
 				$this->error( "Error: '$wiki' has empty site_stats\n", 1 ); // Die
 			}
-			$counts[$wiki] = array(
+			$counts[$wiki] = [
 				'pages' => intval( $row->ss_total_pages ),
 				'contentPages' => intval( $row->ss_good_articles ),
-			);
+			];
 			$lb->reuseConnection( $dbr );
 		}
 		$this->output( FormatJson::encode( $counts, true ) . "\n" );
@@ -65,17 +65,16 @@ class GetPageCounts extends Maintenance {
 	private function dblist( $name ) {
 		if ( !defined( 'MEDIAWIKI_DBLIST_DIR' ) ) {
 			$this->error( "Warning: MEDIAWIKI_DBLIST_DIR is not defined, no wikis will be blacklisted\n" );
-			return array();
+			return [];
 		}
 		$fileName = MEDIAWIKI_DBLIST_DIR . "/$name.dblist";
 		if ( !is_readable( $fileName ) ) {
 			$this->error( "Warning: can't read $fileName, no wikis will be blacklisted\n" );
-			return array();
+			return [];
 		}
 		return array_map( 'trim', file( $fileName ) );
 	}
 }
 
-
 $maintClass = 'GetPageCounts';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -77,20 +77,18 @@ class MeasureZoneSizes extends Maintenance {
 			file_put_contents( $file, "$wgDBname:\n$output", LOCK_EX | FILE_APPEND );
 		}
 		$this->output( $output );
-
 	}
 
 	protected function getSizeOfDirectory( FileBackend $backend, $dir ) {
 		$bytes = 0;
 		$count = 0;
-		$list = $backend->getFileList( array( 'dir' => $dir, 'adviseStat' => true ) );
+		$list = $backend->getFileList( [ 'dir' => $dir, 'adviseStat' => true ] );
 		foreach ( $list as $relPath ) {
-			$bytes += (int)$backend->getFileSize( array( 'src' => "{$dir}/{$relPath}" ) );
+			$bytes += (int)$backend->getFileSize( [ 'src' => "{$dir}/{$relPath}" ] );
 			$count++;
 		}
-		return array( $count, $bytes );
+		return [ $count, $bytes ];
 	}
 }
 $maintClass = 'MeasureZoneSizes';
 require_once RUN_MAINTENANCE_IF_MAIN;
-

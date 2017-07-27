@@ -66,16 +66,16 @@ class RenameWiki extends Maintenance {
 		if ( is_array( $wgDefaultExternalStore ) ) {
 			$stores = $wgDefaultExternalStore;
 		} elseif ( $wgDefaultExternalStore ) {
-			$stores = array( $wgDefaultExternalStore );
+			$stores = [ $wgDefaultExternalStore ];
 		} else {
-			$stores = array();
+			$stores = [];
 		}
 
 		if ( count( $stores ) ) {
 			$this->output( "Initialising external storage...\n" );
 			global $wgDBuser, $wgDBpassword, $wgExternalServers;
 			foreach ( $stores as $storeURL ) {
-				$m = array();
+				$m = [];
 				if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
 					continue;
 				}
@@ -101,4 +101,4 @@ class RenameWiki extends Maintenance {
 }
 
 $maintClass = "RenameWiki";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

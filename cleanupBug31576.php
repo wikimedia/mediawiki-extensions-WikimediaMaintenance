@@ -5,7 +5,7 @@ class CleanupBug31576 extends Maintenance {
 
 	protected $batchsize;
 
-	protected $processed = array();
+	protected $processed = [];
 
 	public function __construct() {
 		parent::__construct();
@@ -32,18 +32,18 @@ class CleanupBug31576 extends Maintenance {
 		$this->output( "Fixing pages with template links to $synonym ...\n" );
 		$from = null;
 		while ( true ) {
-			$where = array(
+			$where = [
 				'tl_namespace' => NS_TEMPLATE,
 				'tl_title ' . $dbr->buildLike( $synonym, $dbr->anyString() )
-			);
+			];
 			if ( $from !== null ) {
 				$where[] = 'tl_from > ' . $dbr->addQuotes( $from );
 				$from = null;
 			}
-			$res = $dbr->select( 'templatelinks', array( 'tl_title', 'tl_from' ),
+			$res = $dbr->select( 'templatelinks', [ 'tl_title', 'tl_from' ],
 				$where,
 				__METHOD__,
-				array( 'ORDER BY' => array( 'tl_title', 'tl_from' ), 'LIMIT' => $this->batchsize )
+				[ 'ORDER BY' => [ 'tl_title', 'tl_from' ], 'LIMIT' => $this->batchsize ]
 			);
 			if ( $dbr->numRows( $res ) == 0 ) {
 				// No more rows, we're done
@@ -71,4 +71,4 @@ class CleanupBug31576 extends Maintenance {
 }
 
 $maintClass = "CleanupBug31576";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

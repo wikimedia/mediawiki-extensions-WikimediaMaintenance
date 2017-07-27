@@ -39,7 +39,6 @@ class FixBeXOldRenames extends Maintenance {
 			}
 		}
 		fclose( $file );
-
 	}
 
 	protected function rename( $oldname ) {
@@ -47,18 +46,18 @@ class FixBeXOldRenames extends Maintenance {
 		$oldUser->mName = $oldname;
 		$newUser = User::newFromName( str_replace( '_', '-', $oldname ), 'usable' );
 		$maintScript = User::newFromName( 'Maintenance script' );
-		$session = array(
+		$session = [
 			'userId' => $maintScript->getId(),
 			'ip' => '127.0.0.1',
 			'sessionId' => '0',
-			'headers' => array(),
-		);
-		$data = array(
+			'headers' => [],
+		];
+		$data = [
 			'movepages' => true,
 			'suppressredirects' => true,
 			'reason' => '[[m:Special:MyLanguage/Single User Login finalisation announcement|SUL finalization]]',
 			'force' => true,
-		);
+		];
 		$globalRenameUser = new GlobalRenameUser(
 			$maintScript,
 			$oldUser,

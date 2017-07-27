@@ -87,7 +87,7 @@ class AddWiki extends Maintenance {
 			null,
 			null,
 			__METHOD__,
-			array( $this, 'noExecuteCommands' )
+			[ $this, 'noExecuteCommands' ]
 		);
 		$dbw->sourceFile( "$IP/extensions/AntiSpoof/sql/patch-antispoof.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/Babel/babel.sql" );
@@ -153,18 +153,18 @@ class AddWiki extends Maintenance {
 		if ( is_array( $wgDefaultExternalStore ) ) {
 			$stores = $wgDefaultExternalStore;
 		} elseif ( $wgDefaultExternalStore ) {
-			$stores = array( $wgDefaultExternalStore );
+			$stores = [ $wgDefaultExternalStore ];
 		} else {
-			$stores = array();
+			$stores = [];
 		}
 
 		// Flow External Store (may be the same, so there is an array_unique)
 		if ( is_array( $wgFlowExternalStore ) ) {
 			$flowStores = $wgFlowExternalStore;
 		} elseif ( $wgFlowExternalStore ) {
-			$flowStores = array( $wgFlowExternalStore );
+			$flowStores = [ $wgFlowExternalStore ];
 		} else {
-			$flowStores = array();
+			$flowStores = [];
 		}
 
 		$stores = array_unique( array_merge( $stores, $flowStores ) );
@@ -172,7 +172,7 @@ class AddWiki extends Maintenance {
 		if ( count( $stores ) ) {
 			global $wgDBuser, $wgDBpassword, $wgExternalServers;
 			foreach ( $stores as $storeURL ) {
-				$m = array();
+				$m = [];
 				if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
 					continue;
 				}
@@ -337,7 +337,6 @@ EOT;
 	 * @return Status
 	 */
 	private function setFundraisingLink( $domain, $language ) {
-
 		$title = Title::newFromText( "Mediawiki:Sitesupport-url" );
 		$this->output( "Writing sidebar donate link to " . $title->getPrefixedDBkey() . "\n" );
 		$article = WikiPage::factory( $title );

@@ -23,7 +23,7 @@ class FixOrphans extends Maintenance {
 		}
 		$dbw = wfGetDB( DB_MASTER );
 
-		$verifyPairs = array(
+		$verifyPairs = [
 			'ar_comment' => 'rev_comment',
 			'ar_user' => 'rev_user',
 			'ar_user_text' => 'rev_user_text',
@@ -35,7 +35,7 @@ class FixOrphans extends Maintenance {
 			'ar_page_id' => 'rev_page',
 			'ar_parent_id' => 'rev_parent_id',
 			'ar_sha1' => 'rev_sha1',
-		);
+		];
 
 		while ( !feof( $f ) ) {
 			$line = fgets( $f );
@@ -52,23 +52,23 @@ class FixOrphans extends Maintenance {
 				$this->error( "XXX: ERROR Invalid line $lineNumber\n" );
 				continue;
 			}
-			$info = array_combine( array( 'up_page', 'up_timestamp', 'log_namespace',
-				'log_title', 'rev_id', 'ar_rev_match', 'ar_text_match' ), $parts );
+			$info = array_combine( [ 'up_page', 'up_timestamp', 'log_namespace',
+				'log_title', 'rev_id', 'ar_rev_match', 'ar_text_match' ], $parts );
 			$revId = $info['rev_id'];
 
 			$this->beginTransaction( $dbw, __METHOD__ );
-			$revRow = $dbw->selectRow( 'revision', '*', array( 'rev_id' => $revId ),
-				__METHOD__, array( 'FOR UPDATE' ) );
+			$revRow = $dbw->selectRow( 'revision', '*', [ 'rev_id' => $revId ],
+				__METHOD__, [ 'FOR UPDATE' ] );
 			if ( !$revRow ) {
 				$this->error( "$revId: ERROR revision row has disappeared!" );
 				$this->commitTransaction( $dbw, __METHOD__ );
 				continue;
 			}
 
-			$arRow = $dbw->selectRow( 'archive', '*', array( 'ar_rev_id' => $revId ),
-				__METHOD__, array( 'FOR UPDATE' ) );
-			$pageRow = $dbw->selectRow( 'page', '*', array( 'page_id' => $revRow->rev_page ),
-				__METHOD__, array( 'FOR UPDATE' ) );
+			$arRow = $dbw->selectRow( 'archive', '*', [ 'ar_rev_id' => $revId ],
+				__METHOD__, [ 'FOR UPDATE' ] );
+			$pageRow = $dbw->selectRow( 'page', '*', [ 'page_id' => $revRow->rev_page ],
+				__METHOD__, [ 'FOR UPDATE' ] );
 
 			if ( $pageRow ) {
 				// rev_page is somehow connected to a valid page row
@@ -121,12 +121,12 @@ class FixOrphans extends Maintenance {
 			}
 
 			if ( $action === 'remove-archive' ) {
-				$dbw->delete( 'archive', array( 'ar_rev_id' => $revId ), __METHOD__ );
+				$dbw->delete( 'archive', [ 'ar_rev_id' => $revId ], __METHOD__ );
 			} elseif ( $action === 'remove-revision' ) {
-				$dbw->delete( 'revision', array( 'rev_id' => $revId ), __METHOD__ );
+				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
 			} elseif ( $action === 'move-revision' ) {
 				$dbw->insert( 'archive',
-					array(
+					[
 						'ar_namespace'  => $info['log_namespace'],
 						'ar_title'      => $info['log_title'],
 						'ar_comment'    => $revRow->rev_comment,
@@ -143,9 +143,9 @@ class FixOrphans extends Maintenance {
 						'ar_page_id'    => $revRow->rev_page,
 						'ar_deleted'    => $revRow->rev_deleted,
 						'ar_sha1'       => $revRow->rev_sha1,
-					),
+					],
 					__METHOD__ );
-				$dbw->delete( 'revision', array( 'rev_id' => $revId ), __METHOD__ );
+				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
 			}
 			$this->commitTransaction( $dbw, __METHOD__ );
 
@@ -157,5 +157,4 @@ class FixOrphans extends Maintenance {
 }
 
 $maintClass = 'FixOrphans';
-require_once( RUN_MAINTENANCE_IF_MAIN );
-
+require_once RUN_MAINTENANCE_IF_MAIN;

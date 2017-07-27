@@ -1,6 +1,6 @@
 <?php
 
-require_once( __DIR__ . '/WikimediaMaintenance.php' );
+require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class MakeDumpList extends Maintenance {
 	public function __construct() {
@@ -45,8 +45,8 @@ class MakeDumpList extends Maintenance {
 			'page_id=tl_from'
 		];
 		$res = $dbr->select(
-			['page', 'templatelinks'],
-			['tl_namespace', 'tl_title'],
+			[ 'page', 'templatelinks' ],
+			[ 'tl_namespace', 'tl_title' ],
 			$conds,
 			__METHOD__ );
 		foreach ( $res as $row ) {
@@ -57,4 +57,4 @@ class MakeDumpList extends Maintenance {
 }
 
 $maintClass = "MakeDumpList";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

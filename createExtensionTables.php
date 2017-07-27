@@ -36,7 +36,7 @@ class CreateExtensionTables extends Maintenance {
 		$dbw = $this->getDB( DB_MASTER );
 		$extension = $this->getArg( 0 );
 
-		$files = array();
+		$files = [];
 		$path = '';
 
 		switch ( strtolower( $extension ) ) {
@@ -50,17 +50,17 @@ class CreateExtensionTables extends Maintenance {
 				$dbw->query( "SET storage_engine=InnoDB" );
 				$dbw->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID() );
 				$dbw->selectDB( wfWikiID() );
-				$files = array( 'echo.sql' );
+				$files = [ 'echo.sql' ];
 				$path = "$IP/extensions/Echo";
 				break;
 
 			case 'educationprogram':
-				$files = array( 'EducationProgram.sql' );
+				$files = [ 'EducationProgram.sql' ];
 				$path = "$IP/extensions/EducationProgram/sql";
 				break;
 
 			case 'flaggedrevs':
-				$files = array( 'FlaggedRevs.sql' );
+				$files = [ 'FlaggedRevs.sql' ];
 				$path = "$IP/extensions/FlaggedRevs/backend/schema/mysql";
 				break;
 
@@ -68,55 +68,55 @@ class CreateExtensionTables extends Maintenance {
 				if ( $wgFlowDefaultWikiDb !== false ) {
 					$this->error( "This wiki uses $wgFlowDefaultWikiDb for Flow tables. They don't need to be created on the project database, which is the scope of this script.", 1 );
 				}
-				$files = array( 'flow.sql' );
+				$files = [ 'flow.sql' ];
 				$path = "$IP/extensions/Flow";
 				break;
 
 			case 'linter':
-				$files = array( 'linter.sql' );
+				$files = [ 'linter.sql' ];
 				$path = "$IP/extensions/Linter";
 				break;
 
 			case 'moodbar':
-				$files = array(
+				$files = [
 					'MoodBar.sql',
 					'moodbar_feedback_response.sql',
-				);
+				];
 				$path = "$IP/extensions/MoodBar/sql";
 				break;
 
 			case 'oathauth':
-				$files = array(
+				$files = [
 					'tables.sql',
-				);
+				];
 				$path = "$IP/extensions/OATHAuth/sql/mysql";
 				break;
 
 			case 'ores':
-				$files = array(
+				$files = [
 					'ores_model.sql',
 					'ores_classification.sql',
-				);
+				];
 				$path = "$IP/extensions/ORES/sql";
 				break;
 
 			case 'pageassessments':
-				$files = array(
+				$files = [
 					'addProjectsTable.sql',
 					'addReviewsTable.sql',
-				);
+				];
 				$path = "$IP/extensions/PageAssessments/db";
 				break;
 
 			case 'shorturl':
-				$files = array(
+				$files = [
 					'shorturls.sql',
-				);
+				];
 				$path = "$IP/extensions/ShortUrl/schemas";
 				break;
 
 			case 'translate':
-				$files = array(
+				$files = [
 					'revtag.sql',
 					'translate_groupstats.sql',
 					'translate_metadata.sql',
@@ -124,12 +124,12 @@ class CreateExtensionTables extends Maintenance {
 					'translate_groupreviews.sql',
 					'translate_messageindex.sql',
 					'translate_reviews.sql',
-				);
+				];
 				$path = "$IP/extensions/Translate/sql";
 				break;
 
 			case 'wikilove':
-				$files = array( 'WikiLoveLog.sql' );
+				$files = [ 'WikiLoveLog.sql' ];
 				$path = "$IP/extensions/WikiLove/patches";
 				break;
 
@@ -146,5 +146,4 @@ class CreateExtensionTables extends Maintenance {
 }
 
 $maintClass = 'CreateExtensionTables';
-require_once( DO_MAINTENANCE );
-
+require_once DO_MAINTENANCE;

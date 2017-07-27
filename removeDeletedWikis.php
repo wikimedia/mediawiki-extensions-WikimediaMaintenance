@@ -65,10 +65,10 @@ class RemoveDeletedWikis extends Maintenance {
 		do {
 			// https://bugzilla.wikimedia.org/show_bug.cgi?id=52868
 			// $dbw->delete(
-			//	$table,
-			//	array( $column => $wiki ),
-			//	__METHOD__,
-			//	array( 'LIMIT' => 500 ),
+			// $table,
+			// array( $column => $wiki ),
+			// __METHOD__,
+			// array( 'LIMIT' => 500 ),
 			// );
 			$wikiQuoted = $dbw->addQuotes( $wiki );
 			$dbw->query(
@@ -85,4 +85,4 @@ class RemoveDeletedWikis extends Maintenance {
 }
 
 $maintClass = 'RemoveDeletedWikis';
-require_once( DO_MAINTENANCE );
+require_once DO_MAINTENANCE;

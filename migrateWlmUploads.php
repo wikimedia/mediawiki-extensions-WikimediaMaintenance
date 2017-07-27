@@ -29,15 +29,15 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class MigrateWlmUploads extends Maintenance {
 	private $dryRun,
-		$testerUsernames = array(
+		$testerUsernames = [
 			'Jdlrobson',
 			'Tfinc',
 			'Brion VIBBER',
 			'Awjrichards',
 			'Philinje',
-		),
+		],
 		$home,
-		$logFiles = array( 'found', 'done', 'exists', 'nouser' ),
+		$logFiles = [ 'found', 'done', 'exists', 'nouser' ],
 		$tmpDir,
 		$deletingUser;
 
@@ -67,25 +67,24 @@ class MigrateWlmUploads extends Maintenance {
 		}
 		wfRestoreWarnings();
 
-
 		$this->home = getenv( 'HOME' );
 		$this->dryRun = !$this->hasOption( 'do-it' );
 
 		$dbw = $this->getDB( DB_MASTER );
-		$this->commonsDbw = $this->getDB( DB_MASTER, array(), 'commonswiki' );
+		$this->commonsDbw = $this->getDB( DB_MASTER, [], 'commonswiki' );
 		$wlmTemplate = Title::newFromText( 'Template:Uploaded with WLM Mobile' );
 		$this->deletingUser = User::newFromName( 'Maintenance script' );
 
 		$res = $dbw->select(
-			array( 'templatelinks', 'page', 'image' ),
-			array( 'page_title', 'img_user_text', 'img_timestamp' ),
-			array(
+			[ 'templatelinks', 'page', 'image' ],
+			[ 'page_title', 'img_user_text', 'img_timestamp' ],
+			[
 				'tl_namespace' => $wlmTemplate->getNamespace(),
 				'tl_title' => $wlmTemplate->getDBkey(),
 				'tl_from = page_id',
 				'page_namespace' => NS_FILE,
 				'page_title = img_name',
-			),
+			],
 			__METHOD__
 		);
 
@@ -94,7 +93,7 @@ class MigrateWlmUploads extends Maintenance {
 			$user = $row->img_user_text;
 			$timestamp = $row->img_timestamp;
 
-			$this->logToFile( 'found', array( $title, $user ) );
+			$this->logToFile( 'found', [ $title, $user ] );
 			$this->output( "$title by $user uploaded at $timestamp\n" );
 			if ( in_array( $user, $this->testerUsernames ) ) {
 				$this->output( "   ...this user is an app tester, rejecting\n" );
@@ -135,15 +134,15 @@ class MigrateWlmUploads extends Maintenance {
 	}
 
 	private function migrateFile( $fileName, $user, $timestamp ) {
-		if ( !$this->commonsDbw->selectField( 'user', 'user_id', array( 'user_name' => $user ) ) ) {
-			$this->logToFile( 'nouser', array( $fileName, $user ) );
+		if ( !$this->commonsDbw->selectField( 'user', 'user_id', [ 'user_name' => $user ] ) ) {
+			$this->logToFile( 'nouser', [ $fileName, $user ] );
 			$this->output( "   ...No such user found on destination wiki\n" );
 			return;
 		}
 		$localFile = wfLocalFile( $fileName );
-		$remoteFileName = $this->commonsDbw->selectField( 'image', 'img_name', array( 'img_sha1' => $localFile->getSha1() ) );
+		$remoteFileName = $this->commonsDbw->selectField( 'image', 'img_name', [ 'img_sha1' => $localFile->getSha1() ] );
 		if ( $remoteFileName ) {
-			$this->logToFile( 'exists', array( $fileName, $user, $remoteFileName ) );
+			$this->logToFile( 'exists', [ $fileName, $user, $remoteFileName ] );
 			$this->output( "   ...File already exists on destination wiki as $remoteFileName\n" );
 			return;
 		}
@@ -158,14 +157,14 @@ class MigrateWlmUploads extends Maintenance {
 		// we just call upload script instead
 		$tempFile = "{$this->tmpDir}/{$fileName}";
 		$cmd = 'sudo -u apache mwscript importImages.php --wiki=commonswiki'
-		 	. ' --user=' . wfEscapeShellArg( $user )
+			 . ' --user=' . wfEscapeShellArg( $user )
 			. ' --comment-file=' . wfEscapeShellArg( $descFile )
 			. ' --summary=' . wfEscapeShellArg( 'WLM image automatically imported from testwiki' )
 			. ' --timestamp=' . wfEscapeShellArg( $timestamp )
 			. ' ' . wfEscapeShellArg( $this->tmpDir );
 		$this->output( "   ...Executing $cmd\n" );
 		if ( $this->dryRun ) {
-			$this->logToFile( 'done', array( $fileName, $user ) );
+			$this->logToFile( 'done', [ $fileName, $user ] );
 			return;
 		}
 
@@ -174,14 +173,14 @@ class MigrateWlmUploads extends Maintenance {
 		copy( $localCopy->getPath(), $tempFile );
 
 		$retval = 0;
-		$output = wfShellExec( $cmd, $retval, array(), array( 'memory' => 1024 * 512 ) );
+		$output = wfShellExec( $cmd, $retval, [], [ 'memory' => 1024 * 512 ] );
 		if ( $output ) {
 			$this->output( $output . "\n" );
 		}
 		if ( $retval ) {
 			$this->error( '*** Upload error, aborting ***', 1 );
 		}
-		$this->logToFile( 'done', array( $fileName, $user ) );
+		$this->logToFile( 'done', [ $fileName, $user ] );
 
 		wfSuppressWarnings();
 		unlink( $tempFile );
@@ -198,4 +197,4 @@ class MigrateWlmUploads extends Maintenance {
 }
 
 $maintClass = 'MigrateWlmUploads';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

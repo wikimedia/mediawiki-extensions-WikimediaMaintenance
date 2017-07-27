@@ -57,7 +57,7 @@ class WikimediaPurgeUrls extends Maintenance {
 			$url = trim( fgets( $stdin ) );
 			if ( preg_match( '%^https?://%', $url ) ) {
 				$urls[] = $url;
-			} else if ( $url !== '' ) {
+			} elseif ( $url !== '' ) {
 				$this->output( "Invalid url (skipped): $url\n" );
 			}
 		}

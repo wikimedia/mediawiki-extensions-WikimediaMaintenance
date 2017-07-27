@@ -32,17 +32,17 @@ $wikiuser_pass = `wikiuser_pass`;
 $wikiadmin_pass = `wikiadmin_pass`;
 $nagios_pass = `nagios_sql_pass`;
 
-$hosts = array(
+$hosts = [
 	'localhost',
 	'10.0.%',
 	'66.230.200.%',
 	'208.80.152.%',
-);
+];
 
-$databases = array(
+$databases = [
 	'%wik%',
 	'centralauth',
-);
+];
 
 print "/*!40100 set old_passwords=1 */;\n";
 print "/*!40100 set global old_passwords=1 */;\n";
@@ -67,4 +67,3 @@ foreach ( $hosts as $host ) {
 
 	print "\n";
 }
-

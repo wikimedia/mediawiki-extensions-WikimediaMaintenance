@@ -18,13 +18,13 @@ class MakeSizeDBLists extends Maintenance {
 
 	function execute() {
 		global $wgConf;
-		$small = array();
-		$medium = array();
-		$large = array();
+		$small = [];
+		$medium = [];
+		$large = [];
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			try {
 				$lb = wfGetLB( $wiki );
-				$db = $lb->getConnection( DB_MASTER, array(), $wiki );
+				$db = $lb->getConnection( DB_MASTER, [], $wiki );
 			} catch ( Exception $e ) {
 				// Probably just wikitech etc, skip!
 				continue;
@@ -60,4 +60,4 @@ class MakeSizeDBLists extends Maintenance {
 }
 
 $maintClass = 'MakeSizeDBLists';
-require_once( DO_MAINTENANCE );
+require_once DO_MAINTENANCE;

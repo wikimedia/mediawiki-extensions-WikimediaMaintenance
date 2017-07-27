@@ -54,7 +54,7 @@ class DumpInterwiki extends Maintenance {
 	 * @returns array
 	 */
 	protected function getSites() {
-		return array(
+		return [
 			'wiki' => new WMFSite( 'wiki', 'w', 'wikipedia' . $this->end ),
 			'wiktionary' => new WMFSite( 'wiktionary', 'wikt', 'wiktionary' . $this->end ),
 			'wikiquote' => new WMFSite( 'wikiquote', 'q', 'wikiquote' . $this->end ),
@@ -64,7 +64,7 @@ class DumpInterwiki extends Maintenance {
 			'wikimedia' => new WMFSite( 'wikimedia', 'chapter', 'wikimedia' . $this->end ),
 			'wikiversity' => new WMFSite( 'wikiversity', 'v', 'wikiversity' . $this->end ),
 			'wikivoyage' => new WMFSite( 'wikivoyage', 'voy', 'wikivoyage' . $this->end ),
-		);
+		];
 	}
 
 	/**
@@ -73,12 +73,12 @@ class DumpInterwiki extends Maintenance {
 	 * @returns array
 	 */
 	protected function getExtraLinks() {
-		return array(
-			array( 'm', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ),
-			array( 'meta', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ),
-			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
-			array( 'd', $this->urlprotocol . '//www.wikidata' . $this->end . '/wiki/$1', 1 ),
-		);
+		return [
+			[ 'm', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
+			[ 'meta', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
+			[ 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ],
+			[ 'd', $this->urlprotocol . '//www.wikidata' . $this->end . '/wiki/$1', 1 ],
+		];
 	}
 
 	/**
@@ -86,16 +86,16 @@ class DumpInterwiki extends Maintenance {
 	 * to another site
 	 * @var array
 	 */
-	protected static $siteOverrides = array(
-		'sourceswiki' => array( 'wikisource', 'en' ),
-	);
+	protected static $siteOverrides = [
+		'sourceswiki' => [ 'wikisource', 'en' ],
+	];
 
 	/**
 	 * Language aliases, usually configured as redirects to the real wiki in apache
 	 * Interlanguage links are made directly to the real wiki
 	 * @var array
 	 */
-	protected static $languageAliases = array(
+	protected static $languageAliases = [
 		# Nasty legacy codes
 		'cz' => 'cs',
 		'dk' => 'da',
@@ -117,15 +117,15 @@ class DumpInterwiki extends Maintenance {
 		'be-tarask' => 'be-x-old',
 		'sgs' => 'bat-smg',
 		'egl' => 'eml',
-	);
+	];
 
 	/**
 	 * Special case prefix rewrites, for the benefit of Swedish which uses s:t
 	 * as an abbreviation for saint
 	 */
-	protected static $prefixRewrites = array(
-		'svwiki' => array( 's' => 'src' ),
-	);
+	protected static $prefixRewrites = [
+		'svwiki' => [ 's' => 'src' ],
+	];
 
 	/**
 	 * Set the wiki's interproject links to point to some other language code
@@ -134,8 +134,8 @@ class DumpInterwiki extends Maintenance {
 	 *   Portuguese projects instead)
 	 * @var array
 	 */
-	protected static $languageOverrides = array(
-		'wikimedia' => array(
+	protected static $languageOverrides = [
+		'wikimedia' => [
 			'ar' => 'es',
 			'bd' => 'bn',
 			'be' => 'en',
@@ -154,11 +154,11 @@ class DumpInterwiki extends Maintenance {
 			'se' => 'sv',
 			'ua' => 'uk',
 			'uk' => 'en',
-		),
-		'wikiversity' => array(
+		],
+		'wikiversity' => [
 			'beta' => 'en',
-		),
-	);
+		],
+	];
 
 	/**
 	 * Additional links to provide for the needs of the different projects
@@ -166,43 +166,43 @@ class DumpInterwiki extends Maintenance {
 	 * @returns array
 	 */
 	protected function getAdditionalLinks( $project ) {
-		switch( $project ) {
+		switch ( $project ) {
 			case 'wikibooks':
-				return array(
-					array( 'b', $this->urlprotocol . '//en.wikibooks' . $this->end . '/wiki/$1', 1 ),
-				);
+				return [
+					[ 'b', $this->urlprotocol . '//en.wikibooks' . $this->end . '/wiki/$1', 1 ],
+				];
 			case 'wikinews':
-				return array(
-					array( 'n', $this->urlprotocol . '//en.wikinews' . $this->end . '/wiki/$1', 1 ),
-				);
+				return [
+					[ 'n', $this->urlprotocol . '//en.wikinews' . $this->end . '/wiki/$1', 1 ],
+				];
 			case 'wikiquote':
-				return array(
-					array( 'q', $this->urlprotocol . '//en.wikiquote' . $this->end . '/wiki/$1', 1 ),
-				);
+				return [
+					[ 'q', $this->urlprotocol . '//en.wikiquote' . $this->end . '/wiki/$1', 1 ],
+				];
 			case 'wikisource':
-				return array(
-					array( 'mul', $this->urlprotocol . '//wikisource.org/wiki/$1', 1 ),
-					array( 's', $this->urlprotocol . '//en.wikisource' . $this->end . '/wiki/$1', 1 ),
-				);
+				return [
+					[ 'mul', $this->urlprotocol . '//wikisource.org/wiki/$1', 1 ],
+					[ 's', $this->urlprotocol . '//en.wikisource' . $this->end . '/wiki/$1', 1 ],
+				];
 			case 'wikiversity':
-				return array(
-					array( 'mul', $this->urlprotocol . '//beta.wikiversity.org/wiki/$1', 1 ),
-					array( 'v', $this->urlprotocol . '//en.wikiversity' . $this->end . '/wiki/$1', 1 ),
-				);
+				return [
+					[ 'mul', $this->urlprotocol . '//beta.wikiversity.org/wiki/$1', 1 ],
+					[ 'v', $this->urlprotocol . '//en.wikiversity' . $this->end . '/wiki/$1', 1 ],
+				];
 			case 'wikivoyage':
-				return array(
-					array( 'voy', $this->urlprotocol . '//en.wikivoyage.org/wiki/$1', 1 ),
-				);
+				return [
+					[ 'voy', $this->urlprotocol . '//en.wikivoyage.org/wiki/$1', 1 ],
+				];
 			case 'wiktionary':
-				return array(
-					array( 'wikt', $this->urlprotocol . '//en.wiktionary' . $this->end . '/wiki/$1', 1 ),
-				);
+				return [
+					[ 'wikt', $this->urlprotocol . '//en.wiktionary' . $this->end . '/wiki/$1', 1 ],
+				];
 			case 'wiki':
-				return array(
-					array( 'w', $this->urlprotocol . '//en.wikipedia' . $this->end . '/wiki/$1', 1 ),
-				);
+				return [
+					[ 'w', $this->urlprotocol . '//en.wikipedia' . $this->end . '/wiki/$1', 1 ],
+				];
 			default:
-				return array();
+				return [];
 		}
 	}
 
@@ -245,7 +245,7 @@ class DumpInterwiki extends Maintenance {
 
 		if ( $this->hasOption( 'o' ) ) {
 			try {
-				$this->dbFile = CdbWriter::open( $this->getOption( 'o' ) ) ;
+				$this->dbFile = CdbWriter::open( $this->getOption( 'o' ) );
 			} catch ( CdbException $e ) {
 				$this->error( "Unable to open cdb file for writing", 1 );
 			}
@@ -271,7 +271,7 @@ class DumpInterwiki extends Maintenance {
 		$extraLinks = $this->getExtraLinks();
 
 		// Construct a list of reserved prefixes
-		$reserved = array();
+		$reserved = [];
 		foreach ( $this->langlist as $lang ) {
 			$reserved[$lang] = 1;
 		}
@@ -312,14 +312,14 @@ class DumpInterwiki extends Maintenance {
 				}
 
 				if ( empty( $reserved[$prefix] ) ) {
-					$imap  = array( "iw_prefix" => $prefix, "iw_url" => $url, "iw_local" => $local );
+					$imap = [ "iw_prefix" => $prefix, "iw_url" => $url, "iw_local" => $local ];
 					$this->makeLink( $imap, "__global" );
 				}
 			}
 		}
 
 		// Exclude Wikipedia for Wikipedia
-		$this->makeLink( array( 'iw_prefix' => 'wikipedia', 'iw_url' => null ), "_wiki" );
+		$this->makeLink( [ 'iw_prefix' => 'wikipedia', 'iw_url' => null ], "_wiki" );
 
 		// Multilanguage sites
 		foreach ( $sites as $site ) {
@@ -331,15 +331,15 @@ class DumpInterwiki extends Maintenance {
 				// Special wiki
 				// Has interwiki links and interlanguage links to wikipedia
 
-				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => "wiki" ), "__sites" );
+				$this->makeLink( [ 'iw_prefix' => $db, 'iw_url' => "wiki" ], "__sites" );
 				// Links to multilanguage sites
 				/**
 				 * @var $targetSite WMFSite
 				 */
 				foreach ( $sites as $targetSite ) {
-					$this->makeLink( array( 'iw_prefix' => $targetSite->prefix,
+					$this->makeLink( [ 'iw_prefix' => $targetSite->prefix,
 						'iw_url' => $targetSite->getURL( 'en', $this->urlprotocol ),
-						'iw_local' => 1 ), $db );
+						'iw_local' => 1 ], $db );
 				}
 			} else {
 				// Find out which site this DB belongs to
@@ -351,7 +351,7 @@ class DumpInterwiki extends Maintenance {
 					list( $site, $lang ) = self::$siteOverrides[$db];
 					$site = $sites[$site];
 				} else {
-					$matches = array();
+					$matches = [];
 					foreach ( $sites as $candidateSite ) {
 						$suffix = $candidateSite->suffix;
 						if ( preg_match( "/(.*)$suffix$/", $db, $matches ) ) {
@@ -362,7 +362,7 @@ class DumpInterwiki extends Maintenance {
 					$lang = $matches[1];
 				}
 
-				$this->makeLink( array( 'iw_prefix' => $db, 'iw_url' => $site->suffix ), "__sites" );
+				$this->makeLink( [ 'iw_prefix' => $db, 'iw_url' => $site->suffix ], "__sites" );
 				if ( !$site ) {
 					$this->error( "Invalid database $db\n" );
 					continue;
@@ -383,9 +383,9 @@ class DumpInterwiki extends Maintenance {
 						$lateralLang = self::$languageOverrides[$site->suffix][$lang];
 					}
 
-					$this->makeLink( array( 'iw_prefix' => $targetSite->prefix,
+					$this->makeLink( [ 'iw_prefix' => $targetSite->prefix,
 						'iw_url' => $targetSite->getURL( $lateralLang, $this->urlprotocol ),
-						'iw_local' => 1 ), $db );
+						'iw_local' => 1 ], $db );
 				}
 
 			}
@@ -412,7 +412,6 @@ class DumpInterwiki extends Maintenance {
 		if ( !$this->dbFile ) {
 			$this->output( "];\n" );
 		}
-
 	}
 
 	/**
@@ -426,13 +425,13 @@ class DumpInterwiki extends Maintenance {
 
 		// Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
-			$this->makeLink( array( $targetLang, $site->getURL( $targetLang, $this->urlprotocol ), 1 ), $source );
+			$this->makeLink( [ $targetLang, $site->getURL( $targetLang, $this->urlprotocol ), 1 ], $source );
 		}
 
 		// Language aliases
 		if ( $wmfRealm === 'production' ) {
 			foreach ( self::$languageAliases as $alias => $lang ) {
-				$this->makeLink( array( $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ), $source );
+				$this->makeLink( [ $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ], $source );
 			}
 		}
 
@@ -454,7 +453,7 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		if ( !array_key_exists( "iw_prefix", $entry ) ) {
-			$entry = array( "iw_prefix" => $entry[0], "iw_url" => $entry[1], "iw_local" => $entry[2] );
+			$entry = [ "iw_prefix" => $entry[0], "iw_url" => $entry[1], "iw_local" => $entry[2] ];
 		}
 		if ( array_key_exists( $source, self::$prefixRewrites ) &&
 				array_key_exists( $entry['iw_prefix'], self::$prefixRewrites[$source] ) ) {
@@ -486,4 +485,3 @@ class DumpInterwiki extends Maintenance {
 
 $maintClass = "DumpInterwiki";
 require_once RUN_MAINTENANCE_IF_MAIN;
-

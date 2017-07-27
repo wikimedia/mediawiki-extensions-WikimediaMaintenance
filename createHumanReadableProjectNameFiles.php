@@ -42,14 +42,14 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 	}
 
 	public function execute() {
-		$outEn = array();
-		$outQqq = array();
+		$outEn = [];
+		$outQqq = [];
 		$counter = 0;
 		$info = $this->getSitematrixFromAPI();
 		$languages = LanguageNames::getNames( 'en' );
 
 		// Wikis that have messages in WikimediaMessages
-		$messageMatrix = array(
+		$messageMatrix = [
 			// code => project name
 			"wiki" => wfMessage( "wikibase-otherprojects-wikipedia" )->text(),
 			"wiktionary" => "Wiktionary", // No message for this!?
@@ -59,9 +59,9 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 			"wikisource" => wfMessage( "wikibase-sitelinks-wikisource" )->text(),
 			"wikiversity" => "Wikiversity", // No message for this, either!
 			"wikivoyage" => wfMessage( "wikibase-otherprojects-wikivoyage" )->text(),
-		);
+		];
 
-		$failedLangWikis = array(
+		$failedLangWikis = [
 			"azbwiki" => "South Azerbaijani Wikipedia",
 			"be_x_oldwiki" => "Belarusian (Taraškievica) Wikipedia",
 			"bhwiki" => "Bihari Wikipedia",
@@ -76,11 +76,10 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 			"zh_min_nanwikibooks" => "Min Nan Wikibooks",
 			"zh_min_nanwikiquote" => "Min Nan Wikiquote",
 			"zh_min_nanwikisource" => "Min Nan Wikisource",
-		);
-
+		];
 
 		// SPECIAL WIKIS
-		$exceptions = array(
+		$exceptions = [
 			// code => full message
 			"arbcom-de" => "German Wikipedia Arbitration Committee",
 			"arbcom-en" => "English Wikipedia Arbitration Committee",
@@ -136,7 +135,7 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 			"trwikimedia" => "Wikimedia Turkey",
 			"uawikimedia" => "Wikimedia Ukraine",
 			"ukwikimedia" => "Wikimedia UK",
-		);
+		];
 
 		// Go over the wikis and fill in the information
 		foreach ( $info as $i => $languageGroup ) {
@@ -166,7 +165,7 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 				// Output the line
 				$outEn[ "project-localized-name-" . $dbname ] =  $name;
 				$outQqq[ "project-localized-name-" . $dbname ] =  $this->createQQQ( $name, $url );
-				$table[$dbname] = array( 'name' => $name, 'url' => $url );
+				$table[$dbname] = [ 'name' => $name, 'url' => $url ];
 
 				$counter++;
 			}
@@ -189,7 +188,7 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 			// Output the line
 			$outEn[ "project-localized-name-" . $dbname ] =  $sitename;
 			$outQqq[ "project-localized-name-" . $dbname ] =  $this->createQQQ( $sitename, $url );
-			$table[$dbname] = array( 'name' => $sitename, 'url' => $url );
+			$table[$dbname] = [ 'name' => $sitename, 'url' => $url ];
 
 			$counter++;
 		}
@@ -216,4 +215,4 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 }
 
 $maintClass = "CreateHumanReadableProjectNameFiles";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

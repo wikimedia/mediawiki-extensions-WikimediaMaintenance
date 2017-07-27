@@ -27,21 +27,21 @@ class FixJobQueueExplosion extends Maintenance {
 		$numBatchesDone = 0;
 		while ( true ) {
 			$res = $dbw->select( 'job_explosion_tmp', '*',
-				array(
+				[
 					'job_id > ' . $dbw->addQuotes( $start ),
 					"NOT ( job_cmd = 'htmlCacheUpdate' AND " .
 						"job_params LIKE '%s:13:\"categorylinks\"%' )"
-				),
-				__METHOD__, array( 'LIMIT' => $batchSize ) );
+				],
+				__METHOD__, [ 'LIMIT' => $batchSize ] );
 
 			if ( !$res->numRows() ) {
 				break;
 			}
 
-			$insertBatch = array();
+			$insertBatch = [];
 			foreach ( $res as $row ) {
 				$start = $row->job_id;
-				$insertRow = array();
+				$insertRow = [];
 				foreach ( (array)$row as $name => $value ) {
 					$insertRow[$name] = $value;
 				}
@@ -62,4 +62,4 @@ class FixJobQueueExplosion extends Maintenance {
 }
 
 $maintClass = 'FixJobQueueExplosion';
-require_once( DO_MAINTENANCE );
+require_once DO_MAINTENANCE;

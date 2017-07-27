@@ -37,12 +37,12 @@ class CleanupPageProps extends Maintenance {
 		$deleted = 0;
 		for ( $id = 0; $id <= $high; $id += $this->mBatchSize ) {
 			$dbw->delete( 'page_props',
-				array(
+				[
 					"pp_page BETWEEN $id AND $id + {$this->mBatchSize}",
 					// Clean up bogus entries left by MobileFrontend
 					'pp_propname' => 'page_top_level_section_count',
 					'pp_value' => 0,
-				),
+				],
 				__METHOD__
 			);
 			$affected = $dbw->affectedRows();

@@ -20,14 +20,14 @@ class unsuppressCrossWiki extends Maintenance {
 		$wikis = $user->listAttached(); // wikis with attached accounts
 		foreach ( $wikis as $wiki ) {
 			$lb = wfGetLB( $wiki );
-			$dbw = $lb->getConnection( DB_MASTER, array(), $wiki );
+			$dbw = $lb->getConnection( DB_MASTER, [], $wiki );
 			# Get local ID like $user->localUserData( $wiki ) does
 			$localUserId = $dbw->selectField( 'user', 'user_id',
-				array( 'user_name' => $userName ), __METHOD__ );
+				[ 'user_name' => $userName ], __METHOD__ );
 
 			$delUserBit = Revision::DELETED_USER;
 			$hiddenCount = $dbw->selectField( 'revision', 'COUNT(*)',
-				array( 'rev_user' => $localUserId, "rev_deleted & $delUserBit != 0" ), __METHOD__ );
+				[ 'rev_user' => $localUserId, "rev_deleted & $delUserBit != 0" ], __METHOD__ );
 			echo "$hiddenCount edits have the username hidden on \"$wiki\"\n";
 			# Unsuppress username on edits
 			if ( $hiddenCount > 0 ) {

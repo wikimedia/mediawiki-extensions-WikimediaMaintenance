@@ -16,9 +16,9 @@ class SanityCheckRequest extends FauxRequest {
 	function __construct() {
 		$this->title = Title::newMainPage();
 
-		parent::__construct( array(
+		parent::__construct( [
 			'title' => $this->title->getPrefixedDBkey()
-		) );
+		] );
 	}
 
 	function getRequestURL() {

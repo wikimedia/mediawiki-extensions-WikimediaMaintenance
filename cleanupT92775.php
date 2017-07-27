@@ -15,11 +15,11 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class FixCUBlockLogs extends Maintenance {
 	public function execute() {
-		$ids = array();
+		$ids = [];
 		$res = wfGetDB( DB_SLAVE )->select(
 			'logging',
-			array( 'log_id' ),
-			array( 'log_params' => "1 week\nanononly\nnocreate" ),
+			[ 'log_id' ],
+			[ 'log_params' => "1 week\nanononly\nnocreate" ],
 			__METHOD__
 		);
 		foreach ( $res as $row ) {
@@ -28,8 +28,8 @@ class FixCUBlockLogs extends Maintenance {
 
 		wfGetDB( DB_MASTER )->update(
 			'logging',
-			array( 'log_params' => "1 week\nanononly,nocreate" ),
-			array( 'log_id' => $ids ),
+			[ 'log_params' => "1 week\nanononly,nocreate" ],
+			[ 'log_id' => $ids ],
 			__METHOD__
 		);
 	}
