@@ -44,6 +44,7 @@ class CreateExtensionTables extends Maintenance {
 				$files = [ 'babel.sql' ];
 				$path = "$IP/extensions/Babel";
 				break;
+
 			case 'echo':
 				$this->output( "Using special database connection for Echo" );
 				$dbw = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
@@ -86,10 +87,13 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'oathauth':
-				$files = [
-					'tables.sql',
-				];
+				$files = [ 'tables.sql' ];
 				$path = "$IP/extensions/OATHAuth/sql/mysql";
+				break;
+
+			case 'oauth':
+				$files = [ 'OAuth.sql' ];
+				$path = "$IP/extensions/OAuth/backend/schema/mysql";
 				break;
 
 			case 'ores':
@@ -109,9 +113,7 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'shorturl':
-				$files = [
-					'shorturls.sql',
-				];
+				$files = [ 'shorturls.sql' ];
 				$path = "$IP/extensions/ShortUrl/schemas";
 				break;
 
