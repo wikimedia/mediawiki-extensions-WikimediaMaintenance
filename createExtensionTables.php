@@ -86,6 +86,16 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/MoodBar/sql";
 				break;
 
+			case 'newsletter':
+				$files = [
+					'nl_newsletters.sql',
+					'nl_issues.sql',
+					'nl_subscriptions.sql',
+					'nl_publishers.sql',
+				];
+				$path = "$IP/extensions/Newsletter/sql";
+				break;
+
 			case 'oathauth':
 				$files = [ 'tables.sql' ];
 				$path = "$IP/extensions/OATHAuth/sql/mysql";
