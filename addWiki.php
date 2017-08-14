@@ -305,6 +305,7 @@ class AddWiki extends Maintenance {
 [//www.wikisource.org Wikisource] |
 [//www.wikiversity.org Wikiversity] |
 [//www.wikivoyage.org Wikivoyage] |
+[//species.wikimedia.org Wikispecies] |
 [//www.wikidata.org Wikidata] |
 [//commons.wikimedia.org Commons]
 </span>
