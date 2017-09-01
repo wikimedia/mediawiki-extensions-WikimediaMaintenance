@@ -53,7 +53,7 @@ class MeasureZoneSizes extends Maintenance {
 		$b2_bytes = ( $bytesC + $bytesA ) * $pfactor;
 		$output .= "B2\t\tpublic\t\t$b2_count\t\t$b2_bytes\t\n";
 
-		if ( $file && ( $b2_count <= .97 * $b1_count || $b2_bytes < .97 * $b1_bytes ) ) {
+		if ( $file && ( $b2_count <= 0.97 * $b1_count || $b2_bytes < 0.97 * $b1_bytes ) ) {
 			file_put_contents( $file, "$wgDBname:\n$output", LOCK_EX | FILE_APPEND );
 		}
 		$this->output( $output );
@@ -73,7 +73,7 @@ class MeasureZoneSizes extends Maintenance {
 		$b2_bytes = $bytes * $dfactor;
 		$output .= "B2\t\tdeleted\t\t$b2_count\t\t$b2_bytes\t\n";
 
-		if ( $file && ( $b2_count <= .97 * $b1_count || $b2_bytes < .97 * $b1_bytes ) ) {
+		if ( $file && ( $b2_count <= 0.97 * $b1_count || $b2_bytes < 0.97 * $b1_bytes ) ) {
 			file_put_contents( $file, "$wgDBname:\n$output", LOCK_EX | FILE_APPEND );
 		}
 		$this->output( $output );
