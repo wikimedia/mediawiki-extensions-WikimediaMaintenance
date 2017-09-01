@@ -10,6 +10,11 @@ class FixOrphans extends Maintenance {
 	}
 
 	function execute() {
+		global $wgCommentTableSchemaMigrationStage;
+
+		$commentMigrationStage = isset( $wgCommentTableSchemaMigrationStage )
+			? $wgCommentTableSchemaMigrationStage : MIGRATION_NEW;
+
 		$fileName = $this->getArg( 0 );
 		$f = fopen( $fileName, 'r' );
 		if ( !$f ) {
@@ -24,7 +29,6 @@ class FixOrphans extends Maintenance {
 		$dbw = wfGetDB( DB_MASTER );
 
 		$verifyPairs = [
-			'ar_comment' => 'rev_comment',
 			'ar_user' => 'rev_user',
 			'ar_user_text' => 'rev_user_text',
 			'ar_timestamp' => 'rev_timestamp',
@@ -36,6 +40,15 @@ class FixOrphans extends Maintenance {
 			'ar_parent_id' => 'rev_parent_id',
 			'ar_sha1' => 'rev_sha1',
 		];
+		if ( $commentMigrationStage <= MIGRATION_WRITE_BOTH ) {
+			$verifyPairs['ar_comment'] = 'rev_comment';
+		}
+		if ( $commentMigrationStage >= MIGRATION_WRITE_BOTH ) {
+			$verifyPairs['ar_comment_id'] = 'revcomment_comment_id';
+		}
+		$revCommentStore = CommentStore::newKey( 'rev_comment' );
+		$commentQuery = $revCommentStore->getJoin();
+		$arCommentStore = CommentStore::newKey( 'ar_comment' );
 
 		while ( !feof( $f ) ) {
 			$line = fgets( $f );
@@ -57,8 +70,14 @@ class FixOrphans extends Maintenance {
 			$revId = $info['rev_id'];
 
 			$this->beginTransaction( $dbw, __METHOD__ );
-			$revRow = $dbw->selectRow( 'revision', '*', [ 'rev_id' => $revId ],
-				__METHOD__, [ 'FOR UPDATE' ] );
+			$revRow = $dbw->selectRow(
+				[ 'revision' ] + $commentQuery['tables'],
+				[ $dbr->tableName( 'revision' ) . '.*' ] + $commentQuery['fields'],
+				[ 'rev_id' => $revId ],
+				__METHOD__,
+				[ 'FOR UPDATE' ],
+				$commentQuery['joins']
+			);
 			if ( !$revRow ) {
 				$this->error( "$revId: ERROR revision row has disappeared!" );
 				$this->commitTransaction( $dbw, __METHOD__ );
@@ -124,12 +143,14 @@ class FixOrphans extends Maintenance {
 				$dbw->delete( 'archive', [ 'ar_rev_id' => $revId ], __METHOD__ );
 			} elseif ( $action === 'remove-revision' ) {
 				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
+				if ( $commentMigrationStage > MIGRATION_OLD ) {
+					$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revId ], __METHOD__ );
+				}
 			} elseif ( $action === 'move-revision' ) {
 				$dbw->insert( 'archive',
 					[
 						'ar_namespace'  => $info['log_namespace'],
 						'ar_title'      => $info['log_title'],
-						'ar_comment'    => $revRow->rev_comment,
 						'ar_user'       => $revRow->rev_user,
 						'ar_user_text'  => $revRow->rev_user_text,
 						'ar_timestamp'  => $revRow->rev_timestamp,
@@ -143,9 +164,12 @@ class FixOrphans extends Maintenance {
 						'ar_page_id'    => $revRow->rev_page,
 						'ar_deleted'    => $revRow->rev_deleted,
 						'ar_sha1'       => $revRow->rev_sha1,
-					],
+					] + $arCommentStore->insert( $dbw, $revCommentStore->getComment( $revRow ) ),
 					__METHOD__ );
 				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
+				if ( $commentMigrationStage > MIGRATION_OLD ) {
+					$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revId ], __METHOD__ );
+				}
 			}
 			$this->commitTransaction( $dbw, __METHOD__ );
 
