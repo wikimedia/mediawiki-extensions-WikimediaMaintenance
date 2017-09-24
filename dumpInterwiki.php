@@ -51,7 +51,7 @@ class DumpInterwiki extends Maintenance {
 	/**
 	 * Returns an array of multi-language sites
 	 * db suffix => db suffix, iw prefix, hostname
-	 * @returns array
+	 * @return array
 	 */
 	protected function getSites() {
 		return [
@@ -70,7 +70,7 @@ class DumpInterwiki extends Maintenance {
 	/**
 	 * Returns an array of extra global interwiki links that can't be in the
 	 * intermap for some reason
-	 * @returns array
+	 * @return array
 	 */
 	protected function getExtraLinks() {
 		return [
@@ -163,7 +163,7 @@ class DumpInterwiki extends Maintenance {
 	/**
 	 * Additional links to provide for the needs of the different projects
 	 * @param string $project The site (e.g. wikibooks)
-	 * @returns array
+	 * @return array
 	 */
 	protected function getAdditionalLinks( $project ) {
 		switch ( $project ) {

@@ -16,7 +16,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 class FixCUBlockLogs extends Maintenance {
 	public function execute() {
 		$ids = [];
-		$res = wfGetDB( DB_SLAVE )->select(
+		$res = wfGetDB( DB_REPLICA )->select(
 			'logging',
 			[ 'log_id' ],
 			[ 'log_params' => "1 week\nanononly\nnocreate" ],

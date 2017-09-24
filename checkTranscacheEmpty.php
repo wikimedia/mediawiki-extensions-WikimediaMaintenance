@@ -5,7 +5,7 @@ $bad = 0;
 $good = 0;
 foreach ( $wgLocalDatabases as $wiki ) {
 	$lb = wfGetLB( $wiki );
-	$db = $lb->getConnection( DB_SLAVE, [], $wiki );
+	$db = $lb->getConnection( DB_REPLICA, [], $wiki );
 	$notEmpty = $db->selectField( 'transcache', '1', false, 'checkTranscacheEmpty.php' );
 	if ( $notEmpty ) {
 		echo "$wiki\n";

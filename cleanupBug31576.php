@@ -26,7 +26,7 @@ class CleanupBug31576 extends Maintenance {
 	}
 
 	public function processSynonym( $synonym ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$pCount = 0;
 		$vCount = 0;
 		$this->output( "Fixing pages with template links to $synonym ...\n" );

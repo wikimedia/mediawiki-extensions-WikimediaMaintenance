@@ -39,7 +39,7 @@ class MakeDumpList extends Maintenance {
 	}
 
 	public function doBatch( $linkBatch ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$conds = [
 			$linkBatch->constructSet( 'page', $dbr ),
 			'page_id=tl_from'

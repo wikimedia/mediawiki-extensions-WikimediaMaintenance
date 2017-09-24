@@ -75,7 +75,7 @@ function fixBug41778() {
 }
 
 function assertCanAlter() {
-	$count = wfGetDB( DB_SLAVE )->selectField( 'ipblocks', 'count(*)', false, __METHOD__ );
+	$count = wfGetDB( DB_REPLICA )->selectField( 'ipblocks', 'count(*)', false, __METHOD__ );
 	if ( $count > 1000000 ) {
 		print "Table is too large for this script\n";
 		exit( 1 );

@@ -32,7 +32,7 @@ class passwordAudit extends Maintenance {
 		if ( $ca ) {
 			$dbr = CentralAuthUtils::getCentralSlaveDB();
 		} else {
-			$dbr = wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_REPLICA );
 		}
 
 		foreach ( $userList as $user ) {
