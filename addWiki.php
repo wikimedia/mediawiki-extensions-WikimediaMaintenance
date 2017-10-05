@@ -78,7 +78,7 @@ class AddWiki extends Maintenance {
 
 		// Set up the database
 		$dbw->query( "SET storage_engine=InnoDB" );
-		$dbw->query( "CREATE DATABASE $dbName" );
+		$dbw->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
 		$dbw->selectDB( $dbName );
 
 		$this->output( "Initialising tables\n" );
