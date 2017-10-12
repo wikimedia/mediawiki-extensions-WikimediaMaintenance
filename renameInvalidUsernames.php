@@ -54,7 +54,11 @@ class RenameInvalidUsernames extends Maintenance {
 
 	protected function rename( $userId, $wiki ) {
 		$dbw = wfGetDB( DB_MASTER, [], $wiki );
-		$row = $dbw->selectRow( 'user', User::selectFields(), [ 'user_id' => $userId ], __METHOD__ );
+		$userQuery = User::getQueryInfo();
+		$row = $dbw->selectRow(
+			$userQuery['tables'], $userQuery['fields'], [ 'user_id' => $userId ],
+			__METHOD__, [], $userQuery['joins']
+		);
 
 		$oldUser = User::newFromRow( $row );
 
