@@ -114,7 +114,7 @@ class WmfManageJobs extends Maintenance {
 		$this->output( "\n\nThe script will now try to delete $total job(s), " .
 			"from $count different queue(s), for this wiki: $target\n" );
 		$this->output( 'Abort with control-C in the next five seconds...' );
-		wfCountDown( 5 );
+		$this->countDown( 5 );
 
 		foreach ( $deleteTypes as $type => $queue ) {
 			$this->output( "$type: deleting...\n" );
