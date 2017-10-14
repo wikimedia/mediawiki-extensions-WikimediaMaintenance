@@ -94,7 +94,7 @@ class passwordAudit extends Maintenance {
 
 	/**
 	 * @param string $hash
-	 * @param $test
+	 * @param string $test
 	 * @return bool
 	 */
 	public function fastPbkdf2test( $hash, $test ) {

@@ -49,8 +49,8 @@ class MakeSizeDBLists extends Maintenance {
 	}
 
 	/**
-	 * @param $filename string
-	 * @param $items array
+	 * @param string $filename
+	 * @param array $items
 	 */
 	private function writeFile( $filename, $items ) {
 		$file = fopen( $filename, 'w' );

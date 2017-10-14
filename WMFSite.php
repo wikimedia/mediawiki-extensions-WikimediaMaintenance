@@ -8,7 +8,7 @@ class WMFSite {
 
 	/**
 	 * @param string $suffix
-	 * @param $prefix
+	 * @param string $prefix
 	 * @param string $url
 	 */
 	function __construct( $suffix, $prefix, $url ) {
