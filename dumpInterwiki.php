@@ -417,8 +417,8 @@ class DumpInterwiki extends Maintenance {
 	/**
 	 * Executes part of an INSERT statement, corresponding to all interlanguage links to a particular site
 	 *
-	 * @param $site WMFSite
-	 * @param $source
+	 * @param WMFSite &$site
+	 * @param string $source
 	 */
 	function makeLanguageLinks( &$site, $source ) {
 		global $wmfRealm;
@@ -443,8 +443,8 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	/**
-	 * @param $entry
-	 * @param $source
+	 * @param array $entry
+	 * @param string $source
 	 * @throws MWException
 	 */
 	function makeLink( $entry, $source ) {

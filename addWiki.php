@@ -46,7 +46,7 @@ class AddWiki extends Maintenance {
 	 * Used as an override from SQL commands in tables.sql being executed.
 	 * In this cases, index creations on the searchindex table
 	 *
-	 * @param $cmd string
+	 * @param string $cmd
 	 * @return bool
 	 */
 	public function noExecuteCommands( $cmd ) {
