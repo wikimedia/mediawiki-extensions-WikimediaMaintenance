@@ -35,6 +35,19 @@ class GetJobQueueLengths extends Maintenance {
 			}
 		}
 
+		uasort(
+			$sizeByWiki,
+			function ( $typeTotalsA, $typeTotalsB ) {
+				$sumA = array_sum( $typeTotalsA );
+				$sumB = array_sum( $typeTotalsB );
+				if ( $sumA == $sumB ) {
+					return 0;
+				}
+
+				return ( $sumA > $sumB ) ? -1 : 1;
+			}
+		);
+
 		if ( $this->hasOption( 'grouponly' ) ) {
 			$this->output( FormatJSON::encode( $sizeByWiki, true ) . "\n" );
 		} else {
