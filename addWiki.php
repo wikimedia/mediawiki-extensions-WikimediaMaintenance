@@ -115,6 +115,12 @@ class AddWiki extends Maintenance {
 		// most wikis are wikibase client wikis and no harm to adding this everywhere
 		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/entity_usage.sql" );
 
+		if ( self::isPrivate( $dbName ) && in_array( $dbName, MWWikiversions::readDbListFile( 'flow' ) ) ) {
+			// For private wikis, we set $wgFlowDefaultWikiDb = false
+			// instead they're on the local database, so create the tables
+			$dbw->sourceFile( "$IP/extensions/Flow/flow.sql" );
+		}
+
 		// Add project specific extension table additions here
 		switch ( $siteGroup ) {
 			case 'wikipedia':
