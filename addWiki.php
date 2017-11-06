@@ -62,7 +62,7 @@ class AddWiki extends Maintenance {
 		}
 
 		$lang = $this->getArg( 0 );
-		$site = $this->getArg( 1 );
+		$siteGroup = $this->getArg( 1 );
 		$dbName = $this->getArg( 2 );
 		$domain = $this->getArg( 3 );
 		$languageNames = Language::fetchLanguageNames();
@@ -74,7 +74,7 @@ class AddWiki extends Maintenance {
 
 		$dbw = wfGetDB( DB_MASTER );
 
-		$this->output( "Creating database $dbName for $lang.$site ($name)\n" );
+		$this->output( "Creating database $dbName for $lang.$siteGroup ($name)\n" );
 
 		// Set up the database
 		$dbw->query( "SET storage_engine=InnoDB" );
@@ -108,7 +108,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
 
 		// Add project specific extension table additions here
-		switch ( $site ) {
+		switch ( $siteGroup ) {
 			case 'wikipedia':
 				break;
 			case 'wiktionary':
@@ -206,10 +206,10 @@ class AddWiki extends Maintenance {
 		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )->useDatabase( false )->plain() );
 		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
 		$article = WikiPage::factory( $title );
-		$ucsite = ucfirst( $site );
+		$ucSiteGroup = ucfirst( $siteGroup );
 
 		$article->doEditContent(
-			ContentHandler::makeContent( $this->getFirstArticle( $ucsite, $name ), $title ),
+			ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title ),
 			'',
 			EDIT_NEW | EDIT_AUTOSUMMARY
 		);
@@ -237,17 +237,17 @@ class AddWiki extends Maintenance {
 			"$IP/extensions/Wikidata/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
 		);
 
-		$sitesPopulation->mOptions[ 'site-group' ] = $site;
+		$sitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
 		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
 		$sitesPopulation->execute();
 
 		// Repopulate Cognate sites table
-		if ( $site === 'wiktionary' ) {
+		if ( $siteGroup === 'wiktionary' ) {
 			$cognateSitesPopulation = $this->runChild(
 				'Cognate\PopulateCognateSites',
 				"$IP/extensions/Cognate/maintenance/populateCognateSites.php"
 			);
-			$cognateSitesPopulation->mOptions[ 'site-group' ] = $site;
+			$cognateSitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
 			$cognateSitesPopulation->execute();
 		}
 
@@ -274,7 +274,7 @@ class AddWiki extends Maintenance {
 		$time = wfTimestamp( TS_RFC2822 );
 		UserMailer::send( new MailAddress( $wmgAddWikiNotify ),
 			new MailAddress( $wgPasswordSender ), "New wiki: $dbName",
-			"A new wiki was created by $user at $time for a $ucsite in $name ($lang).\nOnce the wiki is fully set up, it'll be visible at https://$domain"
+			"A new wiki was created by $user at $time for a $ucSiteGroup in $name ($lang).\nOnce the wiki is fully set up, it'll be visible at https://$domain"
 		);
 
 		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration\n" );
