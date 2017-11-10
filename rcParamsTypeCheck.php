@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Get the length of the job queue on all wikis in $wgConf
+ * Checks the type of recentchanges.rc_params on all wikis in $wgConf
  */
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class GetJobQueueLengths extends Maintenance {
+class RCParamsTypeCheck extends Maintenance {
 	function __construct() {
 		parent::__construct();
-		$this->mDescription = '';
+		$this->mDescription = 'Checks the type of recentchanges.rc_params on all wikis in $wgConf';
 	}
 
 	function execute() {
@@ -25,9 +25,9 @@ class GetJobQueueLengths extends Maintenance {
 			}
 			$lb->reuseConnection( $db );
 		}
-		$this->output( $count . "\n" );
+		$this->output( "$count wikis have recentchanges.rc_params that isn't a blob\n" );
 	}
 }
 
-$maintClass = 'GetJobQueueLengths';
+$maintClass = 'RCParamsTypeCheck';
 require_once DO_MAINTENANCE;
