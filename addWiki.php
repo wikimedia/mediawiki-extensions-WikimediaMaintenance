@@ -67,6 +67,13 @@ class AddWiki extends Maintenance {
 		$domain = $this->getArg( 3 );
 		$languageNames = Language::fetchLanguageNames();
 
+		if ( $siteGroup === 'wiktionary' && strpos( 'wiktionary', $this->getOption( 'wiki' ) ) === false ) {
+			$this->error(
+				'Wiktionaries must be created using --wiki aawiktionary due to the need to load Cognate classes.',
+				true
+			);
+		}
+
 		if ( !isset( $languageNames[$lang] ) ) {
 			$this->fatalError( "Language $lang not found in Names.php" );
 		}
