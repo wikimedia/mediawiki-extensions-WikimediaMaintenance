@@ -18,8 +18,7 @@ class FixOrphans extends Maintenance {
 		$fileName = $this->getArg( 0 );
 		$f = fopen( $fileName, 'r' );
 		if ( !$f ) {
-			$this->error( "Unable to open list file \"$fileName\"" );
-			exit( 1 );
+			$this->fatalError( "Unable to open list file \"$fileName\"" );
 		}
 		$lineNumber = 0;
 		$dryRun = $this->getOption( 'dry-run' );

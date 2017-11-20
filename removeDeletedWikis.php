@@ -33,7 +33,7 @@ class RemoveDeletedWikis extends Maintenance {
 	function execute() {
 		$wikis = file( '/srv/mediawiki/dblists/deleted.dblist' );
 		if ( $wikis === false ) {
-			$this->error( 'Unable to open deleted.dblist', 1 );
+			$this->fatalError( 'Unable to open deleted.dblist' );
 		}
 
 		$dbw = $this->getDB( DB_MASTER );
@@ -58,7 +58,7 @@ class RemoveDeletedWikis extends Maintenance {
 	 */
 	function doDeletes( $dbw, $table, $column, $wiki ) {
 		if ( !$dbw->tableExists( $table ) ) {
-			$this->error( "Maintenance script cannot be run on this wiki as there is no $table table", 1 );
+			$this->fatalError( "Maintenance script cannot be run on this wiki as there is no $table table" );
 		}
 		$this->output( "$table:\n" );
 		$count = 0;

@@ -67,7 +67,7 @@ class CreateExtensionTables extends Maintenance {
 
 			case 'flow':
 				if ( $wgFlowDefaultWikiDb !== false ) {
-					$this->error( "This wiki uses $wgFlowDefaultWikiDb for Flow tables. They don't need to be created on the project database, which is the scope of this script.", 1 );
+					$this->fatalError( "This wiki uses $wgFlowDefaultWikiDb for Flow tables. They don't need to be created on the project database, which is the scope of this script." );
 				}
 				$files = [ 'flow.sql' ];
 				$path = "$IP/extensions/Flow";
@@ -146,7 +146,7 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			default:
-				$this->error( "This script is not configured to create tables for $extension\n", 1 );
+				$this->fatalError( "This script is not configured to create tables for $extension\n" );
 		}
 
 		$this->output( "Creating $extension tables..." );

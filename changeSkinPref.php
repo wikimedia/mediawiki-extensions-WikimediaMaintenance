@@ -47,10 +47,10 @@ class ChangeSkinPref extends Maintenance {
 		$user = User::newFromName( $userName );
 		$wiki = wfWikiID();
 		if ( !$user || $user->getId() === 0 ) {
-			$this->error( "User $userName does not exist or is invalid.", 1 );
+			$this->fatalError( "User $userName does not exist or is invalid." );
 		}
 		if ( !array_key_exists( $newSkin, Skin::getSkinNames() ) ) {
-			$this->error( "$newSkin is not a valid skin", 1 );
+			$this->fatalError( "$newSkin is not a valid skin" );
 		}
 		$skin = $user->getOption( 'skin' );
 		if ( $skin === $newSkin ) {

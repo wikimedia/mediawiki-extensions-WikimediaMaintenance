@@ -47,7 +47,7 @@ class GetPageCounts extends Maintenance {
 			$dbr = $lb->getConnection( DB_REPLICA, [], $wiki );
 			$row = $dbr->selectRow( 'site_stats', [ 'ss_total_pages', 'ss_good_articles' ], '', __METHOD__ );
 			if ( !$row ) {
-				$this->error( "Error: '$wiki' has empty site_stats\n", 1 ); // Die
+				$this->fatalError( "Error: '$wiki' has empty site_stats" );
 			}
 			$counts[$wiki] = [
 				'pages' => intval( $row->ss_total_pages ),

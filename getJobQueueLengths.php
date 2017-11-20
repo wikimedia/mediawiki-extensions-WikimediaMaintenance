@@ -20,8 +20,7 @@ class GetJobQueueLengths extends Maintenance {
 
 	function execute() {
 		if ( $this->hasOption( 'grouponly' ) && $this->hasOption( 'report' ) ) {
-			$this->error( "You cannot specify both '--report' and '--grouponly'.\n" );
-			exit( 1 );
+			$this->fatalError( "You cannot specify both '--report' and '--grouponly'." );
 		}
 
 		$totalOnly = $this->hasOption( 'totalonly' );

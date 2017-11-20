@@ -58,7 +58,7 @@ class AddWiki extends Maintenance {
 			$wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender;
 
 		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
-			$this->error( '$wmgVersionNumber is not set, please use MWScript.php wrapper.', true );
+			$this->fatalError( '$wmgVersionNumber is not set, please use MWScript.php wrapper.' );
 		}
 
 		$lang = $this->getArg( 0 );
@@ -68,7 +68,7 @@ class AddWiki extends Maintenance {
 		$languageNames = Language::fetchLanguageNames();
 
 		if ( !isset( $languageNames[$lang] ) ) {
-			$this->error( "Language $lang not found in Names.php", true );
+			$this->fatalError( "Language $lang not found in Names.php" );
 		}
 		$name = $languageNames[$lang];
 

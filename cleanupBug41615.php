@@ -24,7 +24,7 @@ class CleanupBug41615 extends Maintenance {
 
 		$logFile = $this->getOption( 'logdir' ) . "/$wgDBname";
 		if ( !file_put_contents( $logFile, "STARTED " . wfTimestamp() . "\n", FILE_APPEND ) ) {
-			$this->error( "Could not write to log file", 1 ); // die
+			$this->fatalError( "Could not write to log file" );
 		}
 
 		# Mangle throw the log as log_comment can have newlines and such...
@@ -49,7 +49,7 @@ class CleanupBug41615 extends Maintenance {
 		}
 
 		if ( ( count( $binlog ) % 2 ) != 0 ) {
-			$this->error( "Binlog dump entries not matched up.\n", 1 );
+			$this->fatalError( "Binlog dump entries not matched up.\n" );
 		}
 		$binlog = array_chunk( $binlog, 2 ); // there should be pairs of corresponding logs
 
@@ -60,7 +60,7 @@ class CleanupBug41615 extends Maintenance {
 			// 1351692955 itwiki DELETE /* WikiPage::doDeleteArticleReal Guidomac */
 			// FROM `page` WHERE page_id = '4258611'
 			if ( !preg_match( "!^\d+ (\w+) DELETE .* WHERE page_id = '(\d+)'!", $dEntry, $m ) ) {
-				$this->error( "Could not parse '$dEntry'.", 1 );
+				$this->fatalError( "Could not parse '$dEntry'." );
 			}
 			$info = [ 'wiki' => $m[1], 'page_id' => $m[2] ];
 			// 1351692955 itwiki INSERT /* ManualLogEntry::insert Guidomac */  INTO `logging`
@@ -68,7 +68,7 @@ class CleanupBug41615 extends Maintenance {
 			// VALUES (NULL,'delete','delete','20121031141555','276491','Guidomac','0','Doesn\'t_Matter','0','([[WP:IMMEDIATA|C1]]) Pagina o sottopagina vuota, di prova, senza senso o tautologica','a:0:{}')
 			$et = "(?:[^']|\')*"; // single-quote escaped item
 			if ( !preg_match( "! VALUES \(NULL,'delete','delete','\d+','\d+','$et','(\d+)','($et)','\d','$et','$et'\)!m", $iEntry, $m ) ) {
-				$this->error( "Could not parse '$iEntry'.", 1 );
+				$this->fatalError( "Could not parse '$iEntry'." );
 			}
 			$info['log_namespace'] = $m[1];
 			$info['log_title'] = str_replace( "\'", "'", $m[2] ); // unescape
@@ -115,7 +115,7 @@ class CleanupBug41615 extends Maintenance {
 				}
 				// Log the upcoming UPDATE
 				if ( !file_put_contents( $logFile, "{$info['page_id']} => $newID\n", FILE_APPEND ) ) {
-					$this->error( "Could not write to log file", 1 ); // die
+					$this->fatalError( "Could not write to log file" );
 				}
 				if ( $this->hasOption( 'fix' ) ) {
 					$dbw->update( 'revision',

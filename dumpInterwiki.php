@@ -247,7 +247,7 @@ class DumpInterwiki extends Maintenance {
 			try {
 				$this->dbFile = CdbWriter::open( $this->getOption( 'o' ) );
 			} catch ( CdbException $e ) {
-				$this->error( "Unable to open cdb file for writing", 1 );
+				$this->fatalError( "Unable to open cdb file for writing" );
 			}
 		} else {
 			$this->output( "<?php\n" );
@@ -293,7 +293,7 @@ class DumpInterwiki extends Maintenance {
 		$lines = array_map( 'trim', explode( "\n", trim( $intermap ) ) );
 
 		if ( !$lines || count( $lines ) < 2 ) {
-			$this->error( "m:Interwiki_map not found", true );
+			$this->fatalError( "m:Interwiki_map not found" );
 		}
 
 		// Global interwiki map
