@@ -13,6 +13,7 @@
 		<exclude name="Generic.Files.LineLength.TooLong" />
 		<exclude name="Generic.PHP.BacktickOperator.Found" />
 		<exclude name="Squiz.Classes.ValidClassName.NotCamelCaps" />
+		<exclude name="Squiz.Scope.MethodScope.Missing" />
 	</rule>
 	<rule ref="MediaWiki.NamingConventions.PrefixedGlobalFunctions">
 		<properties>
