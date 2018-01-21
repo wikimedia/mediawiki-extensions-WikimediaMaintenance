@@ -78,14 +78,6 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Linter";
 				break;
 
-			case 'moodbar':
-				$files = [
-					'MoodBar.sql',
-					'moodbar_feedback_response.sql',
-				];
-				$path = "$IP/extensions/MoodBar/sql";
-				break;
-
 			case 'newsletter':
 				$files = [
 					'nl_newsletters.sql',
