@@ -112,7 +112,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/Linter/linter.sql" );
 
 		// most wikis are wikibase client wikis and no harm to adding this everywhere
-		$dbw->sourceFile( "$IP/extensions/Wikidata/extensions/Wikibase/client/sql/entity_usage.sql" );
+		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/entity_usage.sql" );
 
 		// Add project specific extension table additions here
 		switch ( $siteGroup ) {
@@ -241,7 +241,7 @@ class AddWiki extends Maintenance {
 		// Populate sites table
 		$sitesPopulation = $this->runChild(
 			'Wikibase\PopulateSitesTable',
-			"$IP/extensions/Wikidata/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
+			"$IP/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
 		);
 
 		$sitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
