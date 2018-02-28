@@ -33,6 +33,7 @@ class ChangeSkinPref extends Maintenance {
 		parent::__construct();
 		$this->mDescription = 'Set a skin for a user, usually monobook';
 		$this->addArg( 'user', 'Which user to set the skin on' );
+		$this->addOption( 'clear', 'Clear skin pref instead. Overrides --skin' );
 		$this->addOption( 'skin', 'Which skin to set (default monobook)', false, true );
 	}
 
@@ -48,6 +49,12 @@ class ChangeSkinPref extends Maintenance {
 		$wiki = wfWikiID();
 		if ( !$user || $user->getId() === 0 ) {
 			$this->fatalError( "User $userName does not exist or is invalid." );
+		}
+		if ( $this->hasOption( 'clear' ) ) {
+			$user->setOption( 'skin', null );
+			$this->saveSettings();
+			$this->output( "{$userName}: Cleared skin preference\n" );
+			return;
 		}
 		if ( !array_key_exists( $newSkin, Skin::getSkinNames() ) ) {
 			$this->fatalError( "$newSkin is not a valid skin" );
