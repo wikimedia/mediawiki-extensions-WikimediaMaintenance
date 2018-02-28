@@ -35,6 +35,7 @@ class ChangeSkinPref extends Maintenance {
 		$this->addArg( 'user', 'Which user to set the skin on' );
 		$this->addOption( 'clear', 'Clear skin pref instead. Overrides --skin' );
 		$this->addOption( 'skin', 'Which skin to set (default monobook)', false, true );
+		$this->addOption( 'userid', 'Treat the user input as a user id instead of user name' );
 	}
 
 	public function execute() {
@@ -45,7 +46,9 @@ class ChangeSkinPref extends Maintenance {
 	}
 
 	private function setSkin( $userName, $newSkin ) {
-		$user = User::newFromName( $userName );
+		$user = $this->hasOption( 'userid' ) ?
+			User::newFromId( $userName ) :
+			User::newFromName( $userName );
 		$wiki = wfWikiID();
 		if ( !$user || $user->getId() === 0 ) {
 			$this->fatalError( "User $userName does not exist or is invalid." );
