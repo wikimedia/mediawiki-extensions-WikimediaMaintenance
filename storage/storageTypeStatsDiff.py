@@ -1,6 +1,4 @@
 #!/usr/bin/python
-
-
 """
 
     For more detail, see http://wikitech.wikimedia.org/view/Text_storage_data
@@ -44,33 +42,32 @@ all done!
 
 """
 
-
+from __future__ import print_function
 import re
 import optparse
 
-##
-##  set up argument parsing.
+# set up argument parsing.
 usage = "usage: %prog <old-stats-file> <new-stats-file>"
 desc = "Calculate the difference between two files containing storageTypeStatsSum.py output"
 parser = optparse.OptionParser(usage=usage, description=desc)
 (opts, args) = parser.parse_args()
 # Require exactly two arguments
 if len(args) != 2:
-    print "Two files needed."
+    print("Two files needed.")
     parser.print_help()
     exit()
 
 try:
-    oldfile=open(args[0], 'r')
-    newfile=open(args[1], 'r')
-except IOError, e:
-    print "IOError trying to open %s or %s: %s\n" % (args[0], args[1], e)
+    oldfile = open(args[0], 'r')
+    newfile = open(args[1], 'r')
+except IOError as e:
+    print("IOError trying to open %s or %s: %s\n" % (args[0], args[1], e))
     exit(1)
 
 # match only the actual value / key lines; ignore everything else
-valueline = re.compile("^ *(?P<val>\d+) *(?P<desc>.*)$")
+valueline = re.compile(r"^ *(?P<val>\d+) *(?P<desc>.*)$")
 
-files={}
+files = {}
 # ok, parse the files and collect stats!
 for file in (oldfile, newfile):
     stats = {}
@@ -78,16 +75,16 @@ for file in (oldfile, newfile):
         match = valueline.match(line)
         if match:
             stats[match.group('desc')] = int(match.group('val'))
-    #stats collected for one file, save it to the files dict
+    # stats collected for one file, save it to the files dict
     files[file.name] = stats
 
 # calculate the difference
-diff = {} # contains numbers keyed on storage types
+diff = {}  # contains numbers keyed on storage types
 allkeys = []
 # collect keys from both sets in case they don't match
 for stats in files.keys():
     # get the union of allkeys and this file's stats keys
-    allkeys = list( set(allkeys) | set(files[stats].keys()) )
+    allkeys = list(set(allkeys) | set(files[stats].keys()))
 for key in allkeys:
     try:
         diff[key] = files[newfile.name][key] - files[oldfile.name][key]
@@ -96,8 +93,8 @@ for key in allkeys:
         diff[key] = 'n/a'
 
 # print out results
-print "%12s %12s %12s   %s" % (oldfile.name, newfile.name, 'Diff', 'Type')
-print "---------------------------------------------------------------------"
+print("%12s %12s %12s   %s" % (oldfile.name, newfile.name, 'Diff', 'Type'))
+print("---------------------------------------------------------------------")
 for key in sorted(allkeys):
     try:
         oldval = files[oldfile.name][key]
@@ -109,5 +106,4 @@ for key in sorted(allkeys):
         newval = 'n/a'
     diffnum = diff[key]
     name = key
-    print "%12s %12s %12s   %s" % (oldval, newval, diffnum, name)
-
+    print("%12s %12s %12s   %s" % (oldval, newval, diffnum, name))
