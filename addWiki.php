@@ -122,7 +122,7 @@ class AddWiki extends Maintenance {
 				break;
 			case 'wikiquote':
 				break;
-			case 'books':
+			case 'wikibooks':
 				break;
 			case 'wikinews':
 				break;
