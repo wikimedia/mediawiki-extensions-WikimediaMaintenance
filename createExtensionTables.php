@@ -132,6 +132,11 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Translate/sql";
 				break;
 
+			case 'wikibase':
+				$files = [ 'entity_usage.sql' ];
+				$path = "$IP/extensions/Wikibase/client/sql";
+				break;
+
 			case 'wikilove':
 				$files = [ 'WikiLoveLog.sql' ];
 				$path = "$IP/extensions/WikiLove/patches";
