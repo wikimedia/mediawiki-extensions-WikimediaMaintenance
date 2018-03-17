@@ -86,4 +86,4 @@ class FixUsabilityPrefs extends Maintenance {
 }
 
 $maintClass = 'FixUsabilityPrefs';
-require_once DO_MAINTENANCE;
+require_once RUN_MAINTENANCE_IF_MAIN;

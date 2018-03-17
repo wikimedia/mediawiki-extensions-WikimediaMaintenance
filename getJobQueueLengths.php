@@ -73,4 +73,4 @@ class GetJobQueueLengths extends Maintenance {
 }
 
 $maintClass = 'GetJobQueueLengths';
-require_once DO_MAINTENANCE;
+require_once RUN_MAINTENANCE_IF_MAIN;
