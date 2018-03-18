@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class FixUsabilityPrefs extends Maintenance {
+class FixUsabilityPrefs2 extends Maintenance {
 	function __construct() {
 		parent::__construct();
 	}
@@ -110,5 +110,5 @@ class FixUsabilityPrefs extends Maintenance {
 	}
 }
 
-$maintClass = 'FixUsabilityPrefs';
+$maintClass = 'FixUsabilityPrefs2';
 require_once RUN_MAINTENANCE_IF_MAIN;

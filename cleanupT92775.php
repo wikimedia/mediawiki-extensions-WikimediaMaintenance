@@ -13,7 +13,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class FixCUBlockLogs extends Maintenance {
+class CleanupT92775 extends Maintenance {
 	public function execute() {
 		$ids = [];
 		$res = wfGetDB( DB_REPLICA )->select(
@@ -35,5 +35,5 @@ class FixCUBlockLogs extends Maintenance {
 	}
 }
 
-$maintClass = 'FixCUBlockLogs';
+$maintClass = 'CleanupT92775';
 require_once RUN_MAINTENANCE_IF_MAIN;

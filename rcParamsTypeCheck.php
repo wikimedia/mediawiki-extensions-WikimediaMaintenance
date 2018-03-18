@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class RCParamsTypeCheck extends Maintenance {
+class RcParamsTypeCheck extends Maintenance {
 	function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Checks the type of recentchanges.rc_params on all wikis in $wgConf';
@@ -29,5 +29,5 @@ class RCParamsTypeCheck extends Maintenance {
 	}
 }
 
-$maintClass = 'RCParamsTypeCheck';
+$maintClass = 'RcParamsTypeCheck';
 require_once RUN_MAINTENANCE_IF_MAIN;

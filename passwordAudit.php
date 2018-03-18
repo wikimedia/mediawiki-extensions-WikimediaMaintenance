@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class passwordAudit extends Maintenance {
+class PasswordAudit extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
@@ -110,5 +110,5 @@ class passwordAudit extends Maintenance {
 
 }
 
-$maintClass = 'passwordAudit';
+$maintClass = 'PasswordAudit';
 require_once RUN_MAINTENANCE_IF_MAIN;

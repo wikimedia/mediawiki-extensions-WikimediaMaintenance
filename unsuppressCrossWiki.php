@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class unsuppressCrossWiki extends Maintenance {
+class UnsuppressCrossWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Show number of jobs waiting in master database";
@@ -42,5 +42,5 @@ class unsuppressCrossWiki extends Maintenance {
 	}
 }
 
-$maintClass = 'unsuppressCrossWiki';
+$maintClass = 'UnsuppressCrossWiki';
 require_once RUN_MAINTENANCE_IF_MAIN;

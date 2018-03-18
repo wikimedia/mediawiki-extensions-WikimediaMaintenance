@@ -21,7 +21,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-class WikimediaPurgeUrls extends Maintenance {
+class PurgeUrls extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Send purge requests to Varnish for listed urls' );
@@ -78,5 +78,5 @@ class WikimediaPurgeUrls extends Maintenance {
 	}
 }
 
-$maintClass = 'WikimediaPurgeUrls';
+$maintClass = 'PurgeUrls';
 require_once RUN_MAINTENANCE_IF_MAIN;
