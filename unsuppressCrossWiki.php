@@ -18,21 +18,35 @@ class UnsuppressCrossWiki extends Maintenance {
 		}
 		$userName = $user->getName(); // sanity
 		$wikis = $user->listAttached(); // wikis with attached accounts
+		$userQuery = User::getQueryInfo();
 		foreach ( $wikis as $wiki ) {
 			$lb = wfGetLB( $wiki );
 			$dbw = $lb->getConnection( DB_MASTER, [], $wiki );
 			# Get local ID like $user->localUserData( $wiki ) does
-			$localUserId = $dbw->selectField( 'user', 'user_id',
-				[ 'user_name' => $userName ], __METHOD__ );
+			$localUser = User::newFromRow( $dbw->selectField( $userQuery['tables'], $userQuery['fields'],
+				[ 'user_name' => $userName ], __METHOD__, [], $userQuery['joins'] ) );
 
 			$delUserBit = Revision::DELETED_USER;
-			$hiddenCount = $dbw->selectField( 'revision', 'COUNT(*)',
-				[ 'rev_user' => $localUserId, "rev_deleted & $delUserBit != 0" ], __METHOD__ );
+			$revWhere = ActorMigration::newMigration()->getWhere( $dbw, 'rev_user', $localUser );
+			$hiddenCount = 0;
+			foreach ( $revWhere['orconds'] as $cond ) {
+				$hiddenCount += $dbw->selectField(
+					[ 'revision' ] + $revWhere['tables'],
+					'COUNT(*)',
+					[
+						$cond,
+						"rev_deleted & $delUserBit != 0"
+					],
+					__METHOD__,
+					[],
+					$revWhere['joins']
+				);
+			}
 			echo "$hiddenCount edits have the username hidden on \"$wiki\"\n";
 			# Unsuppress username on edits
 			if ( $hiddenCount > 0 ) {
-				echo "Unsuppressed edits of attached account (local id $localUserId) on \"$wiki\"...";
-				RevisionDeleteUser::unsuppressUserName( $userName, $localUserId, $dbw );
+				echo "Unsuppressed edits of attached account (local id {$localUser->getId()}) on \"$wiki\"...";
+				RevisionDeleteUser::unsuppressUserName( $userName, $localUser->getId(), $dbw );
 				echo "done!\n\n";
 			}
 			$lb->reuseConnection( $dbw ); // not really needed
