@@ -202,7 +202,7 @@ class AddWiki extends Maintenance {
 		}
 		$setZones->execute();
 
-		// Clear MassMessage cache (bug 60075)
+		// Clear MassMessage cache (T62075)
 		global $wgConf;
 		// Even if the dblists have been updated, it's not in $wgConf yet
 		$wgConf->wikis[] = $dbName;
