@@ -21,6 +21,8 @@
  * @ingroup Wikimedia
  */
 
+use Wikimedia\Rdbms\IDatabase;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class RemoveDeletedWikis extends Maintenance {
