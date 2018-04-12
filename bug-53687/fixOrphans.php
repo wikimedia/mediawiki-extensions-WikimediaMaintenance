@@ -10,10 +10,12 @@ class FixOrphans extends Maintenance {
 	}
 
 	function execute() {
-		global $wgCommentTableSchemaMigrationStage;
+		global $wgCommentTableSchemaMigrationStage, $wgActorTableSchemaMigrationStage;
 
 		$commentMigrationStage = isset( $wgCommentTableSchemaMigrationStage )
 			? $wgCommentTableSchemaMigrationStage : MIGRATION_NEW;
+		$actorMigrationStage = isset( $wgActorTableSchemaMigrationStage )
+			? $wgActorTableSchemaMigrationStage : MIGRATION_NEW;
 
 		$fileName = $this->getArg( 0 );
 		$f = fopen( $fileName, 'r' );
@@ -28,8 +30,6 @@ class FixOrphans extends Maintenance {
 		$dbw = wfGetDB( DB_MASTER );
 
 		$verifyPairs = [
-			'ar_user' => 'rev_user',
-			'ar_user_text' => 'rev_user_text',
 			'ar_timestamp' => 'rev_timestamp',
 			'ar_minor_edit' => 'rev_minor_edit',
 			'ar_text_id' => 'rev_text_id',
@@ -39,15 +39,24 @@ class FixOrphans extends Maintenance {
 			'ar_parent_id' => 'rev_parent_id',
 			'ar_sha1' => 'rev_sha1',
 		];
+		if ( $actorMigrationStage <= MIGRATION_WRITE_BOTH ) {
+			$verifyPairs['ar_user'] = 'rev_user';
+			$verifyPairs['ar_user_text'] = 'rev_user_text';
+		}
+		if ( $actorMigrationStage >= MIGRATION_WRITE_BOTH ) {
+			$verifyPairs['ar_actor'] = 'revactor_actor';
+		}
 		if ( $commentMigrationStage <= MIGRATION_WRITE_BOTH ) {
 			$verifyPairs['ar_comment'] = 'rev_comment';
 		}
 		if ( $commentMigrationStage >= MIGRATION_WRITE_BOTH ) {
 			$verifyPairs['ar_comment_id'] = 'revcomment_comment_id';
 		}
-		$revCommentStore = CommentStore::newKey( 'rev_comment' );
-		$commentQuery = $revCommentStore->getJoin();
-		$arCommentStore = CommentStore::newKey( 'ar_comment' );
+
+		$commentStore = CommentStore::getStore();
+		$commentQuery = $commentStore->getJoin( 'rev_comment' );
+		$actorMigration = ActorMigration::newMigration();
+		$actorQuery = $actorMigration->getJoin( 'rev_user' );
 
 		while ( !feof( $f ) ) {
 			$line = fgets( $f );
@@ -70,12 +79,12 @@ class FixOrphans extends Maintenance {
 
 			$this->beginTransaction( $dbw, __METHOD__ );
 			$revRow = $dbw->selectRow(
-				[ 'revision' ] + $commentQuery['tables'],
-				[ $dbr->tableName( 'revision' ) . '.*' ] + $commentQuery['fields'],
+				[ 'revision' ] + $commentQuery['tables'] + $actorQuery['tables'],
+				[ $dbr->tableName( 'revision' ) . '.*' ] + $commentQuery['fields'] + $actorQuery['fields'],
 				[ 'rev_id' => $revId ],
 				__METHOD__,
 				[ 'FOR UPDATE' ],
-				$commentQuery['joins']
+				$commentQuery['joins'] + $actorQuery['joins']
 			);
 			if ( !$revRow ) {
 				$this->error( "$revId: ERROR revision row has disappeared!" );
@@ -146,12 +155,12 @@ class FixOrphans extends Maintenance {
 					$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revId ], __METHOD__ );
 				}
 			} elseif ( $action === 'move-revision' ) {
+				$comment = $commentStore->getComment( 'rev_comment', $revRow );
+				$user = User::newFromAnyId( $revRow->rev_user, $revRow->rev_user_text, $revRow->rev_actor );
 				$dbw->insert( 'archive',
 					[
 						'ar_namespace'  => $info['log_namespace'],
 						'ar_title'      => $info['log_title'],
-						'ar_user'       => $revRow->rev_user,
-						'ar_user_text'  => $revRow->rev_user_text,
 						'ar_timestamp'  => $revRow->rev_timestamp,
 						'ar_minor_edit' => $revRow->rev_minor_edit,
 						'ar_rev_id'     => $revId,
@@ -163,7 +172,8 @@ class FixOrphans extends Maintenance {
 						'ar_page_id'    => $revRow->rev_page,
 						'ar_deleted'    => $revRow->rev_deleted,
 						'ar_sha1'       => $revRow->rev_sha1,
-					] + $arCommentStore->insert( $dbw, $revCommentStore->getComment( $revRow ) ),
+					] + $commentStore->insert( $dbw, 'ar_comment', $comment )
+						+ $actorMigration->getInsertValues( $dbr, 'ar_user', $user ),
 					__METHOD__ );
 				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
 				if ( $commentMigrationStage > MIGRATION_OLD ) {
