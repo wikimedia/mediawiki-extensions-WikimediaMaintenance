@@ -275,7 +275,7 @@ class AddWiki extends Maintenance {
 		// Even if the dblists have been updated, it's not in $wgConf yet
 		$wgConf->wikis[] = $dbName;
 		$wgMemc->delete( 'massmessage:urltodb' );
-		MassMessage::getDBName( '' ); // Forces re-cache
+		MediaWiki\MassMessage\DatabaseLookup::getDBName( '' ); // Forces re-cache
 
 		$user = getenv( 'SUDO_USER' );
 		$time = wfTimestamp( TS_RFC2822 );
