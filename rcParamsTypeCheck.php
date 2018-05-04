@@ -6,6 +6,8 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 class RcParamsTypeCheck extends Maintenance {
 	function __construct() {
 		parent::__construct();
@@ -14,9 +16,10 @@ class RcParamsTypeCheck extends Maintenance {
 
 	function execute() {
 		global $wgConf;
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$count = 0;
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
-			$lb = wfGetLB( $wiki );
+			$lb = $lbFactory->getMainLB( $wiki );
 			$db = $lb->getConnection( DB_MASTER, [], $wiki );
 			$field = $db->fieldInfo( 'recentchanges', 'rc_params' );
 			if ( $field->type() !== "blob" ) {

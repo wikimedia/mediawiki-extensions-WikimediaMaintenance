@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\DBReplicationWaitError;
+
 class UnsuppressCrossWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -19,8 +22,9 @@ class UnsuppressCrossWiki extends Maintenance {
 		$userName = $user->getName(); // sanity
 		$wikis = $user->listAttached(); // wikis with attached accounts
 		$userQuery = User::getQueryInfo();
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		foreach ( $wikis as $wiki ) {
-			$lb = wfGetLB( $wiki );
+			$lb = $lbFactory->getMainLB( $wiki );
 			$dbw = $lb->getConnection( DB_MASTER, [], $wiki );
 			# Get local ID like $user->localUserData( $wiki ) does
 			$localUser = User::newFromRow( $dbw->selectField( $userQuery['tables'], $userQuery['fields'],
@@ -51,7 +55,11 @@ class UnsuppressCrossWiki extends Maintenance {
 			}
 			$lb->reuseConnection( $dbw ); // not really needed
 			# Don't lag too bad
-			wfWaitForSlaves( 5 );
+			try {
+				$lbFactory->waitForReplication( [ 'wiki' => $wiki ] );
+			} catch ( DBReplicationWaitError $e ) {
+				// Ignore
+			}
 		}
 	}
 }

@@ -31,8 +31,9 @@ foreach ( $lines as $line ) {
 		'dbk' => $dbk ];
 }
 
+$lbFactory = MediaWiki\MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 foreach ( $opsByWiki as $wiki => $ops ) {
-	$lb = wfGetLB( $wiki );
+	$lb = $lbFactory->getMainLB( $wiki );
 	$db = $lb->getConnection( DB_MASTER, [], $wiki );
 
 	foreach ( $ops as $op ) {

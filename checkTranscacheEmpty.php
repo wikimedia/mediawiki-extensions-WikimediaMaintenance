@@ -3,8 +3,9 @@ require_once __DIR__ . '/WikimediaCommandLine.inc';
 
 $bad = 0;
 $good = 0;
+$lbFactory = MediaWiki\MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 foreach ( $wgLocalDatabases as $wiki ) {
-	$lb = wfGetLB( $wiki );
+	$lb = $lbFactory->getMainLB( $wiki );
 	$db = $lb->getConnection( DB_REPLICA, [], $wiki );
 	$notEmpty = $db->selectField( 'transcache', '1', false, 'checkTranscacheEmpty.php' );
 	if ( $notEmpty ) {

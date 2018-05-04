@@ -22,6 +22,8 @@
 
 require_once __DIR__ . '/WikimediaCommandLine.inc';
 
+use MediaWiki\MediaWikiServices;
+
 class GetPageCounts extends Maintenance {
 	public function __construct() {
 		$this->mDescription = 'Generates machine-readable statistics of pages on all wikis in the cluster';
@@ -33,6 +35,7 @@ class GetPageCounts extends Maintenance {
 
 		$wikis = $wgConf->getLocalDatabases();
 		$exclude = array_flip( $this->getExcludedWikis() );
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
 		$counts = [];
 		foreach ( $wikis as $wiki ) {
@@ -43,7 +46,7 @@ class GetPageCounts extends Maintenance {
 			if ( isset( $exclude[$wiki] ) ) {
 				continue;
 			}
-			$lb = wfGetLB( $wiki );
+			$lb = $lbFactory->getMainLB( $wiki );
 			$dbr = $lb->getConnection( DB_REPLICA, [], $wiki );
 			$row = $dbr->selectRow( 'site_stats', [ 'ss_total_pages', 'ss_good_articles' ], '', __METHOD__ );
 			if ( !$row ) {

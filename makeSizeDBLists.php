@@ -6,6 +6,8 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 class MakeSizeDBLists extends Maintenance {
 
 	const DB_SMALL = 10000;
@@ -18,12 +20,13 @@ class MakeSizeDBLists extends Maintenance {
 
 	function execute() {
 		global $wgConf;
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$small = [];
 		$medium = [];
 		$large = [];
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			try {
-				$lb = wfGetLB( $wiki );
+				$lb = $lbFactory->getMainLB( $wiki );
 				$db = $lb->getConnection( DB_MASTER, [], $wiki );
 			} catch ( Exception $e ) {
 				// Probably just wikitech etc, skip!
