@@ -215,8 +215,8 @@ class DumpInterwiki extends Maintenance {
 		$this->addOption( 'o', 'Cdb output file', false, true );
 		$this->addOption( 'insecure', 'Output wikimedia interwiki urls using HTTP instead of HTTPS', false, false );
 
-		global $wmfRealm;
-		if ( $wmfRealm === 'labs' ) {
+		global $wmgRealm;
+		if ( $wmgRealm === 'labs' ) {
 			$this->end = '.beta.wmflabs.org';
 		}
 	}
@@ -265,7 +265,7 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	function getRebuildInterwikiDump() {
-		global $wgContLang, $wmfRealm;
+		global $wgContLang, $wmgRealm;
 
 		$sites = $this->getSites();
 		$extraLinks = $this->getExtraLinks();
@@ -275,7 +275,7 @@ class DumpInterwiki extends Maintenance {
 		foreach ( $this->langlist as $lang ) {
 			$reserved[$lang] = 1;
 		}
-		if ( $wmfRealm === 'production' ) {
+		if ( $wmgRealm === 'production' ) {
 			foreach ( self::$languageAliases as $alias => $lang ) {
 				$reserved[$alias] = 1;
 			}
@@ -422,7 +422,7 @@ class DumpInterwiki extends Maintenance {
 	 * @param string $source
 	 */
 	function makeLanguageLinks( &$site, $source ) {
-		global $wmfRealm;
+		global $wmgRealm;
 
 		// Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
@@ -430,7 +430,7 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		// Language aliases
-		if ( $wmfRealm === 'production' ) {
+		if ( $wmgRealm === 'production' ) {
 			foreach ( self::$languageAliases as $alias => $lang ) {
 				$this->makeLink( [ $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ], $source );
 			}
