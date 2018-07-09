@@ -48,7 +48,7 @@ class GetJobQueueLengths extends Maintenance {
 		);
 
 		if ( $this->hasOption( 'grouponly' ) ) {
-			$this->output( FormatJSON::encode( $sizeByWiki, true ) . "\n" );
+			$this->output( FormatJson::encode( $sizeByWiki, true ) . "\n" );
 		} else {
 			$total = 0;
 			foreach ( $sizeByWiki as $wiki => $counts ) {
