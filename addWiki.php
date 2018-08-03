@@ -243,6 +243,7 @@ class AddWiki extends Maintenance {
 			"$IP/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
 		);
 
+		$sitesPopulation->setDB( $dbw );
 		$sitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
 		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
 		$sitesPopulation->execute();
@@ -253,6 +254,7 @@ class AddWiki extends Maintenance {
 				'Cognate\PopulateCognateSites',
 				"$IP/extensions/Cognate/maintenance/populateCognateSites.php"
 			);
+			$cognateSitesPopulation->setDB( $dbw );
 			$cognateSitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
 			$cognateSitesPopulation->execute();
 		}
@@ -263,6 +265,7 @@ class AddWiki extends Maintenance {
 			"$IP/extensions/WikimediaMaintenance/filebackend/setZoneAccess.php"
 		);
 
+		$setZones->setDB( $dbw );
 		$setZones->mOptions['backend'] = 'local-multiwrite';
 		if ( $this->isPrivate( $dbName ) ) {
 			$setZones->mOptions['private'] = 1;
