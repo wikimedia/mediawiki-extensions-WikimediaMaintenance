@@ -28,6 +28,8 @@
  */
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 class AddWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -175,6 +177,7 @@ class AddWiki extends Maintenance {
 
 		$stores = array_unique( array_merge( $stores, $flowStores ) );
 
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		if ( count( $stores ) ) {
 			global $wgDBuser, $wgDBpassword, $wgExternalServers;
 			foreach ( $stores as $storeURL ) {
@@ -190,22 +193,28 @@ class AddWiki extends Maintenance {
 				$wgExternalServers[$cluster][0]['user'] = $wgDBuser;
 				$wgExternalServers[$cluster][0]['password'] = $wgDBpassword;
 
-				$store = new ExternalStoreDB;
-				$extdb = $store->getMaster( $cluster );
-				$extdb->query( "SET default_storage_engine=InnoDB" );
+				// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
+				// and gets a DBConnRef, which  is not meant for use with selectDB().
+				$lb = $lbFactory->getExternalLB( $cluster );
+				$extdb = $lb->getConnection( DB_MASTER );
 
+				// Create the database
+				$extdb->query( "SET default_storage_engine=InnoDB" );
 				// IF NOT EXISTS because two External Store clusters
 				// can use the same DB, but different blobs table entries.
 				$extdb->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
 				$extdb->selectDB( $dbName );
 
 				// Hack x2
+				$store = new ExternalStoreDB();
 				$blobsTable = $store->getTable( $extdb );
 				$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " . $this->getDir() . "/storage/blobs.sql";
 				$blobsFile = popen( $sedCmd, 'r' );
 				$extdb->sourceStream( $blobsFile );
 				pclose( $blobsFile );
 				$extdb->commit();
+
+				$lb->reuseConnection( $extdb );
 			}
 		}
 
