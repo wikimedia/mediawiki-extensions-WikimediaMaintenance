@@ -179,7 +179,6 @@ class AddWiki extends Maintenance {
 
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		if ( count( $stores ) ) {
-			global $wgDBuser, $wgDBpassword, $wgExternalServers;
 			foreach ( $stores as $storeURL ) {
 				$m = [];
 				if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
@@ -188,10 +187,6 @@ class AddWiki extends Maintenance {
 
 				$cluster = $m[1];
 				$this->output( "Initialising external storage $cluster...\n" );
-
-				// Hack
-				$wgExternalServers[$cluster][0]['user'] = $wgDBuser;
-				$wgExternalServers[$cluster][0]['password'] = $wgDBpassword;
 
 				// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
 				// and gets a DBConnRef, which  is not meant for use with selectDB().
