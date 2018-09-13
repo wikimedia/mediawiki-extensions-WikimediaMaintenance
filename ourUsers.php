@@ -27,43 +27,48 @@
  * @ingroup Wikimedia
  */
 
-/** */
-$wikiuser_pass = `wikiuser_pass`;
-$wikiadmin_pass = `wikiadmin_pass`;
-$nagios_pass = `nagios_sql_pass`;
+/**
+ * @suppress SecurityCheck-XSS
+ */
+function doStuff() {
+	$wikiuser_pass = `wikiuser_pass`;
+	$wikiadmin_pass = `wikiadmin_pass`;
+	$nagios_pass = `nagios_sql_pass`;
 
-$hosts = [
-	'localhost',
-	'10.0.%',
-	'66.230.200.%',
-	'208.80.152.%',
-];
+	$hosts = [
+		'localhost',
+		'10.0.%',
+		'66.230.200.%',
+		'208.80.152.%',
+	];
 
-$databases = [
-	'%wik%',
-	'centralauth',
-];
+	$databases = [
+		'%wik%',
+		'centralauth',
+	];
 
-print "/*!40100 set old_passwords=1 */;\n";
-print "/*!40100 set global old_passwords=1 */;\n";
+	print "/*!40100 set old_passwords=1 */;\n";
+	print "/*!40100 set global old_passwords=1 */;\n";
 
-foreach ( $hosts as $host ) {
-	print "--\n-- $host\n--\n";
-	print "\n-- wikiuser\n\n";
-	print "GRANT REPLICATION CLIENT,PROCESS ON *.* TO 'wikiuser'@'$host' IDENTIFIED BY '$wikiuser_pass';\n";
-	print "GRANT ALL PRIVILEGES ON `boardvote%`.* TO 'wikiuser'@'$host' IDENTIFIED BY '$wikiuser_pass';\n";
-	foreach ( $databases as $db ) {
-		print "GRANT SELECT, INSERT, UPDATE, DELETE ON `$db`.* TO 'wikiuser'@'$host' IDENTIFIED BY '$wikiuser_pass';\n";
+	foreach ( $hosts as $host ) {
+		print "--\n-- $host\n--\n";
+		print "\n-- wikiuser\n\n";
+		print "GRANT REPLICATION CLIENT,PROCESS ON *.* TO 'wikiuser'@'$host' IDENTIFIED BY '$wikiuser_pass';\n";
+		print "GRANT ALL PRIVILEGES ON `boardvote%`.* TO 'wikiuser'@'$host' IDENTIFIED BY '$wikiuser_pass';\n";
+		foreach ( $databases as $db ) {
+			print "GRANT SELECT, INSERT, UPDATE, DELETE ON `$db`.* TO 'wikiuser'@'$host' IDENTIFIED BY '$wikiuser_pass';\n";
+		}
+
+		print "\n-- wikiadmin\n\n";
+		print "GRANT PROCESS, REPLICATION CLIENT ON *.* TO 'wikiadmin'@'$host' IDENTIFIED BY '$wikiadmin_pass';\n";
+		print "GRANT ALL PRIVILEGES ON `boardvote%`.* TO wikiadmin@'$host' IDENTIFIED BY '$wikiadmin_pass';\n";
+		foreach ( $databases as $db ) {
+			print "GRANT ALL PRIVILEGES ON `$db`.* TO wikiadmin@'$host' IDENTIFIED BY '$wikiadmin_pass';\n";
+		}
+		print "\n-- nagios\n\n";
+		print "GRANT REPLICATION CLIENT ON *.* TO 'nagios'@'$host' IDENTIFIED BY '$nagios_pass';\n";
+
+		print "\n";
 	}
-
-	print "\n-- wikiadmin\n\n";
-	print "GRANT PROCESS, REPLICATION CLIENT ON *.* TO 'wikiadmin'@'$host' IDENTIFIED BY '$wikiadmin_pass';\n";
-	print "GRANT ALL PRIVILEGES ON `boardvote%`.* TO wikiadmin@'$host' IDENTIFIED BY '$wikiadmin_pass';\n";
-	foreach ( $databases as $db ) {
-		print "GRANT ALL PRIVILEGES ON `$db`.* TO wikiadmin@'$host' IDENTIFIED BY '$wikiadmin_pass';\n";
-	}
-	print "\n-- nagios\n\n";
-	print "GRANT REPLICATION CLIENT ON *.* TO 'nagios'@'$host' IDENTIFIED BY '$nagios_pass';\n";
-
-	print "\n";
 }
+doStuff();

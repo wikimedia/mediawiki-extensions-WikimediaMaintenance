@@ -14,7 +14,7 @@
 	</rule>
 	<rule ref="MediaWiki.NamingConventions.PrefixedGlobalFunctions">
 		<properties>
-			<property name="ignoreList" type="array" value="doSanityCheck,purgeStaleMemcachedText,fixBug41778,assertCanAlter" />
+			<property name="ignoreList" type="array" value="doSanityCheck,purgeStaleMemcachedText,fixBug41778,assertCanAlter,doStuff" />
 		</properties>
 	</rule>
 	<rule ref="MediaWiki.NamingConventions.ValidGlobalName">

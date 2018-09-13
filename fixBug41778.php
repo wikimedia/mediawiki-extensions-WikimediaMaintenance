@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/WikimediaCommandLine.inc';
 
+/**
+ * @suppress SecurityCheck-XSS
+ */
 function fixBug41778() {
 	$dbw = wfGetDB( DB_MASTER );
 

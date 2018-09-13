@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/WikimediaCommandLine.inc';
 
+/**
+ * @suppress SecurityCheck-XSS
+ */
 function purgeStaleMemcachedText() {
 	global $wgMemc, $wgDBname;
 	$db = wfGetDB( DB_MASTER );
