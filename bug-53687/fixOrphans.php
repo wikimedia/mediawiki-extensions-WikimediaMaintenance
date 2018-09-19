@@ -15,7 +15,7 @@ class FixOrphans extends Maintenance {
 		$commentMigrationStage = isset( $wgCommentTableSchemaMigrationStage )
 			? $wgCommentTableSchemaMigrationStage : MIGRATION_NEW;
 		$actorMigrationStage = isset( $wgActorTableSchemaMigrationStage )
-			? $wgActorTableSchemaMigrationStage : MIGRATION_NEW;
+			? $wgActorTableSchemaMigrationStage : SCHEMA_COMPAT_NEW;
 
 		$fileName = $this->getArg( 0 );
 		$f = fopen( $fileName, 'r' );
@@ -39,11 +39,11 @@ class FixOrphans extends Maintenance {
 			'ar_parent_id' => 'rev_parent_id',
 			'ar_sha1' => 'rev_sha1',
 		];
-		if ( $actorMigrationStage <= MIGRATION_WRITE_BOTH ) {
+		if ( $actorMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
 			$verifyPairs['ar_user'] = 'rev_user';
 			$verifyPairs['ar_user_text'] = 'rev_user_text';
 		}
-		if ( $actorMigrationStage >= MIGRATION_WRITE_BOTH ) {
+		if ( $actorMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
 			$verifyPairs['ar_actor'] = 'revactor_actor';
 		}
 		if ( $commentMigrationStage <= MIGRATION_WRITE_BOTH ) {
