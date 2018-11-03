@@ -244,7 +244,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/Babel/babel.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_changes.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_log.sql" );
-		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/globalblocking.sql" );
+		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/sql/global_block_whitelist.sql" );
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/db/mathoid.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/sql/TimedMediaHandler.sql" );
