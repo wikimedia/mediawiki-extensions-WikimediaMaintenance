@@ -3,11 +3,11 @@
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class FixUsabilityPrefs2 extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 
-	function execute() {
+	public function execute() {
 		$dbw = wfGetDB( DB_MASTER );
 
 		echo "Fixing usebetatoolbar\n";

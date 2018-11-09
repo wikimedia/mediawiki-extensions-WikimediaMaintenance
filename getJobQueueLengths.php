@@ -9,7 +9,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use MediaWiki\MediaWikiServices;
 
 class GetJobQueueLengths extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Get the length of the job queue on all wikis in $wgConf';
 		$this->addOption( 'totalonly', 'Whether to only output the total number of jobs' );
@@ -18,7 +18,7 @@ class GetJobQueueLengths extends Maintenance {
 		$this->addOption( 'report', "Report the total count of job queue items to StatsD" );
 	}
 
-	function execute() {
+	public function execute() {
 		if ( $this->hasOption( 'grouponly' ) && $this->hasOption( 'report' ) ) {
 			$this->fatalError( "You cannot specify both '--report' and '--grouponly'." );
 		}

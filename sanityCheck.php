@@ -13,7 +13,7 @@ require_once __DIR__ . '/WikimediaCommandLine.inc';
 class SanityCheckRequest extends FauxRequest {
 	public $title;
 
-	function __construct() {
+	public function __construct() {
 		$this->title = Title::newMainPage();
 
 		parent::__construct( [
@@ -21,7 +21,7 @@ class SanityCheckRequest extends FauxRequest {
 		] );
 	}
 
-	function getRequestURL() {
+	public function getRequestURL() {
 		return $this->title->getFullURL( '', false, PROTO_CANONICAL );
 	}
 }

@@ -150,7 +150,7 @@ class ImportUseModWikipedia extends Maintenance {
 		}
 	}
 
-	function initLinkPatterns() {
+	private function initLinkPatterns() {
 		# Field separators are used in the URL-style patterns below.
 		$this->FS  = "\xb3";      # The FS character is a superscript "3"
 		$this->FS1 = $this->FS . "1";   # The FS values are used to separate fields
@@ -203,7 +203,7 @@ $AnyLetter .= "]";
 		$ISBNPattern = "ISBN:?([0-9- xX]{10,})";
 	}
 
-	function execute() {
+	public function execute() {
 		$this->articleFileName = '/tmp/importUseMod.' . mt_rand( 0, 0x7ffffff ) . '.tmp';
 		$this->patchFileName = '/tmp/importUseMod.' . mt_rand( 0, 0x7ffffff ) . '.tmp';
 		$this->dataDir = $this->getOption( 'datadir' );
@@ -223,7 +223,7 @@ $AnyLetter .= "]";
 		return 0;
 	}
 
-	function writeXmlHeader() {
+	private function writeXmlHeader() {
 		fwrite( $this->outFile, <<<EOT
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
@@ -240,11 +240,11 @@ EOT
 		);
 	}
 
-	function writeXmlFooter() {
+	private function writeXmlFooter() {
 		fwrite( $this->outFile, "</mediawiki>\n" );
 	}
 
-	function readRclog() {
+	private function readRclog() {
 		$rcFile = fopen( "{$this->dataDir}/rclog", 'r' );
 		while ( $line = fgets( $rcFile ) ) {
 			$bits = explode( $this->FS3, $line );
@@ -270,7 +270,7 @@ EOT
 		}
 	}
 
-	function writeMoveLog() {
+	private function writeMoveLog() {
 		$this->moveLog = [];
 		$deepRenames = $this->deepRenames;
 		echo "Calculating move log...\n";
@@ -341,11 +341,11 @@ EOT
 		}
 	}
 
-	function element( $name, $value ) {
+	private function element( $name, $value ) {
 		return "<$name>" . htmlspecialchars( $this->encode( $value ) ) . "</$name>\n";
 	}
 
-	function moveLogCallback( $entry ) {
+	private function moveLogCallback( $entry ) {
 		$rctitle = $entry['rctitle'];
 		$title = $entry['title'];
 		$this->moveDests[$rctitle] = $title;
@@ -368,14 +368,14 @@ EOT
 		}
 	}
 
-	function writeRevisions() {
+	private function writeRevisions() {
 		$this->numGoodRevs = 0;
 		$this->revId = 1;
 		$this->processDiffFile( [ $this, 'revisionCallback' ] );
 		echo "\n\nImported {$this->numGoodRevs} out of {$this->numRevs}\n";
 	}
 
-	function revisionCallback( $params ) {
+	private function revisionCallback( $params ) {
 		$title = $params['rctitle'];
 		$editTime = $params['timestamp'];
 
@@ -417,7 +417,7 @@ EOT
 		# $this->printLatin1( "$editTime $title\n" );
 	}
 
-	function doPendingOps( $editTime ) {
+	private function doPendingOps( $editTime ) {
 		foreach ( $this->moveLog as $newTitle => $entry ) {
 			if ( $entry['timestamp'] <= $editTime ) {
 				unset( $this->moveLog[$newTitle] );
@@ -454,7 +454,7 @@ EOT
 		}
 	}
 
-	function patch( $source, $diff ) {
+	private function patch( $source, $diff ) {
 		file_put_contents( $this->articleFileName, $source );
 		file_put_contents( $this->patchFileName, $diff );
 		$error = wfShellExec(
@@ -477,7 +477,7 @@ EOT
 		}
 	}
 
-	function resolveFailedDiff( $origText, $diff ) {
+	private function resolveFailedDiff( $origText, $diff ) {
 		$context = [];
 		$diffLines = explode( "\n", $diff );
 		for ( $i = 0; $i < count( $diffLines ); $i++ ) {
@@ -515,7 +515,7 @@ EOT
 		return $changedLinks;
 	}
 
-	function resolveTextChange( $source, $dest ) {
+	private function resolveTextChange( $source, $dest ) {
 		$changedLinks = [];
 		$sourceLinks = $this->getLinkList( $source );
 		$destLinks = $this->getLinkList( $dest );
@@ -556,7 +556,7 @@ EOT
 		return $changedLinks;
 	}
 
-	function processDiffFile( $callback ) {
+	private function processDiffFile( $callback ) {
 		$diffFile = fopen( "{$this->dataDir}/diff_log", 'r' );
 
 		$delimiter = "------\n";
@@ -645,7 +645,7 @@ EOT
 		return true;
 	}
 
-	function reconcileCurrentRevs() {
+	private function reconcileCurrentRevs() {
 		foreach ( $this->textCache as $title => $text ) {
 			$fileName = "{$this->dataDir}/page/";
 			if ( preg_match( '/^[A-Z]/', $title, $m ) ) {
@@ -686,11 +686,11 @@ EOT
 		}
 	}
 
-	function makeTitle( $titleText ) {
+	private function makeTitle( $titleText ) {
 		return Title::newFromText( $this->encode( $titleText ) );
 	}
 
-	function getText( $titleText ) {
+	private function getText( $titleText ) {
 		if ( !isset( $this->textCache[$titleText] ) ) {
 			return "Describe the new page here.\n";
 		} else {
@@ -698,7 +698,7 @@ EOT
 		}
 	}
 
-	function saveRevision( $params ) {
+	private function saveRevision( $params ) {
 		$this->textCache[$params['rctitle']] = $params['text'];
 
 		$out = "<page>\n" .
@@ -727,7 +727,7 @@ EOT
 		fwrite( $this->outFile, $out );
 	}
 
-	function renameTextLinks( $old, $new, $timestamp ) {
+	private function renameTextLinks( $old, $new, $timestamp ) {
 		$newWithUnderscores = $new;
 		$old = str_replace( '_', ' ', $old );
 		$new = str_replace( '_', ' ', $new );
@@ -753,7 +753,7 @@ EOT
 		}
 	}
 
-	function substituteTextLinks( $old, $new, $text ) {
+	private function substituteTextLinks( $old, $new, $text ) {
 		$this->saveUrl = [];
 		$this->old = $old;
 		$this->new = $new;
@@ -786,7 +786,7 @@ EOT
 		return $text;
 	}
 
-	function getLinkList( $text ) {
+	private function getLinkList( $text ) {
 		$this->saveUrl = [];
 		$this->linkList = [];
 
@@ -816,12 +816,12 @@ EOT
 		return $this->linkList;
 	}
 
-	function storeRaw( $m ) {
+	private function storeRaw( $m ) {
 		$this->saveUrl[] = $m[1];
 		return $this->FS . ( count( $this->saveUrl ) - 1 ) . $this->FS;
 	}
 
-	function subFreeLink( $m ) {
+	private function subFreeLink( $m ) {
 		$link = $m[1];
 		if ( isset( $m[2] ) ) {
 			$name = $m[2];
@@ -844,7 +844,7 @@ EOT
 		return $this->storeRaw( [ 1 => $link ] );
 	}
 
-	function subWikiLink( $m ) {
+	private function subWikiLink( $m ) {
 		$link = $m[1];
 		if ( $link == $this->old ) {
 			$link = $this->new;
@@ -855,28 +855,28 @@ EOT
 		return $this->storeRaw( [ 1 => $link ] );
 	}
 
-	function restoreRaw( $m ) {
+	private function restoreRaw( $m ) {
 		return $this->saveUrl[$m[1]];
 	}
 
-	function storeLink( $m ) {
+	private function storeLink( $m ) {
 		$this->linkList[] = $m[1];
 		return $this->storeRaw( $m );
 	}
 
-	function encode( $s ) {
+	private function encode( $s ) {
 		return strtr( $s, $this->encodeMap );
 	}
 
-	function decode( $s ) {
+	private function decode( $s ) {
 		return strtr( $s, $this->decodeMap );
 	}
 
-	function printLatin1( $s ) {
+	private function printLatin1( $s ) {
 		echo $this->encode( $s );
 	}
 
-	function unserializeUseMod( $s, $sep ) {
+	private function unserializeUseMod( $s, $sep ) {
 		$parts = explode( $sep, $s );
 		$result = [];
 		for ( $i = 0; $i < count( $parts ); $i += 2 ) {

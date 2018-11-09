@@ -221,7 +221,7 @@ class DumpInterwiki extends Maintenance {
 		}
 	}
 
-	function execute() {
+	public function execute() {
 		$root = getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki';
 
 		if ( !file_exists( "$root/dblists" ) ) {
@@ -264,7 +264,7 @@ class DumpInterwiki extends Maintenance {
 		$this->getRebuildInterwikiDump();
 	}
 
-	function getRebuildInterwikiDump() {
+	private function getRebuildInterwikiDump() {
 		global $wgContLang, $wmgRealm;
 
 		$sites = $this->getSites();
@@ -421,7 +421,7 @@ class DumpInterwiki extends Maintenance {
 	 * @param WMFSite &$site
 	 * @param string $source
 	 */
-	function makeLanguageLinks( &$site, $source ) {
+	private function makeLanguageLinks( &$site, $source ) {
 		global $wmgRealm;
 
 		// Actual languages with their own databases
@@ -448,7 +448,7 @@ class DumpInterwiki extends Maintenance {
 	 * @param string $source
 	 * @throws MWException
 	 */
-	function makeLink( $entry, $source ) {
+	private function makeLink( $entry, $source ) {
 		if ( isset( self::$prefixRewrites[$source] ) && isset( $entry[0] ) && isset( self::$prefixRewrites[$source][$entry[0]] ) ) {
 			$entry[0] = self::$prefixRewrites[$source][$entry[0]];
 		}

@@ -13,12 +13,12 @@ class MakeSizeDBLists extends Maintenance {
 	const DB_SMALL = 10000;
 	const DB_MEDIUM = 1000000;
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Builds database lists of wikis based on size';
 	}
 
-	function execute() {
+	public function execute() {
 		global $wgConf;
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$small = [];

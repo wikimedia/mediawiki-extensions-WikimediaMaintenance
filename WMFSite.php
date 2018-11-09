@@ -11,7 +11,7 @@ class WMFSite {
 	 * @param string $prefix
 	 * @param string $url
 	 */
-	function __construct( $suffix, $prefix, $url ) {
+	public function __construct( $suffix, $prefix, $url ) {
 		$this->suffix = $suffix;
 		$this->prefix = $prefix;
 		$this->url = $url;
@@ -22,7 +22,7 @@ class WMFSite {
 	 * @param string $urlprotocol
 	 * @return string
 	 */
-	function getURL( $lang, $urlprotocol ) {
+	public function getURL( $lang, $urlprotocol ) {
 		$xlang = str_replace( '_', '-', $lang );
 		return "$urlprotocol//$xlang.{$this->url}/wiki/\$1";
 	}

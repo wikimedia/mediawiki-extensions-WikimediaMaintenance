@@ -9,12 +9,12 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use MediaWiki\MediaWikiServices;
 
 class RcParamsTypeCheck extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Checks the type of recentchanges.rc_params on all wikis in $wgConf';
 	}
 
-	function execute() {
+	public function execute() {
 		global $wgConf;
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$count = 0;

@@ -25,13 +25,13 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  * Creates the necessary tables to install various extensions on a WMF wiki
  */
 class CreateExtensionTables extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Creates database tables for specific MediaWiki Extensions';
 		$this->addArg( 'extension', 'Which extension to install' );
 	}
 
-	function execute() {
+	public function execute() {
 		global $IP, $wgFlowDefaultWikiDb;
 		$dbw = $this->getDB( DB_MASTER );
 		$extension = $this->getArg( 0 );

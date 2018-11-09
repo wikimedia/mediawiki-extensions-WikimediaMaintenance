@@ -26,13 +26,13 @@ use Wikimedia\Rdbms\IDatabase;
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class RemoveDeletedWikis extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Remove any remaining entries in globalimagelinks, localuser and localnames for deleted wikis.\n"
 			. "This is probably best run against Commons due to globalusage tables";
 	}
 
-	function execute() {
+	public function execute() {
 		$wikis = file( '/srv/mediawiki/dblists/deleted.dblist' );
 		if ( $wikis === false ) {
 			$this->fatalError( 'Unable to open deleted.dblist' );
@@ -58,7 +58,7 @@ class RemoveDeletedWikis extends Maintenance {
 	 * @param string $column
 	 * @param string $wiki
 	 */
-	function doDeletes( $dbw, $table, $column, $wiki ) {
+	private function doDeletes( $dbw, $table, $column, $wiki ) {
 		if ( !$dbw->tableExists( $table ) ) {
 			$this->fatalError( "Maintenance script cannot be run on this wiki as there is no $table table" );
 		}
