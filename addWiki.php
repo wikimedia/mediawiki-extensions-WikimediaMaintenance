@@ -57,7 +57,8 @@ class AddWiki extends Maintenance {
 
 	public function execute() {
 		global $IP, $wgDefaultExternalStore, $wgFlowExternalStore,
-			$wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender;
+			$wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender,
+			$wgDBname;
 
 		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
 			$this->fatalError( '$wmgVersionNumber is not set, please use MWScript.php wrapper.' );
@@ -69,7 +70,7 @@ class AddWiki extends Maintenance {
 		$domain = $this->getArg( 3 );
 		$languageNames = Language::fetchLanguageNames();
 
-		if ( $siteGroup === 'wiktionary' && strpos( 'wiktionary', $this->getOption( 'wiki' ) ) === false ) {
+		if ( $siteGroup === 'wiktionary' && strpos( 'wiktionary', $wgDBname ) === false ) {
 			$this->error(
 				'Wiktionaries must be created using --wiki aawiktionary due to the need to load Cognate classes.',
 				true
