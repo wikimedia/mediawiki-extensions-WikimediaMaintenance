@@ -21,6 +21,8 @@
  */
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Creates the necessary tables to install various extensions on a WMF wiki
  */
@@ -32,7 +34,8 @@ class CreateExtensionTables extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgFlowDefaultWikiDb;
+		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster;
+
 		$dbw = $this->getDB( DB_MASTER );
 		$extension = $this->getArg( 0 );
 
@@ -47,10 +50,18 @@ class CreateExtensionTables extends Maintenance {
 
 			case 'echo':
 				$this->output( "Using special database connection for Echo" );
-				$dbw = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
-				$dbw->query( "SET storage_engine=InnoDB" );
-				$dbw->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID() );
-				$dbw->selectDB( wfWikiID() );
+
+				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+				$echoLB = $wgEchoCluster
+					? $lbFactory->getExternalLB( $wgEchoCluster )
+					: $lbFactory->getMainLB();
+				$conn = $echoLB->getConnection( DB_MASTER, [], '' );
+				$conn->query( "SET storage_engine=InnoDB" );
+				$conn->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID() );
+				$echoLB->closeConnection( $conn );
+
+				$dbw = $echoLB->getConnection( DB_MASTER );
+
 				$files = [ 'echo.sql' ];
 				$path = "$IP/extensions/Echo";
 				break;

@@ -58,7 +58,7 @@ class AddWiki extends Maintenance {
 	public function execute() {
 		global $IP, $wgDefaultExternalStore, $wgFlowExternalStore,
 			$wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender,
-			$wgDBname;
+			$wgDBname, $wgEchoCluster;
 
 		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
 			$this->fatalError( '$wmgVersionNumber is not set, please use MWScript.php wrapper.' );
@@ -82,14 +82,24 @@ class AddWiki extends Maintenance {
 		}
 		$name = $languageNames[$lang];
 
-		$dbw = wfGetDB( DB_MASTER );
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
 		$this->output( "Creating database $dbName for $lang.$siteGroup ($name)\n" );
 
-		// Set up the database
-		$dbw->query( "SET storage_engine=InnoDB" );
-		$dbw->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-		$dbw->selectDB( $dbName );
+		// Set up the database on the same shard as the wiki this script is running on
+		$conn = $lbFactory->getMainLB()->getConnection( DB_MASTER, [], '' );
+		$conn->query( "SET storage_engine=InnoDB" );
+		$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+		$lbFactory->getMainLB()->closeConnection( $conn );
+
+		// Close connections and make future ones use the new database as the local domain
+		$lbFactory->redefineLocalDomain( $dbName );
+
+		// Get a connection to the new database
+		$dbw = $lbFactory->getMainLB()->getConnection( DB_MASTER );
+		if ( $dbw->getDBname() !== $dbName ) { // sanity
+			$this->fatalError( "Expected connection to '$dbName', not '{$dbw->getDBname()}'" );
+		}
 
 		$this->output( "Initialising tables\n" );
 		$dbw->sourceFile(
@@ -157,11 +167,15 @@ class AddWiki extends Maintenance {
 		// Initialise Echo cluster if applicable.
 		// It will create the Echo tables in the main database if
 		// extension1 is not in use.
-		/** @var Database $echoDbW */
-		$echoDbW = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_MASTER );
-		$echoDbW->query( "SET storage_engine=InnoDB" );
-		$echoDbW->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-		$echoDbW->selectDB( $dbName );
+		$echoLB = $wgEchoCluster
+			? $lbFactory->getExternalLB( $wgEchoCluster )
+			: $lbFactory->getMainLB();
+		$conn = $echoLB->getConnection( DB_MASTER, [], '' );
+		$conn->query( "SET storage_engine=InnoDB" );
+		$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+		$echoLB->closeConnection( $conn );
+
+		$echoDbW = $echoLB->getConnection( DB_MASTER );
 		$echoDbW->sourceFile( "$IP/extensions/Echo/echo.sql" );
 
 		// Initialise external storage
@@ -184,7 +198,6 @@ class AddWiki extends Maintenance {
 
 		$stores = array_unique( array_merge( $stores, $flowStores ) );
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		if ( count( $stores ) ) {
 			foreach ( $stores as $storeURL ) {
 				$m = [];
@@ -196,16 +209,17 @@ class AddWiki extends Maintenance {
 				$this->output( "Initialising external storage $cluster...\n" );
 
 				// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
-				// and gets a DBConnRef, which  is not meant for use with selectDB().
 				$lb = $lbFactory->getExternalLB( $cluster );
-				$extdb = $lb->getConnection( DB_MASTER );
 
 				// Create the database
-				$extdb->query( "SET default_storage_engine=InnoDB" );
+				$conn = $lb->getConnection( DB_MASTER, [], '' );
+				$conn->query( "SET default_storage_engine=InnoDB" );
 				// IF NOT EXISTS because two External Store clusters
 				// can use the same DB, but different blobs table entries.
-				$extdb->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-				$extdb->selectDB( $dbName );
+				$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+				$lb->closeConnection( $conn );
+
+				$extdb = $lb->getConnection( DB_MASTER );
 
 				// Hack x2
 				$store = new ExternalStoreDB();
@@ -216,7 +230,7 @@ class AddWiki extends Maintenance {
 				pclose( $blobsFile );
 				$extdb->commit();
 
-				$lb->reuseConnection( $extdb );
+				unset( $extdb );
 			}
 		}
 
