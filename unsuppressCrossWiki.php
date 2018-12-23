@@ -9,16 +9,25 @@ class UnsuppressCrossWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Show number of jobs waiting in master database";
+		$this->addOption( 'user', 'The username to operate on', false, true );
+		$this->addOption( 'userid', 'The user id to operate on', false, true );
 	}
 
 	public function execute() {
-		$userName = 'The Thing That Should Not Be'; // <- targer username
+		if ( $this->hasOption( 'user' ) ) {
+			$user = CentralAuthUser::getMasterInstanceByName( $this->getOption( 'user' ) );
+		} elseif ( $this->hasOption( 'userid' ) ) {
+			$user = CentralAuthUser::newMasterInstanceFromId( $this->getOption( 'userid' ) );
+		} else {
+			$this->fatalError( "A \"user\" or \"userid\" must be set to unsuppress for" );
+		}
 
-		$user = new CentralAuthUser( $userName, CentralAuthUser::READ_LATEST );
-		if ( !$user->exists() ) {
-			echo "Cannot unsuppress non-existent user {$userName}!\n";
+		if ( !$user || !$user->exists() ) {
+			$user = $this->hasOption( 'user' ) ? $this->getOption( 'user' ) : $this->getOption( 'userid' );
+			echo "Cannot unsuppress non-existent user {$user}!\n";
 			exit( 0 );
 		}
+
 		$userName = $user->getName(); // sanity
 		$wikis = $user->listAttached(); // wikis with attached accounts
 		$userQuery = User::getQueryInfo();
