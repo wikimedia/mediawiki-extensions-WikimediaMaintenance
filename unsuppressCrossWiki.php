@@ -8,7 +8,7 @@ use Wikimedia\Rdbms\DBReplicationWaitError;
 class UnsuppressCrossWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Show number of jobs waiting in master database";
+		$this->mDescription = "Globally unsuppress a user name";
 		$this->addOption( 'user', 'The username to operate on', false, true );
 		$this->addOption( 'userid', 'The user id to operate on', false, true );
 	}
@@ -36,7 +36,7 @@ class UnsuppressCrossWiki extends Maintenance {
 			$lb = $lbFactory->getMainLB( $wiki );
 			$dbw = $lb->getConnection( DB_MASTER, [], $wiki );
 			# Get local ID like $user->localUserData( $wiki ) does
-			$localUser = User::newFromRow( $dbw->selectField( $userQuery['tables'], $userQuery['fields'],
+			$localUser = User::newFromRow( $dbw->selectRow( $userQuery['tables'], $userQuery['fields'],
 				[ 'user_name' => $userName ], __METHOD__, [], $userQuery['joins'] ) );
 
 			$delUserBit = Revision::DELETED_USER;
