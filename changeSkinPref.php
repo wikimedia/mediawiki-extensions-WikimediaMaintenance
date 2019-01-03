@@ -55,7 +55,7 @@ class ChangeSkinPref extends Maintenance {
 		}
 		if ( $this->hasOption( 'clear' ) ) {
 			$user->setOption( 'skin', null );
-			$this->saveSettings();
+			$user->saveSettings();
 			$this->output( "{$userName}: Cleared skin preference\n" );
 			return;
 		}
