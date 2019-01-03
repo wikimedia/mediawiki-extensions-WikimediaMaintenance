@@ -80,7 +80,7 @@ class FixOrphans extends Maintenance {
 			$this->beginTransaction( $dbw, __METHOD__ );
 			$revRow = $dbw->selectRow(
 				[ 'revision' ] + $commentQuery['tables'] + $actorQuery['tables'],
-				[ $dbr->tableName( 'revision' ) . '.*' ] + $commentQuery['fields'] + $actorQuery['fields'],
+				[ $dbw->tableName( 'revision' ) . '.*' ] + $commentQuery['fields'] + $actorQuery['fields'],
 				[ 'rev_id' => $revId ],
 				__METHOD__,
 				[ 'FOR UPDATE' ],
@@ -173,7 +173,7 @@ class FixOrphans extends Maintenance {
 						'ar_deleted'    => $revRow->rev_deleted,
 						'ar_sha1'       => $revRow->rev_sha1,
 					] + $commentStore->insert( $dbw, 'ar_comment', $comment )
-						+ $actorMigration->getInsertValues( $dbr, 'ar_user', $user ),
+						+ $actorMigration->getInsertValues( $dbw, 'ar_user', $user ),
 					__METHOD__ );
 				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
 				if ( $commentMigrationStage > MIGRATION_OLD ) {
