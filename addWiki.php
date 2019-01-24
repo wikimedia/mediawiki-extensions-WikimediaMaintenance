@@ -33,6 +33,7 @@ use Wikibase\PopulateSitesTable;
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\IMaintainableDatabase;
 
 class AddWiki extends Maintenance {
 	public function __construct() {
@@ -42,6 +43,11 @@ class AddWiki extends Maintenance {
 		$this->addArg( 'site', 'Type of site, e.g. wikipedia' );
 		$this->addArg( 'dbname', 'Name of database to create, e.g. enwiki' );
 		$this->addArg( 'domain', 'Domain name of the wiki, e.g. en.wikipedia.org' );
+		$this->addOption( 'skipclusters',
+			'Comma-separated DB clusters to skip schema changes for (main,extstore,echo,ext1)',
+			false,
+			true
+		);
 	}
 
 	public function getDbType() {
@@ -72,6 +78,8 @@ class AddWiki extends Maintenance {
 		$siteGroup = $this->getArg( 1 );
 		$dbName = $this->getArg( 2 );
 		$domain = $this->getArg( 3 );
+		$skipClusters = explode( ',', $this->getOption( 'skipclusters', '' ) );
+
 		$languageNames = Language::fetchLanguageNames();
 
 		if ( $siteGroup === 'wiktionary' && strpos( $wgDBname, 'wiktionary' ) === false ) {
@@ -90,11 +98,13 @@ class AddWiki extends Maintenance {
 
 		$this->output( "Creating database $dbName for $lang.$siteGroup ($name)\n" );
 
-		// Set up the database on the same shard as the wiki this script is running on
-		$conn = $lbFactory->getMainLB()->getConnection( DB_MASTER, [], '' );
-		$conn->query( "SET storage_engine=InnoDB" );
-		$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-		$lbFactory->getMainLB()->closeConnection( $conn );
+		if ( !in_array( 'main', $skipClusters, true ) ) {
+			// Set up the database on the same shard as the wiki this script is running on
+			$conn = $lbFactory->getMainLB()->getConnection( DB_MASTER, [], '' );
+			$conn->query( "SET storage_engine=InnoDB" );
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+			$lbFactory->getMainLB()->closeConnection( $conn );
+		}
 
 		// Close connections and make future ones use the new database as the local domain
 		$lbFactory->redefineLocalDomain( $dbName );
@@ -104,6 +114,182 @@ class AddWiki extends Maintenance {
 		if ( $dbw->getDBname() !== $dbName ) { // sanity
 			$this->fatalError( "Expected connection to '$dbName', not '{$dbw->getDBname()}'" );
 		}
+
+		if ( !in_array( 'main', $skipClusters, true ) ) {
+			// Create all required tables from core and extensions
+			$this->createMainClusterSchema( $dbw, $dbName, $siteGroup );
+		}
+
+		if (
+			!in_array( 'echo', $skipClusters, true ) &&
+			!( !$wgEchoCluster && in_array( 'main', $skipClusters, true ) )
+		) {
+			// Initialise Echo cluster if applicable.
+			// It will create the Echo tables in the main database if
+			// extension1 is not in use.
+			$echoLB = $wgEchoCluster
+				? $lbFactory->getExternalLB( $wgEchoCluster )
+				: $lbFactory->getMainLB();
+			$conn = $echoLB->getConnection( DB_MASTER, [], '' );
+			$conn->query( "SET storage_engine=InnoDB" );
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+			$echoLB->closeConnection( $conn );
+
+			$echoDbW = $echoLB->getConnection( DB_MASTER );
+			$echoDbW->sourceFile( "$IP/extensions/Echo/echo.sql" );
+		}
+
+		if ( !in_array( 'extstore', $skipClusters, true ) ) {
+			// Initialise external storage
+			if ( is_array( $wgDefaultExternalStore ) ) {
+				$stores = $wgDefaultExternalStore;
+			} elseif ( $wgDefaultExternalStore ) {
+				$stores = [ $wgDefaultExternalStore ];
+			} else {
+				$stores = [];
+			}
+
+			// Flow External Store (may be the same, so there is an array_unique)
+			if ( is_array( $wgFlowExternalStore ) ) {
+				$flowStores = $wgFlowExternalStore;
+			} elseif ( $wgFlowExternalStore ) {
+				$flowStores = [ $wgFlowExternalStore ];
+			} else {
+				$flowStores = [];
+			}
+
+			$stores = array_unique( array_merge( $stores, $flowStores ) );
+
+			if ( count( $stores ) ) {
+				foreach ( $stores as $storeURL ) {
+					$m = [];
+					if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
+						continue;
+					}
+
+					$cluster = $m[1];
+					$this->output( "Initialising external storage $cluster...\n" );
+
+					// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
+					$lb = $lbFactory->getExternalLB( $cluster );
+
+					// Create the database
+					$conn = $lb->getConnection( DB_MASTER, [], '' );
+					$conn->query( "SET default_storage_engine=InnoDB" );
+					// IF NOT EXISTS because two External Store clusters
+					// can use the same DB, but different blobs table entries.
+					$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+					$lb->closeConnection( $conn );
+
+					$extdb = $lb->getConnection( DB_MASTER );
+
+					// Hack x2
+					$store = new ExternalStoreDB();
+					$blobsTable = $store->getTable( $extdb );
+					// T212881: avoid errors on retry from partial failures on some es masters
+					if ( !$extdb->tableExists( $blobsTable ) ) {
+						$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " .
+							$this->getDir() . "/storage/blobs.sql";
+						$blobsFile = popen( $sedCmd, 'r' );
+						$extdb->sourceStream( $blobsFile );
+						pclose( $blobsFile );
+						$extdb->commit();
+					}
+
+					unset( $extdb );
+				}
+			}
+		}
+
+		// Make the main page (this should be idempotent)
+		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )->useDatabase( false )->plain() );
+		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
+		$article = WikiPage::factory( $title );
+		$ucSiteGroup = ucfirst( $siteGroup );
+
+		$article->doEditContent(
+			ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title ),
+			'',
+			EDIT_NEW | EDIT_AUTOSUMMARY
+		);
+
+		$this->setFundraisingLink( $domain, $lang );
+
+		// Create new search index (this should be idempotent)
+		global $wgCirrusSearchWriteClusters, $wgCirrusSearchClusters;
+
+		$writableClusters = $wgCirrusSearchWriteClusters;
+		if ( is_null( $writableClusters ) ) {
+			$writableClusters = array_keys( $wgCirrusSearchClusters );
+		}
+
+		foreach ( $writableClusters as $cluster ) {
+			$searchIndex = $this->runChild( UpdateSearchIndexConfig::class );
+			$searchIndex->mOptions[ 'baseName' ] = $dbName;
+			$searchIndex->mOptions[ 'cluster' ] = $cluster;
+			$searchIndex->execute();
+		}
+
+		// Populate sites table (this should be idempotent)
+		$sitesPopulation = $this->runChild(
+			PopulateSitesTable::class,
+			"$IP/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
+		);
+
+		$sitesPopulation->setDB( $dbw );
+		$sitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
+		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
+		$sitesPopulation->execute();
+
+		// Repopulate Cognate sites table (this should be idempotent)
+		if ( $siteGroup === 'wiktionary' ) {
+			$cognateSitesPopulation = $this->runChild(
+				PopulateCognateSites::class,
+				"$IP/extensions/Cognate/maintenance/populateCognateSites.php"
+			);
+			$cognateSitesPopulation->setDB( $dbw );
+			$cognateSitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
+			$cognateSitesPopulation->execute();
+		}
+
+		// Sets up the filebackend zones (this should be idempotent)
+		$setZones = $this->runChild(
+			SetZoneAccess::class,
+			"$IP/extensions/WikimediaMaintenance/filebackend/setZoneAccess.php"
+		);
+
+		$setZones->setDB( $dbw );
+		$setZones->mOptions['backend'] = 'local-multiwrite';
+		if ( $this->isPrivate( $dbName ) ) {
+			$setZones->mOptions['private'] = 1;
+		}
+		$setZones->execute();
+
+		// Clear MassMessage cache (bug 60075)
+		global $wgMemc, $wgConf;
+		// Even if the dblists have been updated, it's not in $wgConf yet
+		$wgConf->wikis[] = $dbName;
+		$wgMemc->delete( 'massmessage:urltodb' );
+		MediaWiki\MassMessage\DatabaseLookup::getDBName( '' ); // Forces re-cache
+
+		$user = getenv( 'SUDO_USER' );
+		$time = wfTimestamp( TS_RFC2822 );
+		UserMailer::send( new MailAddress( $wmgAddWikiNotify ),
+			new MailAddress( $wgPasswordSender ), "New wiki: $dbName",
+			"A new wiki was created by $user at $time for a $ucSiteGroup in $name ($lang).\nOnce the wiki is fully set up, it'll be visible at https://$domain"
+		);
+
+		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration\n" );
+	}
+
+	/**
+	 * @param IMaintainableDatabase $dbw
+	 * @param string $dbName
+	 * @param string $siteGroup
+	 * @throws Exception
+	 */
+	private function createMainClusterSchema( IMaintainableDatabase $dbw, $dbName, $siteGroup ) {
+		global $IP;
 
 		$this->output( "Initialising tables\n" );
 		$dbw->sourceFile(
@@ -167,155 +353,6 @@ class AddWiki extends Maintenance {
 		}
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
-
-		// Initialise Echo cluster if applicable.
-		// It will create the Echo tables in the main database if
-		// extension1 is not in use.
-		$echoLB = $wgEchoCluster
-			? $lbFactory->getExternalLB( $wgEchoCluster )
-			: $lbFactory->getMainLB();
-		$conn = $echoLB->getConnection( DB_MASTER, [], '' );
-		$conn->query( "SET storage_engine=InnoDB" );
-		$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-		$echoLB->closeConnection( $conn );
-
-		$echoDbW = $echoLB->getConnection( DB_MASTER );
-		$echoDbW->sourceFile( "$IP/extensions/Echo/echo.sql" );
-
-		// Initialise external storage
-		if ( is_array( $wgDefaultExternalStore ) ) {
-			$stores = $wgDefaultExternalStore;
-		} elseif ( $wgDefaultExternalStore ) {
-			$stores = [ $wgDefaultExternalStore ];
-		} else {
-			$stores = [];
-		}
-
-		// Flow External Store (may be the same, so there is an array_unique)
-		if ( is_array( $wgFlowExternalStore ) ) {
-			$flowStores = $wgFlowExternalStore;
-		} elseif ( $wgFlowExternalStore ) {
-			$flowStores = [ $wgFlowExternalStore ];
-		} else {
-			$flowStores = [];
-		}
-
-		$stores = array_unique( array_merge( $stores, $flowStores ) );
-
-		if ( count( $stores ) ) {
-			foreach ( $stores as $storeURL ) {
-				$m = [];
-				if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
-					continue;
-				}
-
-				$cluster = $m[1];
-				$this->output( "Initialising external storage $cluster...\n" );
-
-				// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
-				$lb = $lbFactory->getExternalLB( $cluster );
-
-				// Create the database
-				$conn = $lb->getConnection( DB_MASTER, [], '' );
-				$conn->query( "SET default_storage_engine=InnoDB" );
-				// IF NOT EXISTS because two External Store clusters
-				// can use the same DB, but different blobs table entries.
-				$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-				$lb->closeConnection( $conn );
-
-				$extdb = $lb->getConnection( DB_MASTER );
-
-				// Hack x2
-				$store = new ExternalStoreDB();
-				$blobsTable = $store->getTable( $extdb );
-				$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " . $this->getDir() . "/storage/blobs.sql";
-				$blobsFile = popen( $sedCmd, 'r' );
-				$extdb->sourceStream( $blobsFile );
-				pclose( $blobsFile );
-				$extdb->commit();
-
-				unset( $extdb );
-			}
-		}
-
-		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )->useDatabase( false )->plain() );
-		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
-		$article = WikiPage::factory( $title );
-		$ucSiteGroup = ucfirst( $siteGroup );
-
-		$article->doEditContent(
-			ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title ),
-			'',
-			EDIT_NEW | EDIT_AUTOSUMMARY
-		);
-
-		$this->setFundraisingLink( $domain, $lang );
-
-		// Create new search index
-		global $wgCirrusSearchWriteClusters, $wgCirrusSearchClusters;
-
-		$writableClusters = $wgCirrusSearchWriteClusters;
-		if ( is_null( $writableClusters ) ) {
-			$writableClusters = array_keys( $wgCirrusSearchClusters );
-		}
-
-		foreach ( $writableClusters as $cluster ) {
-			$searchIndex = $this->runChild( UpdateSearchIndexConfig::class );
-			$searchIndex->mOptions[ 'baseName' ] = $dbName;
-			$searchIndex->mOptions[ 'cluster' ] = $cluster;
-			$searchIndex->execute();
-		}
-
-		// Populate sites table
-		$sitesPopulation = $this->runChild(
-			PopulateSitesTable::class,
-			"$IP/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
-		);
-
-		$sitesPopulation->setDB( $dbw );
-		$sitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
-		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
-		$sitesPopulation->execute();
-
-		// Repopulate Cognate sites table
-		if ( $siteGroup === 'wiktionary' ) {
-			$cognateSitesPopulation = $this->runChild(
-				PopulateCognateSites::class,
-				"$IP/extensions/Cognate/maintenance/populateCognateSites.php"
-			);
-			$cognateSitesPopulation->setDB( $dbw );
-			$cognateSitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
-			$cognateSitesPopulation->execute();
-		}
-
-		// Sets up the filebackend zones
-		$setZones = $this->runChild(
-			SetZoneAccess::class,
-			"$IP/extensions/WikimediaMaintenance/filebackend/setZoneAccess.php"
-		);
-
-		$setZones->setDB( $dbw );
-		$setZones->mOptions['backend'] = 'local-multiwrite';
-		if ( $this->isPrivate( $dbName ) ) {
-			$setZones->mOptions['private'] = 1;
-		}
-		$setZones->execute();
-
-		// Clear MassMessage cache (bug 60075)
-		global $wgMemc, $wgConf;
-		// Even if the dblists have been updated, it's not in $wgConf yet
-		$wgConf->wikis[] = $dbName;
-		$wgMemc->delete( 'massmessage:urltodb' );
-		MediaWiki\MassMessage\DatabaseLookup::getDBName( '' ); // Forces re-cache
-
-		$user = getenv( 'SUDO_USER' );
-		$time = wfTimestamp( TS_RFC2822 );
-		UserMailer::send( new MailAddress( $wmgAddWikiNotify ),
-			new MailAddress( $wgPasswordSender ), "New wiki: $dbName",
-			"A new wiki was created by $user at $time for a $ucSiteGroup in $name ($lang).\nOnce the wiki is fully set up, it'll be visible at https://$domain"
-		);
-
-		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration\n" );
 	}
 
 	/**
