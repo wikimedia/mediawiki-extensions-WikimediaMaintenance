@@ -432,7 +432,12 @@ class DumpInterwiki extends Maintenance {
 		// Language aliases
 		if ( $wmgRealm === 'production' ) {
 			foreach ( self::$languageAliases as $alias => $lang ) {
-				$this->makeLink( [ $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ], $source );
+				// Very special edge case: T214400
+				if ( $site->suffix === 'wiktionary' && $alias === 'yue' ) {
+					$this->makeLink( [ $lang, $site->getURL( $alias, $this->urlprotocol ), 1 ], $source );
+				} else {
+					$this->makeLink( [ $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ], $source );
+				}
 			}
 		}
 
