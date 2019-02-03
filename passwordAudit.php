@@ -73,7 +73,7 @@ class PasswordAudit extends Maintenance {
 				$hcnt++;
 				$password = trim( $password );
 
-				$match = $pbkdf2 ? $this->fastPbkdf2test( $hash, $password ) : $mPassword->equals( $password );
+				$match = $pbkdf2 ? $this->fastPbkdf2test( $hash, $password ) : $mPassword->verify( $password );
 				if ( $match ) {
 					$this->output( "*** MATCH: $username / $password\n" );
 					break;
