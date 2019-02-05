@@ -66,11 +66,6 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Echo";
 				break;
 
-			case 'educationprogram':
-				$files = [ 'EducationProgram.sql' ];
-				$path = "$IP/extensions/EducationProgram/sql";
-				break;
-
 			case 'flaggedrevs':
 				$files = [ 'FlaggedRevs.sql' ];
 				$path = "$IP/extensions/FlaggedRevs/backend/schema/mysql";
