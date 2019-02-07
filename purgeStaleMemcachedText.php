@@ -20,7 +20,7 @@ function purgeStaleMemcachedText() {
 		$key = wfMemcKey( 'revisiontext', 'textid', $i );
 
 		while ( 1 ) {
-			if ( ! $wgMemc->delete( $key ) ) {
+			if ( !$wgMemc->delete( $key ) ) {
 				echo "Memcache delete for $key returned false\n";
 			}
 			if ( $wgMemc->get( $key ) ) {
