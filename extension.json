@@ -4,6 +4,9 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:WikimediaMaintenance",
 	"license-name": "GPL-2.0-or-later",
 	"descriptionmsg": "wikimediamaintenance-desc",
+	"requires": {
+		"MediaWiki": ">= 1.31.0"
+	},
 	"MessagesDirs": {
 		"WikimediaMaintenance": [
 			"i18n"

@@ -677,9 +677,9 @@ EOT
 					}
 				} else {
 					$this->printLatin1( "ERROR: unresolved diff in $title:\n" );
-					wfSuppressWarnings();
+					Wikimedia\suppressWarnings();
 					$diff = xdiff_string_diff( $text, $pageText ) . '';
-					wfRestoreWarnings();
+					Wikimedia\restoreWarnings();
 					$this->printLatin1( "$diff\n" );
 				}
 			}
