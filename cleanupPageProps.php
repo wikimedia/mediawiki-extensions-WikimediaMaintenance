@@ -56,5 +56,5 @@ class CleanupPageProps extends Maintenance {
 	}
 }
 
-$maintClass = 'CleanupPageProps';
+$maintClass = CleanupPageProps::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

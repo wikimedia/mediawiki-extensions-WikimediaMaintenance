@@ -156,5 +156,5 @@ class RenameInvalidUsernames extends Maintenance {
 	}
 }
 
-$maintClass = 'RenameInvalidUsernames';
+$maintClass = RenameInvalidUsernames::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

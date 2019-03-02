@@ -216,5 +216,5 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 	}
 }
 
-$maintClass = "CreateHumanReadableProjectNameFiles";
+$maintClass = CreateHumanReadableProjectNameFiles::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

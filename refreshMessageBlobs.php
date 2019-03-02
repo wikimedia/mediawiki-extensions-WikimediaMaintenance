@@ -14,5 +14,5 @@ class RefreshMessageBlobs extends Maintenance {
 	}
 }
 
-$maintClass = 'RefreshMessageBlobs';
+$maintClass = RefreshMessageBlobs::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

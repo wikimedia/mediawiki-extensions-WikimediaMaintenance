@@ -86,5 +86,5 @@ class RemoveDeletedWikis extends Maintenance {
 	}
 }
 
-$maintClass = 'RemoveDeletedWikis';
+$maintClass = RemoveDeletedWikis::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

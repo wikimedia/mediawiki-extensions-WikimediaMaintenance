@@ -395,5 +395,5 @@ EOT;
 	}
 }
 
-$maintClass = 'AddWiki';
+$maintClass = AddWiki::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

@@ -90,5 +90,5 @@ class MeasureZoneSizes extends Maintenance {
 		return [ $count, $bytes ];
 	}
 }
-$maintClass = 'MeasureZoneSizes';
+$maintClass = MeasureZoneSizes::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

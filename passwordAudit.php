@@ -110,5 +110,5 @@ class PasswordAudit extends Maintenance {
 
 }
 
-$maintClass = 'PasswordAudit';
+$maintClass = PasswordAudit::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

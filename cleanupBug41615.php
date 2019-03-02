@@ -131,5 +131,5 @@ class CleanupBug41615 extends Maintenance {
 	}
 }
 
-$maintClass = 'CleanupBug41615';
+$maintClass = CleanupBug41615::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

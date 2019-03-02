@@ -73,5 +73,5 @@ class UnsuppressCrossWiki extends Maintenance {
 	}
 }
 
-$maintClass = 'UnsuppressCrossWiki';
+$maintClass = UnsuppressCrossWiki::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

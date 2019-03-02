@@ -35,5 +35,5 @@ class CleanupT92775 extends Maintenance {
 	}
 }
 
-$maintClass = 'CleanupT92775';
+$maintClass = CleanupT92775::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

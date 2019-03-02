@@ -160,5 +160,5 @@ class CreateExtensionTables extends Maintenance {
 	}
 }
 
-$maintClass = 'CreateExtensionTables';
+$maintClass = CreateExtensionTables::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

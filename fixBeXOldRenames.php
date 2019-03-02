@@ -74,5 +74,5 @@ class FixBeXOldRenames extends Maintenance {
 	}
 }
 
-$maintClass = 'FixBeXOldRenames';
+$maintClass = FixBeXOldRenames::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

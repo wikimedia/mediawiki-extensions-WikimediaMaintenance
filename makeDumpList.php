@@ -56,5 +56,5 @@ class MakeDumpList extends Maintenance {
 	}
 }
 
-$maintClass = "MakeDumpList";
+$maintClass = MakeDumpList::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

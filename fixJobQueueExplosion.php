@@ -61,5 +61,5 @@ class FixJobQueueExplosion extends Maintenance {
 	}
 }
 
-$maintClass = 'FixJobQueueExplosion';
+$maintClass = FixJobQueueExplosion::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

@@ -99,5 +99,5 @@ class DeleteWiki extends Maintenance {
 	}
 }
 
-$maintClass = 'DeleteWiki';
+$maintClass = DeleteWiki::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

@@ -189,5 +189,5 @@ class FixOrphans extends Maintenance {
 	}
 }
 
-$maintClass = 'FixOrphans';
+$maintClass = FixOrphans::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

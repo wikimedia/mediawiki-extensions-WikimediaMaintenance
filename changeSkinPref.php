@@ -73,5 +73,5 @@ class ChangeSkinPref extends Maintenance {
 	}
 }
 
-$maintClass = "ChangeSkinPref";
+$maintClass = ChangeSkinPref::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

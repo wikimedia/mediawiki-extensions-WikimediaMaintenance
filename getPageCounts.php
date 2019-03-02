@@ -79,5 +79,5 @@ class GetPageCounts extends Maintenance {
 	}
 }
 
-$maintClass = 'GetPageCounts';
+$maintClass = GetPageCounts::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

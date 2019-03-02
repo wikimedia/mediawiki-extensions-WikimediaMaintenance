@@ -44,5 +44,5 @@ class SetZoneAccess extends Maintenance {
 		}
 	}
 }
-$maintClass = 'SetZoneAccess';
+$maintClass = SetZoneAccess::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

@@ -397,5 +397,5 @@ class SendBulkEmails extends Maintenance {
 	}
 }
 
-$maintClass = 'SendBulkEmails';
+$maintClass = SendBulkEmails::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

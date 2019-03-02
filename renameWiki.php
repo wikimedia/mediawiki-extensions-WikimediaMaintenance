@@ -100,5 +100,5 @@ class RenameWiki extends Maintenance {
 	}
 }
 
-$maintClass = "RenameWiki";
+$maintClass = RenameWiki::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

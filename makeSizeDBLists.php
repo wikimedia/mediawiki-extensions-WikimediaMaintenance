@@ -62,5 +62,5 @@ class MakeSizeDBLists extends Maintenance {
 	}
 }
 
-$maintClass = 'MakeSizeDBLists';
+$maintClass = MakeSizeDBLists::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
