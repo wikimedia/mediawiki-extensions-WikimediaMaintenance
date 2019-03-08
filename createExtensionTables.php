@@ -81,7 +81,7 @@ class CreateExtensionTables extends Maintenance {
 
 			case 'linter':
 				$files = [ 'linter.sql' ];
-				$path = "$IP/extensions/Linter";
+				$path = "$IP/extensions/Linter/sql";
 				break;
 
 			case 'newsletter':
