@@ -12,10 +12,8 @@ class FixOrphans extends Maintenance {
 	public function execute() {
 		global $wgCommentTableSchemaMigrationStage, $wgActorTableSchemaMigrationStage;
 
-		$commentMigrationStage = isset( $wgCommentTableSchemaMigrationStage )
-			? $wgCommentTableSchemaMigrationStage : MIGRATION_NEW;
-		$actorMigrationStage = isset( $wgActorTableSchemaMigrationStage )
-			? $wgActorTableSchemaMigrationStage : SCHEMA_COMPAT_NEW;
+		$commentMigrationStage = $wgCommentTableSchemaMigrationStage ?? MIGRATION_NEW;
+		$actorMigrationStage = $wgActorTableSchemaMigrationStage ?? SCHEMA_COMPAT_NEW;
 
 		$fileName = $this->getArg( 0 );
 		$f = fopen( $fileName, 'r' );

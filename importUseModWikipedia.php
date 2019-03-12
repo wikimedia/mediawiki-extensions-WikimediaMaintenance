@@ -499,7 +499,7 @@ EOT
 		$changedLinks = [];
 		$origLines = explode( "\n", $origText );
 		foreach ( $context as $i => $contextLine ) {
-			$origLine = isset( $origLines[$i] ) ? $origLines[$i] : '';
+			$origLine = $origLines[$i] ?? '';
 			if ( $contextLine === $origLine ) {
 				continue;
 			}
