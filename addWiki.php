@@ -3,6 +3,10 @@
  * @defgroup Wikimedia Wikimedia
  */
 
+use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
+use Cognate\PopulateCognateSites;
+use Wikibase\PopulateSitesTable;
+
 /**
  * Add a new wiki
  * Wikimedia specific!
@@ -256,7 +260,7 @@ class AddWiki extends Maintenance {
 		}
 
 		foreach ( $writableClusters as $cluster ) {
-			$searchIndex = $this->runChild( 'CirrusSearch\Maintenance\UpdateSearchIndexConfig' );
+			$searchIndex = $this->runChild( UpdateSearchIndexConfig::class );
 			$searchIndex->mOptions[ 'baseName' ] = $dbName;
 			$searchIndex->mOptions[ 'cluster' ] = $cluster;
 			$searchIndex->execute();
@@ -264,7 +268,7 @@ class AddWiki extends Maintenance {
 
 		// Populate sites table
 		$sitesPopulation = $this->runChild(
-			'Wikibase\PopulateSitesTable',
+			PopulateSitesTable::class,
 			"$IP/extensions/Wikibase/lib/maintenance/populateSitesTable.php"
 		);
 
@@ -276,7 +280,7 @@ class AddWiki extends Maintenance {
 		// Repopulate Cognate sites table
 		if ( $siteGroup === 'wiktionary' ) {
 			$cognateSitesPopulation = $this->runChild(
-				'Cognate\PopulateCognateSites',
+				PopulateCognateSites::class,
 				"$IP/extensions/Cognate/maintenance/populateCognateSites.php"
 			);
 			$cognateSitesPopulation->setDB( $dbw );
@@ -286,7 +290,7 @@ class AddWiki extends Maintenance {
 
 		// Sets up the filebackend zones
 		$setZones = $this->runChild(
-			'SetZoneAccess',
+			SetZoneAccess::class,
 			"$IP/extensions/WikimediaMaintenance/filebackend/setZoneAccess.php"
 		);
 
