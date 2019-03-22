@@ -30,7 +30,7 @@ class PasswordAudit extends Maintenance {
 		$ca = $this->getOption( 'centralauth', false );
 
 		if ( $ca ) {
-			$dbr = CentralAuthUtils::getCentralSlaveDB();
+			$dbr = CentralAuthUtils::getCentralReplicaDB();
 		} else {
 			$dbr = wfGetDB( DB_REPLICA );
 		}
