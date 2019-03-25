@@ -66,9 +66,8 @@ class AddWiki extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgDefaultExternalStore, $wgFlowExternalStore,
-			$wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender,
-			$wgDBname, $wgEchoCluster;
+		global $IP, $wmgVersionNumber, $wmgAddWikiNotify,
+			$wgPasswordSender, $wgDBname, $wgEchoCluster;
 
 		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
 			$this->fatalError( '$wmgVersionNumber is not set, please use MWScript.php wrapper.' );
@@ -140,65 +139,7 @@ class AddWiki extends Maintenance {
 		}
 
 		if ( !in_array( 'extstore', $skipClusters, true ) ) {
-			// Initialise external storage
-			if ( is_array( $wgDefaultExternalStore ) ) {
-				$stores = $wgDefaultExternalStore;
-			} elseif ( $wgDefaultExternalStore ) {
-				$stores = [ $wgDefaultExternalStore ];
-			} else {
-				$stores = [];
-			}
-
-			// Flow External Store (may be the same, so there is an array_unique)
-			if ( is_array( $wgFlowExternalStore ) ) {
-				$flowStores = $wgFlowExternalStore;
-			} elseif ( $wgFlowExternalStore ) {
-				$flowStores = [ $wgFlowExternalStore ];
-			} else {
-				$flowStores = [];
-			}
-
-			$stores = array_unique( array_merge( $stores, $flowStores ) );
-
-			if ( count( $stores ) ) {
-				foreach ( $stores as $storeURL ) {
-					$m = [];
-					if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
-						continue;
-					}
-
-					$cluster = $m[1];
-					$this->output( "Initialising external storage $cluster...\n" );
-
-					// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
-					$lb = $lbFactory->getExternalLB( $cluster );
-
-					// Create the database
-					$conn = $lb->getConnection( DB_MASTER, [], '' );
-					$conn->query( "SET default_storage_engine=InnoDB" );
-					// IF NOT EXISTS because two External Store clusters
-					// can use the same DB, but different blobs table entries.
-					$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-					$lb->closeConnection( $conn );
-
-					$extdb = $lb->getConnection( DB_MASTER );
-
-					// Hack x2
-					$store = new ExternalStoreDB();
-					$blobsTable = $store->getTable( $extdb );
-					// T212881: avoid errors on retry from partial failures on some es masters
-					if ( !$extdb->tableExists( $blobsTable ) ) {
-						$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " .
-							$this->getDir() . "/storage/blobs.sql";
-						$blobsFile = popen( $sedCmd, 'r' );
-						$extdb->sourceStream( $blobsFile );
-						pclose( $blobsFile );
-						$extdb->commit();
-					}
-
-					unset( $extdb );
-				}
-			}
+			$this->createExternalStoreClusterSchema( $dbName, $lbFactory );
 		}
 
 		// Make the main page (this should be idempotent)
@@ -353,6 +294,70 @@ class AddWiki extends Maintenance {
 		}
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
+	}
+
+	private function createExternalStoreClusterSchema( $dbName, $lbFactory ) {
+		global $wgDefaultExternalStore, $wgFlowExternalStore;
+
+		// Initialise external storage
+		if ( is_array( $wgDefaultExternalStore ) ) {
+			$stores = $wgDefaultExternalStore;
+		} elseif ( $wgDefaultExternalStore ) {
+			$stores = [ $wgDefaultExternalStore ];
+		} else {
+			$stores = [];
+		}
+
+		// Flow External Store (may be the same, so there is an array_unique)
+		if ( is_array( $wgFlowExternalStore ) ) {
+			$flowStores = $wgFlowExternalStore;
+		} elseif ( $wgFlowExternalStore ) {
+			$flowStores = [ $wgFlowExternalStore ];
+		} else {
+			$flowStores = [];
+		}
+
+		$stores = array_unique( array_merge( $stores, $flowStores ) );
+
+		if ( count( $stores ) ) {
+			foreach ( $stores as $storeURL ) {
+				$m = [];
+				if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
+					continue;
+				}
+
+				$cluster = $m[1];
+				$this->output( "Initialising external storage $cluster...\n" );
+
+				// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
+				$lb = $lbFactory->getExternalLB( $cluster );
+
+				// Create the database
+				$conn = $lb->getConnection( DB_MASTER, [], '' );
+				$conn->query( "SET default_storage_engine=InnoDB" );
+				// IF NOT EXISTS because two External Store clusters
+				// can use the same DB, but different blobs table entries.
+				$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+				$lb->closeConnection( $conn );
+
+				$extdb = $lb->getConnection( DB_MASTER );
+
+				// Hack x2
+				$store = new ExternalStoreDB();
+				$blobsTable = $store->getTable( $extdb );
+				// T212881: avoid errors on retry from partial failures on some es masters
+				if ( !$extdb->tableExists( $blobsTable ) ) {
+					$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " .
+						$this->getDir() . "/storage/blobs.sql";
+					$blobsFile = popen( $sedCmd, 'r' );
+					$extdb->sourceStream( $blobsFile );
+					pclose( $blobsFile );
+					$extdb->commit();
+				}
+
+				unset( $extdb );
+			}
+		}
 	}
 
 	/**
