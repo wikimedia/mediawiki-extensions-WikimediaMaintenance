@@ -324,7 +324,7 @@ class AddWiki extends Maintenance {
 
 		$stores = array_unique( array_merge( $stores, $flowStores ) );
 
-		if ( count( $stores ) ) {
+		if ( !count( $stores ) ) {
 			return;
 		}
 		foreach ( $stores as $storeURL ) {
