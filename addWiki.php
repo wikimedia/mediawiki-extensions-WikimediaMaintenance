@@ -34,6 +34,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\LBFactory;
 
 class AddWiki extends Maintenance {
 	public function __construct() {
@@ -296,6 +297,10 @@ class AddWiki extends Maintenance {
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 	}
 
+	/**
+	 * @param string $dbName
+	 * @param LBFactory $lbFactory
+	 */
 	private function createExternalStoreClusterSchema( $dbName, $lbFactory ) {
 		global $wgDefaultExternalStore, $wgFlowExternalStore;
 
@@ -320,43 +325,44 @@ class AddWiki extends Maintenance {
 		$stores = array_unique( array_merge( $stores, $flowStores ) );
 
 		if ( count( $stores ) ) {
-			foreach ( $stores as $storeURL ) {
-				$m = [];
-				if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
-					continue;
-				}
-
-				$cluster = $m[1];
-				$this->output( "Initialising external storage $cluster...\n" );
-
-				// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
-				$lb = $lbFactory->getExternalLB( $cluster );
-
-				// Create the database
-				$conn = $lb->getConnection( DB_MASTER, [], '' );
-				$conn->query( "SET default_storage_engine=InnoDB" );
-				// IF NOT EXISTS because two External Store clusters
-				// can use the same DB, but different blobs table entries.
-				$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-				$lb->closeConnection( $conn );
-
-				$extdb = $lb->getConnection( DB_MASTER );
-
-				// Hack x2
-				$store = new ExternalStoreDB();
-				$blobsTable = $store->getTable( $extdb );
-				// T212881: avoid errors on retry from partial failures on some es masters
-				if ( !$extdb->tableExists( $blobsTable ) ) {
-					$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " .
-						$this->getDir() . "/storage/blobs.sql";
-					$blobsFile = popen( $sedCmd, 'r' );
-					$extdb->sourceStream( $blobsFile );
-					pclose( $blobsFile );
-					$extdb->commit();
-				}
-
-				unset( $extdb );
+			return;
+		}
+		foreach ( $stores as $storeURL ) {
+			$m = [];
+			if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
+				continue;
 			}
+
+			$cluster = $m[1];
+			$this->output( "Initialising external storage $cluster...\n" );
+
+			// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
+			$lb = $lbFactory->getExternalLB( $cluster );
+
+			// Create the database
+			$conn = $lb->getConnection( DB_MASTER, [], '' );
+			$conn->query( "SET default_storage_engine=InnoDB" );
+			// IF NOT EXISTS because two External Store clusters
+			// can use the same DB, but different blobs table entries.
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+			$lb->closeConnection( $conn );
+
+			$extdb = $lb->getConnection( DB_MASTER );
+
+			// Hack x2
+			$store = new ExternalStoreDB();
+			$blobsTable = $store->getTable( $extdb );
+			// T212881: avoid errors on retry from partial failures on some es masters
+			if ( !$extdb->tableExists( $blobsTable ) ) {
+				$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " .
+					$this->getDir() . "/storage/blobs.sql";
+				$blobsFile = popen( $sedCmd, 'r' );
+				$extdb->sourceStream( $blobsFile );
+				pclose( $blobsFile );
+				$extdb->commit();
+			}
+
+			unset( $extdb );
 		}
 	}
 
