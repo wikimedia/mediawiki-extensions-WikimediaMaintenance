@@ -9,7 +9,7 @@ use MediaWiki\MediaWikiServices;
  */
 class RefreshMessageBlobs extends Maintenance {
 	public function execute() {
-		$blobStore = new MessageBlobStore( MediaWikiServices::getInstance()->getResourceLoader() );
+		$blobStore = MediaWikiServices::getInstance()->getResourceLoader()->getMessageBlobStore();
 		$blobStore->clear();
 	}
 }
