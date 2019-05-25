@@ -31,10 +31,10 @@ class PurgeUrls extends Maintenance {
 	}
 
 	public function execute() {
-		global $wgSquidServers, $wgHTCPRouting;
+		global $wgCdnServers, $wgHTCPRouting;
 
 		// Ensure direct purging is disabled
-		$wgSquidServers = [];
+		$wgCdnServers = [];
 
 		// Select cluster
 		$cluster = $this->getOption( 'cluster', 'cache_text' );
