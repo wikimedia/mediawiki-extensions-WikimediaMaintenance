@@ -22,7 +22,7 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 	 * a language subdomain)
 	 *
 	 * @param string $projURL URL of root of domain (e.g. https://en.wikipedia.org)
-	 * @return Language code, or null on failure
+	 * @return string|null Language code, or null on failure
 	 */
 	private function getLanguageCode( $projURL ) {
 		$url = "$projURL/w/api.php?action=query&meta=siteinfo&format=json";
