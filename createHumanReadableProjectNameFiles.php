@@ -12,7 +12,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 class CreateHumanReadableProjectNameFiles extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = 'Builds i18n files for translating names of Wikimedia projects';
+		$this->addDescription( 'Builds i18n files for translating names of Wikimedia projects' );
 
 		$this->addOption( 'directory', 'Output directory where files should be created', true, true );
 	}

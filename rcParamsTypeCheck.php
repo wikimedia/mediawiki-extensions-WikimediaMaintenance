@@ -11,7 +11,7 @@ use MediaWiki\MediaWikiServices;
 class RcParamsTypeCheck extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = 'Checks the type of recentchanges.rc_params on all wikis in $wgConf';
+		$this->addDescription( 'Checks the type of recentchanges.rc_params on all wikis in $wgConf' );
 	}
 
 	public function execute() {

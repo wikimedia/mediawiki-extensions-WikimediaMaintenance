@@ -8,7 +8,7 @@ use Wikimedia\Rdbms\DBReplicationWaitError;
 class UnsuppressCrossWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Globally unsuppress a user name";
+		$this->addDescription( "Globally unsuppress a user name" );
 		$this->addOption( 'user', 'The username to operate on', false, true );
 		$this->addOption( 'userid', 'The user id to operate on', false, true );
 	}

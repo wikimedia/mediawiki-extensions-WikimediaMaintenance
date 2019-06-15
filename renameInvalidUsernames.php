@@ -13,7 +13,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  */
 class RenameInvalidUsernames extends Maintenance {
 	public function __construct() {
-		$this->mDescription = 'Rename invalid usernames to a generic one based on their user id';
+		$this->addDescription( 'Rename invalid usernames to a generic one based on their user id' );
 		$this->setBatchSize( 30 );
 		$this->addOption( 'list', 'List of users to fix', true, true );
 	}

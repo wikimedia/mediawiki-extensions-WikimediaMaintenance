@@ -141,8 +141,7 @@ class SendBulkEmails extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->start = microtime( true );
-		$this->mDescription =
-			'Send bulk email to a list of wiki account holders';
+		$this->addDescription( 'Send bulk email to a list of wiki account holders' );
 		$this->addOption( 'subject', 'Email subject (string)', true, true );
 		$this->addOption( 'body', 'Email body (file)', true, true );
 		$this->addOption( 'to',

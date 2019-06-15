@@ -24,7 +24,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class CleanupPageProps extends Maintenance {
 	public function __construct() {
-		$this->mDescription = 'Cleans up page_propertes table from obsolete entries';
+		$this->addDescription( 'Cleans up page_propertes table from obsolete entries' );
 		$this->addOption( 'wait-after', 'Wait for changes to be replicated after this number of rows is '
 			. 'deleted' );
 		$this->setBatchSize( 1000 ); // This large because not every row in batch needs to be deleted

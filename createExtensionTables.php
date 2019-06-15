@@ -29,7 +29,7 @@ use MediaWiki\MediaWikiServices;
 class CreateExtensionTables extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = 'Creates database tables for specific MediaWiki Extensions';
+		$this->addDescription( 'Creates database tables for specific MediaWiki Extensions' );
 		$this->addArg( 'extension', 'Which extension to install' );
 	}
 

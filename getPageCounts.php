@@ -26,7 +26,7 @@ use MediaWiki\MediaWikiServices;
 
 class GetPageCounts extends Maintenance {
 	public function __construct() {
-		$this->mDescription = 'Generates machine-readable statistics of pages on all wikis in the cluster';
+		$this->addDescription( 'Generates machine-readable statistics of pages on all wikis in the cluster' );
 		parent::__construct();
 	}
 

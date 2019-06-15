@@ -39,7 +39,7 @@ use Wikimedia\Rdbms\LBFactory;
 class AddWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Add a new wiki to the family. Wikimedia specific!";
+		$this->addDescription( "Add a new wiki to the family. Wikimedia specific!" );
 		$this->addArg( 'language', 'Language code of new site, e.g. en' );
 		$this->addArg( 'site', 'Type of site, e.g. wikipedia' );
 		$this->addArg( 'dbname', 'Name of database to create, e.g. enwiki' );

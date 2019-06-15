@@ -12,7 +12,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 class CleanupBug41615 extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Cleans up corruption caused by bug 41615";
+		$this->addDescription( "Cleans up corruption caused by bug 41615" );
 		$this->addOption( 'fix', 'Actually update the rev_page values' );
 		$this->addOption( 'logdir', "Log directory", true, true );
 		$this->addOption( 'binlogdump', "Binlog dump of DELETE(page)+INSERT(logging)", true, true );

@@ -15,7 +15,7 @@ class MakeSizeDBLists extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = 'Builds database lists of wikis based on size';
+		$this->addDescription( 'Builds database lists of wikis based on size' );
 	}
 
 	public function execute() {

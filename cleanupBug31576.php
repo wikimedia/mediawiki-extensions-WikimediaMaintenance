@@ -9,7 +9,7 @@ class CleanupBug31576 extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Cleans up templatelinks corruption caused by https://bugzilla.wikimedia.org/show_bug.cgi?id=31576";
+		$this->addDescription( "Cleans up templatelinks corruption caused by https://bugzilla.wikimedia.org/show_bug.cgi?id=31576" );
 		$this->addOption( 'batchsize', 'Number of rows to process in one batch. Default: 50', false, true );
 	}
 

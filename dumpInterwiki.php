@@ -210,7 +210,7 @@ class DumpInterwiki extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Build constant slightly compact database of interwiki prefixes.";
+		$this->addDescription( "Build constant slightly compact database of interwiki prefixes." );
 		$this->addOption( 'langlist', 'File with one language code per line', false, true );
 		$this->addOption( 'dblist', 'File with one db per line', false, true );
 		$this->addOption( 'specialdbs', "File with one 'special' db per line", false, true );
