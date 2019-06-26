@@ -87,11 +87,13 @@ class RenameWiki extends Maintenance {
 				$wgExternalServers[$cluster][0]['password'] = $wgDBpassword;
 
 				$store = new ExternalStoreDB;
-				$extdb =& $store->getMaster( $cluster );
+				$extdb = $store->getMaster( $cluster );
 				$extdb->query( "SET default_storage_engine=InnoDB" );
-				$extdb->query( "CREATE DATABASE {$to}" );
+				$extdb->query( "CREATE DATABASE IF NOT EXISTS {$to}" );
 				$extdb->query( "ALTER TABLE {$from}.blobs RENAME TO {$to}.blobs" );
-				$extdb->selectDB( $from );
+
+				$store = new ExternalStoreDB( [ 'wiki' => $from ] );
+				$extdb = $store->getMaster( $cluster );
 				$extdb->sourceFile( $this->getDir() . '/storage/blobs.sql' );
 				$extdb->commit();
 			}
