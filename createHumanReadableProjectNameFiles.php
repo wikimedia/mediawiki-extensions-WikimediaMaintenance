@@ -98,7 +98,6 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 			"ten" => "Wikipedia 10",
 			"test" => "Test Wikipedia",
 			"test2" => "Test2 Wikipedia",
-			"zero" => "Wikipedia Zero",
 			"board" => "Wikimedia Board Wiki",
 			"labs" => "Wikitech",
 			"labtest" => "Wikitech Test Wiki",
