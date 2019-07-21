@@ -55,7 +55,7 @@ class CreateExtensionTables extends Maintenance {
 				$echoLB = $wgEchoCluster
 					? $lbFactory->getExternalLB( $wgEchoCluster )
 					: $lbFactory->getMainLB();
-				$conn = $echoLB->getConnection( DB_MASTER, [], '' );
+				$conn = $echoLB->getConnection( DB_MASTER, [], $echoLB::DOMAIN_ANY );
 				$conn->query( "SET storage_engine=InnoDB" );
 				$conn->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID() );
 				$echoLB->closeConnection( $conn );
