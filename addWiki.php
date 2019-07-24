@@ -95,22 +95,23 @@ class AddWiki extends Maintenance {
 		$name = $languageNames[$lang];
 
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$localLb = $lbFactory->getMainLB();
 
 		$this->output( "Creating database $dbName for $lang.$siteGroup ($name)\n" );
 
 		if ( !in_array( 'main', $skipClusters, true ) ) {
 			// Set up the database on the same shard as the wiki this script is running on
-			$conn = $lbFactory->getMainLB()->getConnection( DB_MASTER, [], '' );
+			$conn = $localLb->getConnection( DB_MASTER, [], $localLb::DOMAIN_ANY );
 			$conn->query( "SET storage_engine=InnoDB" );
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
-			$lbFactory->getMainLB()->closeConnection( $conn );
+			$localLb->closeConnection( $conn );
 		}
 
 		// Close connections and make future ones use the new database as the local domain
 		$lbFactory->redefineLocalDomain( $dbName );
 
 		// Get a connection to the new database
-		$dbw = $lbFactory->getMainLB()->getConnection( DB_MASTER );
+		$dbw = $localLb->getMaintenanceConnectionRef( DB_MASTER );
 		if ( $dbw->getDBname() !== $dbName ) { // sanity
 			$this->fatalError( "Expected connection to '$dbName', not '{$dbw->getDBname()}'" );
 		}
@@ -127,15 +128,13 @@ class AddWiki extends Maintenance {
 			// Initialise Echo cluster if applicable.
 			// It will create the Echo tables in the main database if
 			// extension1 is not in use.
-			$echoLB = $wgEchoCluster
-				? $lbFactory->getExternalLB( $wgEchoCluster )
-				: $lbFactory->getMainLB();
-			$conn = $echoLB->getConnection( DB_MASTER, [], '' );
+			$echoLB = $wgEchoCluster ? $lbFactory->getExternalLB( $wgEchoCluster ) : $localLb;
+			$conn = $echoLB->getConnection( DB_MASTER, [], $localLb::DOMAIN_ANY );
 			$conn->query( "SET storage_engine=InnoDB" );
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
 			$echoLB->closeConnection( $conn );
 
-			$echoDbW = $echoLB->getConnection( DB_MASTER );
+			$echoDbW = $echoLB->getMaintenanceConnectionRef( DB_MASTER );
 			$echoDbW->sourceFile( "$IP/extensions/Echo/echo.sql" );
 		}
 
@@ -340,17 +339,18 @@ class AddWiki extends Maintenance {
 			$lb = $lbFactory->getExternalLB( $cluster );
 
 			// Create the database
-			$conn = $lb->getConnection( DB_MASTER, [], '' );
+			$conn = $lb->getConnection( DB_MASTER, [], $lb::DOMAIN_ANY );
 			$conn->query( "SET default_storage_engine=InnoDB" );
 			// IF NOT EXISTS because two External Store clusters
 			// can use the same DB, but different blobs table entries.
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
 			$lb->closeConnection( $conn );
 
-			$extdb = $lb->getConnection( DB_MASTER );
+			$extdb = $lb->getMaintenanceConnectionRef( DB_MASTER );
 
 			// Hack x2
-			$store = new ExternalStoreDB();
+			/** @var ExternalStoreDB $store */
+			$store = MediaWikiServices::getInstance()->getExternalStoreFactory()->getStore( 'DB' );
 			$blobsTable = $store->getTable( $extdb );
 			// T212881: avoid errors on retry from partial failures on some es masters
 			if ( !$extdb->tableExists( $blobsTable ) ) {
@@ -359,10 +359,7 @@ class AddWiki extends Maintenance {
 				$blobsFile = popen( $sedCmd, 'r' );
 				$extdb->sourceStream( $blobsFile );
 				pclose( $blobsFile );
-				$extdb->commit();
 			}
-
-			unset( $extdb );
 		}
 	}
 
