@@ -10,11 +10,6 @@ class FixOrphans extends Maintenance {
 	}
 
 	public function execute() {
-		global $wgCommentTableSchemaMigrationStage, $wgActorTableSchemaMigrationStage;
-
-		$commentMigrationStage = $wgCommentTableSchemaMigrationStage ?? MIGRATION_NEW;
-		$actorMigrationStage = $wgActorTableSchemaMigrationStage ?? SCHEMA_COMPAT_NEW;
-
 		$fileName = $this->getArg( 0 );
 		$f = fopen( $fileName, 'r' );
 		if ( !$f ) {
@@ -36,20 +31,9 @@ class FixOrphans extends Maintenance {
 			'ar_page_id' => 'rev_page',
 			'ar_parent_id' => 'rev_parent_id',
 			'ar_sha1' => 'rev_sha1',
+			'ar_actor' => 'revactor_actor',
+			'ar_comment_id' => 'revcomment_comment_id',
 		];
-		if ( $actorMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$verifyPairs['ar_user'] = 'rev_user';
-			$verifyPairs['ar_user_text'] = 'rev_user_text';
-		}
-		if ( $actorMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$verifyPairs['ar_actor'] = 'revactor_actor';
-		}
-		if ( $commentMigrationStage <= MIGRATION_WRITE_BOTH ) {
-			$verifyPairs['ar_comment'] = 'rev_comment';
-		}
-		if ( $commentMigrationStage >= MIGRATION_WRITE_BOTH ) {
-			$verifyPairs['ar_comment_id'] = 'revcomment_comment_id';
-		}
 
 		$commentStore = CommentStore::getStore();
 		$commentQuery = $commentStore->getJoin( 'rev_comment' );
@@ -149,9 +133,8 @@ class FixOrphans extends Maintenance {
 				$dbw->delete( 'archive', [ 'ar_rev_id' => $revId ], __METHOD__ );
 			} elseif ( $action === 'remove-revision' ) {
 				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
-				if ( $commentMigrationStage > MIGRATION_OLD ) {
-					$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revId ], __METHOD__ );
-				}
+				$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revId ], __METHOD__ );
+				$dbw->delete( 'revision_actor_temp', [ 'revactor_rev' => $revId ], __METHOD__ );
 			} elseif ( $action === 'move-revision' ) {
 				$comment = $commentStore->getComment( 'rev_comment', $revRow );
 				$user = User::newFromAnyId( $revRow->rev_user, $revRow->rev_user_text, $revRow->rev_actor );
@@ -174,9 +157,8 @@ class FixOrphans extends Maintenance {
 						+ $actorMigration->getInsertValues( $dbw, 'ar_user', $user ),
 					__METHOD__ );
 				$dbw->delete( 'revision', [ 'rev_id' => $revId ], __METHOD__ );
-				if ( $commentMigrationStage > MIGRATION_OLD ) {
-					$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revId ], __METHOD__ );
-				}
+				$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revId ], __METHOD__ );
+				$dbw->delete( 'revision_actor_temp', [ 'revactor_rev' => $revId ], __METHOD__ );
 			}
 			$this->commitTransaction( $dbw, __METHOD__ );
 
