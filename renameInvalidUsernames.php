@@ -7,18 +7,30 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  * various MW changes, updates to interwiki map, etc.
  *
  * At the same time, convert them to a global account if necessary.
- * Unattached accounts will be renamed to 'Invalid username $userId~$wiki'
- * Global accounts will be renamed to 'Invalid username $globalUserId'
+ *
+ * The new name name may be specified as part of the list of names. Otherwise,
+ * unattached accounts will be renamed to 'Invalid username $userId~$wiki' and
+ * global accounts will be renamed to 'Invalid username $globalUserId'.
+ *
  * @see bug T5507
  */
 class RenameInvalidUsernames extends Maintenance {
+
+	protected $reason;
+
 	public function __construct() {
+		parent::__construct();
 		$this->addDescription( 'Rename invalid usernames to a generic one based on their user id' );
 		$this->setBatchSize( 30 );
-		$this->addOption( 'list', 'List of users to fix', true, true );
+		$this->addOption( 'list',
+			'List of users to fix, as a TSV file. '
+			. 'Column 1 is the wiki, 2 the user ID, and (optional) 3 is the new name.',
+			true, true );
+		$this->addOption( 'reason', 'Rename reason to use for the renames', true, true );
 	}
 
 	public function execute() {
+		$this->reason = $this->getOption( 'reason' );
 		$list = $this->getOption( 'list' );
 		$file = fopen( $list, 'r' );
 		if ( $file === false ) {
@@ -32,7 +44,7 @@ class RenameInvalidUsernames extends Maintenance {
 			$this->output( "$line\n" );
 			// xxwiki	#####
 			$exp = explode( "\t", $line );
-			$this->rename( $exp[1], $exp[0] );
+			$this->rename( $exp[1], $exp[0], $exp[2] ?? '' );
 			$count++;
 			if ( $count > $this->mBatchSize ) {
 				$count = 0;
@@ -52,7 +64,11 @@ class RenameInvalidUsernames extends Maintenance {
 		fclose( $file );
 	}
 
-	protected function rename( $userId, $wiki ) {
+	protected function rename( $userId, $wiki, $newName = '' ) {
+		if ( $newName === '' ) {
+			$newName = null;
+		}
+
 		$dbw = wfGetDB( DB_MASTER, [], $wiki );
 		$userQuery = User::getQueryInfo();
 		$row = $dbw->selectRow(
@@ -62,7 +78,6 @@ class RenameInvalidUsernames extends Maintenance {
 
 		$oldUser = User::newFromRow( $row );
 
-		$reason = '[[m:Special:MyLanguage/Single User Login finalisation announcement|SUL finalization]] - [[phab:T5507]]';
 		$caUser = new CentralAuthUser( $oldUser->getName(), CentralAuthUser::READ_LATEST );
 		$maintScript = User::newFromName( 'Maintenance script' );
 		$session = [
@@ -74,12 +89,14 @@ class RenameInvalidUsernames extends Maintenance {
 		$data = [
 			'movepages' => true,
 			'suppressredirects' => true,
-			'reason' => $reason,
+			'reason' => $this->reason,
 			'force' => true,
 		];
 
 		if ( $caUser->exists() && $caUser->isAttached() ) {
-			$newUser = User::newFromName( 'Invalid username ' . (string)$caUser->getId(), 'usable' );
+			$newUser = User::newFromName(
+				$newName ?? 'Invalid username ' . (string)$caUser->getId(), 'usable'
+			);
 			$newCAUser = CentralAuthUser::getInstance( $newUser );
 			if ( $newCAUser->exists() ) {
 				$this->output( "ERROR: {$newCAUser->getName()} already exists!\n" );
@@ -99,12 +116,11 @@ class RenameInvalidUsernames extends Maintenance {
 			);
 			$globalRenameUser->rename( $data );
 		} else { // Not attached, do a promote to global rename
-			$newUser = User::newFromName( 'Invalid username ' . (string)$oldUser->getId(), 'usable' );
 			$suffix = '~' . str_replace( '_', '-', $wiki );
-			$newCAUser = new CentralAuthUser(
-				$newUser->getName() . $suffix,
-				CentralAuthUser::READ_LATEST
+			$newUser = User::newFromName(
+				$newName ?? 'Invalid username ' . (string)$oldUser->getId() . $suffix, 'usable'
 			);
+			$newCAUser = new CentralAuthUser( $newUser->getName(), CentralAuthUser::READ_LATEST );
 			if ( $newCAUser->exists() ) {
 				$this->output( "ERROR: {$newCAUser->getName()} already exists!\n" );
 				return;
@@ -133,7 +149,7 @@ class RenameInvalidUsernames extends Maintenance {
 					'movepages' => true,
 					'suppressredirects' => true,
 					'promotetoglobal' => true,
-					'reason' => $reason,
+					'reason' => $this->reason,
 					'force' => true,
 				]
 			);
@@ -141,7 +157,7 @@ class RenameInvalidUsernames extends Maintenance {
 			JobQueueGroup::singleton( $wiki )->push( $job );
 			// Log it
 			$logger = new GlobalRenameUserLogger( $maintScript );
-			$logger->logPromotion( $oldUser->getName(), $wiki, $newCAUser->getName(), $reason );
+			$logger->logPromotion( $oldUser->getName(), $wiki, $newCAUser->getName(), $this->reason );
 		}
 	}
 
