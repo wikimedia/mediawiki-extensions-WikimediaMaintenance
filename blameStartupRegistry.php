@@ -23,7 +23,7 @@ use MediaWiki\MediaWikiServices;
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class BlameStartupRegistry extends Maintenance {
-	const COMP_UNKNOWN = '(unknown)';
+	const COMP_UNKNOWN = 'unknown';
 
 	public function __construct() {
 		parent::__construct();
@@ -43,7 +43,6 @@ class BlameStartupRegistry extends Maintenance {
 		$overview = [
 			self::COMP_UNKNOWN => [ 'modules' => 0, 'bytes' => 0, 'names' => [] ],
 		];
-		$total = [ 'modules' => 0, 'bytes' => 0 ];
 
 		$coreModuleNames = array_keys( require "$IP/resources/Resources.php" );
 		$extModuleNames = []; // from module name to extension name
@@ -90,7 +89,7 @@ class BlameStartupRegistry extends Maintenance {
 			} elseif ( isset( $extModuleNames[$name] ) ) {
 				$component = $extModuleNames[$name];
 			} elseif ( strpos( $name, 'ext.gadget.' ) === 0 ) {
-				$component = '(user gadgets)';
+				$component = 'user_gadgets';
 				// Some exenstension (also) have modules registered outside ExtensionRegistry
 			} elseif ( strpos( $name, 'ext.centralauth.' ) === 0 ) {
 				$component = 'CentralAuth';
@@ -129,10 +128,21 @@ class BlameStartupRegistry extends Maintenance {
 			}
 			$overview[$component]['modules'] = ( $overview[$component]['modules'] ?? 0 ) + 1;
 			$overview[$component]['bytes'] = ( $overview[$component]['bytes'] ?? 0 ) + $bytes;
-
-			$total['modules']++;
-			$total['bytes'] += $bytes;
 		}
+
+		// Also measure the startup JS code itself as special component
+		$startupJs = file_get_contents( "$IP/resources/src/startup/startup.js" )
+			. file_get_contents( "$IP/resources/src/startup/mediawiki.js" )
+			. file_get_contents( "$IP/resources/src/startup/mediawiki.requestIdleCallback.js" );
+		// ... make variables constant,
+		$startupJs = preg_replace( '/\$VARS\.[a-zA-Z]+/', 'null', $startupJs );
+		// ... and strip code substitutions.
+		$startupJs = preg_replace( '/\$CODE\.[a-zA-Z]+\(\);/', '', $startupJs );
+		$startupJs = ResourceLoader::filter( 'minify-js', $startupJs, [ 'cache' => false ] );
+		$startupJsBytes = strlen( gzencode( $startupJs, 9 ) );
+		unset( $startupJs );
+		$overview['startup_js']['modules'] = 0;
+		$overview['startup_js']['bytes'] = $startupJsBytes;
 
 		uasort( $overview, function ( $a, $b ) {
 			return $b['bytes'] - $a['bytes'];
@@ -141,11 +151,9 @@ class BlameStartupRegistry extends Maintenance {
 		echo "| Component | Modules | Bytes\n";
 		echo "|-- |-- |--\n";
 		foreach ( $overview as $component => $info ) {
-			$modulePct = round( $info['modules'] / $total['modules'], 3 ) * 100;
-			$moduleStr = "{$info['modules']} ({$modulePct}%)";
-			$bytePct = round( $info['bytes'] / $total['bytes'], 3 ) * 100;
-			$byteStr = number_format( $info['bytes'] ) . " ({$bytePct}%)";
-			echo sprintf( "| %-20s | %12s | %14s\n",
+			$moduleStr = $info['modules'];
+			$byteStr = number_format( $info['bytes'] );
+			echo sprintf( "| %-20s | %5s | %8s\n",
 				$component,
 				$moduleStr,
 				$byteStr
@@ -154,7 +162,7 @@ class BlameStartupRegistry extends Maintenance {
 
 		if ( $overview[self::COMP_UNKNOWN]['names'] ) {
 			echo "\n";
-			echo "Untracked modules: " . implode( ", ", $overview[self::COMP_UNKNOWN]['names'] );
+			echo "Unknown component: " . implode( ", ", $overview[self::COMP_UNKNOWN]['names'] );
 			echo "\n";
 		}
 
