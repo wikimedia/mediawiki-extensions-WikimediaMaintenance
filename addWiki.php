@@ -325,6 +325,8 @@ class AddWiki extends Maintenance {
 		if ( !count( $stores ) ) {
 			return;
 		}
+
+		$esFactory = MediaWikiServices::getInstance()->getExternalStoreFactory();
 		foreach ( $stores as $storeURL ) {
 			$m = [];
 			if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
@@ -345,20 +347,10 @@ class AddWiki extends Maintenance {
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
 			$lb->closeConnection( $conn );
 
-			$extdb = $lb->getMaintenanceConnectionRef( DB_MASTER );
-
 			// Hack x2
 			/** @var ExternalStoreDB $store */
-			$store = MediaWikiServices::getInstance()->getExternalStoreFactory()->getStore( 'DB' );
-			$blobsTable = $store->getTable( $extdb );
-			// T212881: avoid errors on retry from partial failures on some es masters
-			if ( !$extdb->tableExists( $blobsTable ) ) {
-				$sedCmd = "sed s/blobs\\\\\\>/$blobsTable/ " .
-					$this->getDir() . "/storage/blobs.sql";
-				$blobsFile = popen( $sedCmd, 'r' );
-				$extdb->sourceStream( $blobsFile );
-				pclose( $blobsFile );
-			}
+			$store = $esFactory->getStore( 'DB', [ 'domain' => $dbName ] );
+			$store->initializeTable( $cluster );
 		}
 	}
 
