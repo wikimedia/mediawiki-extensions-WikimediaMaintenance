@@ -28,6 +28,7 @@ require_once __DIR__ . '/WMFSite.php';
 
 use Cdb\Writer as CdbWriter;
 use Cdb\Exception as CdbException;
+use MediaWiki\MediaWikiServices;
 
 class DumpInterwiki extends Maintenance {
 
@@ -267,7 +268,7 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	private function getRebuildInterwikiDump() {
-		global $wgContLang, $wmgRealm;
+		global $wmgRealm;
 
 		$sites = $this->getSites();
 		$extraLinks = $this->getExtraLinks();
@@ -284,7 +285,7 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		/**
-		 * @var $site WMFSite
+		 * @var WMFSite $site
 		 */
 		foreach ( $sites as $site ) {
 			$reserved[$site->prefix] = 1;
@@ -300,9 +301,10 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		// Global interwiki map
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		foreach ( $lines as $line ) {
 			if ( preg_match( '/^\|\s*(.*?)\s*\|\|\s*(.*?)\s*$/', $line, $matches ) ) {
-				$prefix = $wgContLang->lc( $matches[1] );
+				$prefix = $contLang->lc( $matches[1] );
 				$prefix = str_replace( ' ', '_', $prefix );
 
 				$url = $matches[2];
