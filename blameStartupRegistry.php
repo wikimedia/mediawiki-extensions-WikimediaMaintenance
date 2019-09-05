@@ -73,7 +73,7 @@ class BlameStartupRegistry extends Maintenance {
 			// Use index number only, and in a way that's stable over time
 			// (so round down in the component's favour, by starting at 0)
 			$deps = array_keys( $module->getDependencies( $context ) );
-			$group = $module->getGroup();
+			$group = $module->getGroup() === null ? null : 10;
 			$source = $module->getSource() === 'local' ? null : $module->getSource();
 			$skipFn = $module->getSkipFunction();
 			if ( $skipFn !== null ) {
