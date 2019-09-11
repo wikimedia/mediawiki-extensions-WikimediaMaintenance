@@ -43,6 +43,8 @@ class BlameStartupRegistry extends Maintenance {
 		$overview = [
 			self::COMP_UNKNOWN => [ 'modules' => 0, 'bytes' => 0, 'names' => [] ],
 		];
+		$totalCount = 0;
+		$totalBytes = 0;
 
 		$coreModuleNames = array_keys( require "$IP/resources/Resources.php" );
 		$extModuleNames = []; // from module name to extension name
@@ -128,6 +130,8 @@ class BlameStartupRegistry extends Maintenance {
 			}
 			$overview[$component]['modules'] = ( $overview[$component]['modules'] ?? 0 ) + 1;
 			$overview[$component]['bytes'] = ( $overview[$component]['bytes'] ?? 0 ) + $bytes;
+			$totalCount += 1;
+			$totalBytes += $bytes;
 		}
 
 		// Also measure the startup JS code itself as special component
@@ -143,6 +147,7 @@ class BlameStartupRegistry extends Maintenance {
 		unset( $startupJs );
 		$overview['startup_js']['modules'] = 0;
 		$overview['startup_js']['bytes'] = $startupJsBytes;
+		$totalBytes += $startupJsBytes;
 
 		uasort( $overview, function ( $a, $b ) {
 			return $b['bytes'] - $a['bytes'];
@@ -189,6 +194,14 @@ class BlameStartupRegistry extends Maintenance {
 					);
 				}
 			}
+			$stats->gauge(
+				sprintf( 'resourceloader_startup_modules_total.%s', $wiki ),
+				$totalCount
+			);
+			$stats->gauge(
+				sprintf( 'resourceloader_startup_bytes_total.%s', $wiki ),
+				$totalBytes
+			);
 			echo "Done!\n";
 		}
 	}
