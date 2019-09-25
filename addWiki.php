@@ -33,6 +33,7 @@ use Wikibase\PopulateSitesTable;
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Storage\RevisionStore;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\LBFactory;
 
@@ -141,6 +142,16 @@ class AddWiki extends Maintenance {
 		if ( !in_array( 'extstore', $skipClusters, true ) ) {
 			$this->createExternalStoreClusterSchema( $dbName, $lbFactory );
 		}
+
+		// T212881: Redefine the RevisionStore service to explicitly use the new DB name.
+		// Otherwise, ExternalStoreDB would be instantiated with an implicit database domain,
+		// causing it to use the DB name of the wiki the script is running on due to T200471.
+		MediaWikiServices::getInstance()->redefineService(
+			'RevisionStore',
+			function ( MediaWikiServices $services ) use ( $dbName ): RevisionStore {
+				return $services->getRevisionStoreFactory()->getRevisionStore( $dbName );
+			}
+		);
 
 		// Make the main page (this should be idempotent)
 		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )->useDatabase( false )->plain() );
