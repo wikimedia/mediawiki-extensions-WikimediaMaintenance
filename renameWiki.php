@@ -24,6 +24,8 @@
  */
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 class RenameWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -73,6 +75,7 @@ class RenameWiki extends Maintenance {
 
 		if ( count( $stores ) ) {
 			$this->output( "Initialising external storage...\n" );
+			$esFactory = MediaWikiServices::getInstance()->getExternalStoreFactory();
 			global $wgDBuser, $wgDBpassword, $wgExternalServers;
 			foreach ( $stores as $storeURL ) {
 				$m = [];
@@ -86,13 +89,14 @@ class RenameWiki extends Maintenance {
 				$wgExternalServers[$cluster][0]['user'] = $wgDBuser;
 				$wgExternalServers[$cluster][0]['password'] = $wgDBpassword;
 
-				$store = new ExternalStoreDB;
+				/** @var ExternalStoreDB $store */
+				$store = $esFactory->getStore( 'DB', [ 'domain' => $to ] );
 				$extdb = $store->getMaster( $cluster );
 				$extdb->query( "SET default_storage_engine=InnoDB" );
 				$extdb->query( "CREATE DATABASE IF NOT EXISTS {$to}" );
 				$extdb->query( "ALTER TABLE {$from}.blobs RENAME TO {$to}.blobs" );
 
-				$store = new ExternalStoreDB( [ 'wiki' => $from ] );
+				$store = $esFactory->getStore( 'DB', [ 'domain' => $from ] );
 				$extdb = $store->getMaster( $cluster );
 				$extdb->sourceFile( $this->getDir() . '/storage/blobs.sql' );
 				$extdb->commit();
