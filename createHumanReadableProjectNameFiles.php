@@ -166,7 +166,6 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 				// Output the line
 				$outEn[ "project-localized-name-" . $dbname ] = $name;
 				$outQqq[ "project-localized-name-" . $dbname ] = $this->createQQQ( $name, $url );
-				$table[$dbname] = [ 'name' => $name, 'url' => $url ];
 
 				$counter++;
 			}
@@ -189,7 +188,6 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 			// Output the line
 			$outEn[ "project-localized-name-" . $dbname ] = $sitename;
 			$outQqq[ "project-localized-name-" . $dbname ] = $this->createQQQ( $sitename, $url );
-			$table[$dbname] = [ 'name' => $sitename, 'url' => $url ];
 
 			$counter++;
 		}
