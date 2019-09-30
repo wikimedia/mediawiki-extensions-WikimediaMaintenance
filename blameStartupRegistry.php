@@ -57,6 +57,12 @@ class BlameStartupRegistry extends Maintenance {
 			}
 		}
 
+		try {
+			$rl->preloadModuleInfo( $moduleNames, $context );
+		} catch ( Exception $e ) {
+			// Ignore
+		}
+
 		foreach ( $moduleNames as $name ) {
 			$module = $rl->getModule( $name );
 			if ( $module instanceof ResourceLoaderStartUpModule ) {
