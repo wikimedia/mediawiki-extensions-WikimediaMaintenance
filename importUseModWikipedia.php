@@ -84,7 +84,7 @@ class ImportUseModWikipedia extends Maintenance {
 
 	public $replacementsDone = [];
 
-	/** @var array */
+	/** @var array[] */
 	public $moveLog = [];
 	public $moveDests = [];
 	public $revId;
@@ -309,6 +309,7 @@ EOT
 		$this->processDiffFile( [ $this, 'moveLogCallback' ] );
 
 		// We have the timestamp intervals, now make a guess at the actual timestamp
+		// @phan-suppress-next-line PhanEmptyForeach Filled by callback
 		foreach ( $this->moveLog as $newTitle => $params ) {
 			// Is there a time specified?
 			$drTime = false;
@@ -356,6 +357,7 @@ EOT
 				"</contributor>" .
 				$this->element( 'type', 'move' ) .
 				$this->element( 'action', 'move' ) .
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset
 				$this->element( 'logtitle', $params['old'] ) .
 				"<params xml:space=\"preserve\">" .
 				htmlspecialchars( $this->encode( "{$newTitle}\n1" ) ) .

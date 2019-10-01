@@ -361,6 +361,7 @@ class AddWiki extends Maintenance {
 			// Hack x2
 			/** @var ExternalStoreDB $store */
 			$store = $esFactory->getStore( 'DB', [ 'domain' => $dbName ] );
+			'@phan-var ExternalStoreDB $store';
 			$store->initializeTable( $cluster );
 		}
 	}

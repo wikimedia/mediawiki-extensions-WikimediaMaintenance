@@ -153,6 +153,7 @@ class BlameStartupRegistry extends Maintenance {
 
 		// Measure the mw.config payload as special component
 		$module = $rl->getModule( 'startup' );
+		'@phan-var ResourceLoaderStartUpModule $module';
 		$configData = $module->getConfigSettings( $context );
 		$configBytes = strlen( gzencode( $context->encodeJson( $configData ), 9 ) );
 		unset( $configData );

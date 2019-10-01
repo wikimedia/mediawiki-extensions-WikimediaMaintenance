@@ -224,6 +224,9 @@ class DumpInterwiki extends Maintenance {
 		}
 	}
 
+	/**
+	 * @suppress PhanUndeclaredFunction getRealmSpecificFilename is deprecated in multiversion
+	 */
 	public function execute() {
 		$root = getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki';
 

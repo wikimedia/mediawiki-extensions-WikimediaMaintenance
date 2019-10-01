@@ -70,6 +70,7 @@ class GetPageCounts extends Maintenance {
 			$this->error( "Warning: MEDIAWIKI_DEPLOYMENT_DIR is not defined, no wikis will be blacklisted\n" );
 			return [];
 		}
+		// @phan-suppress-next-line PhanUndeclaredConstant
 		$fileName = MEDIAWIKI_DEPLOYMENT_DIR . "/dblists/$name.dblist";
 		if ( !is_readable( $fileName ) ) {
 			$this->error( "Warning: can't read $fileName, no wikis will be blacklisted\n" );
