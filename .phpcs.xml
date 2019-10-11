@@ -8,6 +8,7 @@
 		<exclude name="MediaWiki.Usage.ForbiddenFunctions.popen" />
 		<exclude name="MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment" />
 		<exclude name="Generic.Files.LineLength.TooLong" />
+		<exclude name="PSR12.Properties.ConstantVisibility.NotFound" />
 	</rule>
 	<rule ref="MediaWiki.NamingConventions.PrefixedGlobalFunctions">
 		<properties>
