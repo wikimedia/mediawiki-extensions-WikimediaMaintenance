@@ -140,7 +140,7 @@ class BlameStartupRegistry extends Maintenance {
 			$totalBytes += $bytes;
 		}
 
-		// Also measure the startup JS code itself as special component
+		// Measure the internal JS code as special component
 		$startupJs = file_get_contents( "$IP/resources/src/startup/startup.js" )
 			. file_get_contents( "$IP/resources/src/startup/mediawiki.js" )
 			. file_get_contents( "$IP/resources/src/startup/mediawiki.requestIdleCallback.js" );
@@ -154,6 +154,14 @@ class BlameStartupRegistry extends Maintenance {
 		$overview['startup_js']['modules'] = 0;
 		$overview['startup_js']['bytes'] = $startupJsBytes;
 		$totalBytes += $startupJsBytes;
+
+		// Measure the mw.config payload as special component
+		$module = $rl->getModule( 'startup' );
+		$configData = $module->getConfigSettings( $context );
+		$configBytes = strlen( gzencode( $context->encodeJson( $configData ), 9 ) );
+		unset( $configData );
+		$overview['startup_config']['modules'] = 0;
+		$overview['startup_config']['bytes'] = $configBytes;
 
 		uasort( $overview, function ( $a, $b ) {
 			return $b['bytes'] - $a['bytes'];
