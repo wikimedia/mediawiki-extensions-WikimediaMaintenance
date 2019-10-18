@@ -84,6 +84,7 @@ class ImportUseModWikipedia extends Maintenance {
 
 	public $replacementsDone = [];
 
+	/** @var array */
 	public $moveLog = [];
 	public $moveDests = [];
 	public $revId;
@@ -95,6 +96,7 @@ class ImportUseModWikipedia extends Maintenance {
 	public $FS, $FS1, $FS2, $FS3;
 	public $FreeLinkPattern, $UrlPattern, $LinkPattern, $InterLinkPattern;
 
+	/** @var array */
 	public $cp1252Table = [
 0x80 => 0x20ac,
 0x81 => 0x0081,
@@ -128,6 +130,36 @@ class ImportUseModWikipedia extends Maintenance {
 0x9d => 0x009d,
 0x9e => 0x017e,
 0x9f => 0x0178 ];
+
+	/** @var string */
+	private $articleFileName;
+
+	/** @var string */
+	private $patchFileName;
+
+	/** @var string */
+	private $dataDir;
+
+	/** @var resource */
+	private $outFile;
+
+	/** @var int */
+	private $numGoodRevs;
+
+	/** @var int */
+	private $numRevs;
+
+	/** @var array */
+	private $saveUrl;
+
+	/** @var array */
+	private $linkList;
+
+	/** @var string */
+	private $old;
+
+	/** @var string */
+	private $new;
 
 	public function __construct() {
 		parent::__construct();
