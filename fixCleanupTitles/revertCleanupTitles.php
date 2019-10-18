@@ -41,7 +41,7 @@ foreach ( $opsByWiki as $wiki => $ops ) {
 
 		# Sanity check
 		$row = $db->selectRow( 'page', [ 'page_namespace', 'page_title' ],
-			[ 'page_id' => $op['id'] ], __METHOD__ );
+			[ 'page_id' => $op['id'] ], 'revertCleanupTitles.php' );
 		if ( !$row ) {
 			echo "$wiki: missing: $msg\n";
 			continue;
@@ -58,7 +58,7 @@ foreach ( $opsByWiki as $wiki => $ops ) {
 				'page_title' => $op['dbk'] ],
 			/* WHERE */ [
 				'page_id' => $op['id'] ],
-			__METHOD__ );
+			'revertCleanupTitles.php' );
 		echo "$wiki: updated: $msg\n";
 	}
 	$lb->reuseConnection( $db );
