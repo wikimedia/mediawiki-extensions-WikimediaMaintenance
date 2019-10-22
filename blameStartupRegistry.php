@@ -111,22 +111,18 @@ class BlameStartupRegistry extends Maintenance {
 				$component = 'MobileFrontend';
 			} elseif ( strpos( $name, 'skins.monobook.' ) === 0 ) {
 				$component = 'MonoBook';
-			} elseif ( preg_match( '/^((jquery\.)?wikibase\b|mw\.config\.values\.wb)/', $name ) ) {
+			} elseif ( preg_match( '/^((jquery\.)?(wikibase|valueview)\b|mw\.config\.values\.wb)/', $name ) ) {
 				// Does not use ExtensionRegistry yet
 				$component = 'Wikibase';
 			} elseif (
 				in_array( $name, [
-					'vue2',
-					'jquery.animateWithEvent', 'jquery.AnimationEvent',
-					'jquery.focusAt', 'jquery.inputautoexpand', 'jquery.PurposedCallbacks',
-					'jquery.ui.listrotator', 'jquery.ui.ooMenu', 'jquery.ui.preview',
-					'jquery.ui.suggester', 'jquery.ui.commonssuggester', 'jquery.ui.languagesuggester',
-					'jquery.ui.toggler', 'jquery.ui.unitsuggester', 'jquery.util.adaptlettercase',
-					'jquery.util.getscrollbarwidth', 'util.ContentLanguages', 'util.Extendable',
-					'util.highlightSubstring', 'util.MessageProvider', 'util.HashMessageProvider',
-					'util.CombiningMessageProvider', 'util.PrefixingMessageProvider', 'util.Notifier',
-					'util.inherit',
-					'jquery.event.special.eachchange', 'jquery.ui.inputextender',
+					'dataValues', 'dataValues.DataValue', 'dataValues.TimeValue','dataValues.values',
+					'jquery.animateWithEvent', 'jquery.event.special.eachchange', 'jquery.inputautoexpand',
+					'jquery.ui.commonssuggester', 'jquery.ui.languagesuggester', 'jquery.ui.suggester',
+					'jquery.util.getDirectionality', 'promise-polyfill', 'util.ContentLanguages', 'util.Extendable',
+					'util.MessageProvider', 'util.MessageProviders', 'util.Notifier', 'util.highlightSubstring',
+					'util.inherit', 'valueFormatters', 'valueParsers', 'valueParsers.ValueParserStore',
+					'valueParsers.parsers', 'vue2', 'vuex'
 				] )
 			) {
 				$component = 'Wikibase';
