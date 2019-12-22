@@ -54,7 +54,7 @@ class SendBulkEmails extends Maintenance {
 	const DEFAULT_DELAY = 5;
 
 	/**
-	 * @var int $start Unix epoch time
+	 * @var float $start Unix epoch time
 	 */
 	private $start = 0;
 

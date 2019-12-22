@@ -4,8 +4,8 @@ require_once __DIR__ . '/../WikimediaMaintenance.php';
 class MeasureZoneSizes extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->addOption( 'backend1', true, true );
-		$this->addOption( 'backend2', true, true );
+		$this->addOption( 'backend1', 'file backend 1', true, true );
+		$this->addOption( 'backend2', 'file backend 2', true, true );
 		$this->addOption( 'fast', 'Estimate size from a sample of shards.' );
 		$this->addOption( 'outfile', 'File to report backend size discrepencies.', false, true );
 	}

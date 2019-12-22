@@ -84,9 +84,8 @@ class AddWiki extends Maintenance {
 		$languageNames = Language::fetchLanguageNames();
 
 		if ( $siteGroup === 'wiktionary' && strpos( $wgDBname, 'wiktionary' ) === false ) {
-			$this->error(
-				'Wiktionaries must be created using --wiki aawiktionary due to the need to load Cognate classes.',
-				true
+			$this->fatalError(
+				'Wiktionaries must be created using --wiki aawiktionary due to the need to load Cognate classes.'
 			);
 		}
 

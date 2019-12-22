@@ -62,7 +62,7 @@ class CleanupBug41615 extends Maintenance {
 			if ( !preg_match( "!^\d+ (\w+) DELETE .* WHERE page_id = '(\d+)'!", $dEntry, $m ) ) {
 				$this->fatalError( "Could not parse '$dEntry'." );
 			}
-			$info = [ 'wiki' => $m[1], 'page_id' => $m[2] ];
+			$info = [ 'wiki' => $m[1], 'page_id' => (int)$m[2] ];
 			// 1351692955 itwiki INSERT /* ManualLogEntry::insert Guidomac */  INTO `logging`
 			// (log_id,log_type,log_action,log_timestamp,log_user,log_user_text,log_namespace,log_title,log_page,log_comment,log_params)
 			// VALUES (NULL,'delete','delete','20121031141555','276491','Guidomac','0','Doesn\'t_Matter','0','([[WP:IMMEDIATA|C1]]) Pagina o sottopagina vuota, di prova, senza senso o tautologica','a:0:{}')
@@ -70,7 +70,7 @@ class CleanupBug41615 extends Maintenance {
 			if ( !preg_match( "! VALUES \(NULL,'delete','delete','\d+','\d+','$et','(\d+)','($et)','\d','$et','$et'\)!m", $iEntry, $m ) ) {
 				$this->fatalError( "Could not parse '$iEntry'." );
 			}
-			$info['log_namespace'] = $m[1];
+			$info['log_namespace'] = (int)$m[1];
 			$info['log_title'] = str_replace( "\'", "'", $m[2] ); // unescape
 			$deletedPages[] = $info;
 		}
