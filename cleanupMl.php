@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaCommandLine.inc';
 
 $file = fopen( $args[0], 'r' );
@@ -69,13 +71,18 @@ while ( !feof( $file ) ) {
 	} else {
 		# Does not exist, move this redirect to the unbroken title
 		# Do not leave a redirect behind
-		$result = $brokenTitle->moveTo( $unbrokenTitle, /*auth*/ false,
-			'Fixing broken redirect', /*createRedirect*/ false );
-		if ( $result === true ) {
+		$result = MediaWikiServices::getInstance()
+			->getMovePageFactory()
+			->newMovePage( $brokenTitle, $unbrokenTitle )
+			->move(
+				$wgUser,
+				/*reason*/ 'Fixing broken redirect',
+				/*createRedirect*/ false
+			);
+		if ( $result->isOK() ) {
 			echo "Moved: $line\n";
 		} else {
-			$error = reset( $result );
-			echo "Move error: {$error[0]}: $line\n";
+			echo "Move error at $line: $result\n";
 		}
 	}
 
