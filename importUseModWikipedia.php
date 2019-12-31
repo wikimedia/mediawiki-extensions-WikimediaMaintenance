@@ -242,7 +242,7 @@ $AnyLetter .= "]";
 		$this->outFile = fopen( $this->getOption( 'outfile' ), 'w' );
 		if ( !$this->outFile ) {
 			echo "Unable to open output file\n";
-			return 1;
+			return true;
 		}
 		$this->writeXmlHeader();
 		$this->readRclog();
@@ -252,7 +252,7 @@ $AnyLetter .= "]";
 		$this->writeXmlFooter();
 		unlink( $this->articleFileName );
 		unlink( $this->patchFileName );
-		return 0;
+		return false;
 	}
 
 	private function writeXmlHeader() {
@@ -298,6 +298,7 @@ EOT
 			for ( $i = 0; $i < count( $extraList ); $i += 2 ) {
 				$params['extra'][$extraList[$i]] = $extraList[$i + 1];
 			}
+			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			$this->rc[$params['timestamp']][] = $params;
 		}
 	}
@@ -899,6 +900,7 @@ EOT
 	}
 
 	private function encode( $s ) {
+		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		return strtr( $s, $this->encodeMap );
 	}
 

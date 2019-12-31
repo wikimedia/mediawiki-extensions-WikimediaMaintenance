@@ -16,7 +16,7 @@ function fixBug41778() {
 			'table_name' => 'ipblocks',
 			'column_name' => 'ipb_range_start'
 		],
-		__METHOD__ );
+		__FUNCTION__ );
 
 	print "Existing field length: $maxLength\n";
 
@@ -55,7 +55,7 @@ function fixBug41778() {
 	wfWaitForSlaves();
 
 	print "Regenerating field values\n";
-	$res = $dbw->select( 'ipblocks', '*', [ 'ipb_range_start LIKE \'v6-%\'' ], __METHOD__ );
+	$res = $dbw->select( 'ipblocks', '*', [ 'ipb_range_start LIKE \'v6-%\'' ], __FUNCTION__ );
 	foreach ( $res as $i => $row ) {
 		list( $start, $end ) = IP::parseRange( $row->ipb_address );
 		if ( substr( $start, 0, 3 ) !== 'v6-' || substr( $end, 0, 3 ) !== 'v6-' ) {
@@ -78,7 +78,7 @@ function fixBug41778() {
 }
 
 function assertCanAlter() {
-	$count = wfGetDB( DB_REPLICA )->selectField( 'ipblocks', 'count(*)', false, __METHOD__ );
+	$count = wfGetDB( DB_REPLICA )->selectField( 'ipblocks', 'count(*)', [], __FUNCTION__ );
 	if ( $count > 1000000 ) {
 		print "Table is too large for this script\n";
 		exit( 1 );

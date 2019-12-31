@@ -7,7 +7,7 @@ $lbFactory = MediaWiki\MediaWikiServices::getInstance()->getDBLoadBalancerFactor
 foreach ( $wgLocalDatabases as $wiki ) {
 	$lb = $lbFactory->getMainLB( $wiki );
 	$db = $lb->getConnection( DB_REPLICA, [], $wiki );
-	$notEmpty = $db->selectField( 'transcache', '1', false, 'checkTranscacheEmpty.php' );
+	$notEmpty = $db->selectField( 'transcache', '1', [], 'checkTranscacheEmpty.php' );
 	if ( $notEmpty ) {
 		echo "$wiki\n";
 		$bad++;

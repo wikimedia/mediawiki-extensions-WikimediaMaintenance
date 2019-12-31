@@ -24,7 +24,7 @@ class PasswordAudit extends Maintenance {
 		);
 		$cnt = 0;
 		$hcnt = 0;
-		$startts = microtime( true );
+		$startts = (int)microtime( true );
 		$this->output( "Starting: " . date( 'Ymd-H:i:s', $startts ) . "...\n" );
 
 		$ca = $this->getOption( 'centralauth', false );
