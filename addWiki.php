@@ -3,10 +3,6 @@
  * @defgroup Wikimedia Wikimedia
  */
 
-use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
-use Cognate\PopulateCognateSites;
-use Wikibase\PopulateSitesTable;
-
 /**
  * Add a new wiki
  * Wikimedia specific!
@@ -30,10 +26,14 @@ use Wikibase\PopulateSitesTable;
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
+use Cognate\PopulateCognateSites;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Storage\RevisionStore;
+use Wikibase\PopulateSitesTable;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\LBFactory;
 
@@ -170,7 +170,7 @@ class AddWiki extends Maintenance {
 		global $wgCirrusSearchWriteClusters, $wgCirrusSearchClusters;
 
 		$writableClusters = $wgCirrusSearchWriteClusters;
-		if ( is_null( $writableClusters ) ) {
+		if ( $writableClusters === null ) {
 			$writableClusters = array_keys( $wgCirrusSearchClusters );
 		}
 
