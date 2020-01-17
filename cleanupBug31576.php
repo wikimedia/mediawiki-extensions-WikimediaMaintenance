@@ -15,9 +15,11 @@ class CleanupBug31576 extends Maintenance {
 
 	public function execute() {
 		$this->batchsize = $this->getOption( 'batchsize', 50 );
-		$variableIDs = MagicWord::getVariableIDs();
+		$magicWordFactory = \MediaWiki\MediaWikiServices::getInstance()->getMagicWordFactory();
+
+		$variableIDs = $magicWordFactory->getVariableIDs();
 		foreach ( $variableIDs as $id ) {
-			$magic = MagicWord::get( $id );
+			$magic = $magicWordFactory->get( $id );
 			foreach ( $magic->getSynonyms() as $synonym ) {
 				$this->processSynonym( $synonym );
 			}
