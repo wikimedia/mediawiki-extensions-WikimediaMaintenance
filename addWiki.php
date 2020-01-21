@@ -217,10 +217,11 @@ class AddWiki extends Maintenance {
 		$setZones->execute();
 
 		// Clear MassMessage cache (bug 60075)
-		global $wgMemc, $wgConf;
+		global $wgConf;
 		// Even if the dblists have been updated, it's not in $wgConf yet
 		$wgConf->wikis[] = $dbName;
-		$wgMemc->delete( 'massmessage:urltodb' );
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		$cache->delete( $cache->makeGlobalKey( 'massmessage', 'urltodb' ) );
 		MediaWiki\MassMessage\DatabaseLookup::getDBName( '' ); // Forces re-cache
 
 		$user = getenv( 'SUDO_USER' );
