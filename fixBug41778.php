@@ -1,5 +1,7 @@
 <?php
 
+use Wikimedia\IPUtils;
+
 require_once __DIR__ . '/WikimediaCommandLine.inc';
 
 /**
@@ -57,7 +59,7 @@ function fixBug41778() {
 	print "Regenerating field values\n";
 	$res = $dbw->select( 'ipblocks', '*', [ 'ipb_range_start LIKE \'v6-%\'' ], __FUNCTION__ );
 	foreach ( $res as $i => $row ) {
-		list( $start, $end ) = IP::parseRange( $row->ipb_address );
+		list( $start, $end ) = IPUtils::parseRange( $row->ipb_address );
 		if ( substr( $start, 0, 3 ) !== 'v6-' || substr( $end, 0, 3 ) !== 'v6-' ) {
 			print "Invalid address: {$row->ipb_address}\n";
 			continue;
