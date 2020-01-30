@@ -22,6 +22,7 @@ class UnsuppressCrossWiki extends Maintenance {
 			$this->fatalError( "A \"user\" or \"userid\" must be set to unsuppress for" );
 		}
 
+		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable T240141
 		if ( !$user || !$user->exists() ) {
 			$user = $this->hasOption( 'user' ) ? $this->getOption( 'user' ) : $this->getOption( 'userid' );
 			echo "Cannot unsuppress non-existent user {$user}!\n";

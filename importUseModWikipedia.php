@@ -298,7 +298,6 @@ EOT
 			for ( $i = 0; $i < count( $extraList ); $i += 2 ) {
 				$params['extra'][$extraList[$i]] = $extraList[$i + 1];
 			}
-			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			$this->rc[$params['timestamp']][] = $params;
 		}
 	}

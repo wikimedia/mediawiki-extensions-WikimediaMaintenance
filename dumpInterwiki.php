@@ -459,7 +459,6 @@ class DumpInterwiki extends Maintenance {
 	 * @param array $entry
 	 * @param string $source
 	 * @throws MWException
-	 * @suppress PhanTypePossiblyInvalidDimOffset Everthing is set
 	 */
 	private function makeLink( $entry, $source ) {
 		if ( isset( self::$prefixRewrites[$source] ) && isset( $entry[0] ) && isset( self::$prefixRewrites[$source][$entry[0]] ) ) {
