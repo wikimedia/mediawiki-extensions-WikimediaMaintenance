@@ -151,15 +151,6 @@ class BlameStartupRegistry extends Maintenance {
 		$overview['startup_js']['bytes'] = $startupJsBytes;
 		$totalBytes += $startupJsBytes;
 
-		// Measure the mw.config payload as special component
-		$module = $rl->getModule( 'startup' );
-		'@phan-var ResourceLoaderStartUpModule $module';
-		$configData = $module->getConfigSettings( $context );
-		$configBytes = strlen( gzencode( $context->encodeJson( $configData ), 9 ) );
-		unset( $configData );
-		$overview['startup_config']['modules'] = 0;
-		$overview['startup_config']['bytes'] = $configBytes;
-
 		uasort( $overview, function ( $a, $b ) {
 			return $b['bytes'] - $a['bytes'];
 		} );
