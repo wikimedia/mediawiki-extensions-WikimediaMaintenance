@@ -134,7 +134,10 @@ class RenameInvalidUsernames extends Maintenance {
 			] ] );
 
 			if ( !$success ) {
-				$this->output( "WARNING: Race condition, renameuser_status already set for {$newCAUser->getName()}. Skipping.\n" );
+				$this->output(
+					"WARNING: Race condition, renameuser_status already set for " .
+						"{$newCAUser->getName()}. Skipping.\n"
+				);
 				return;
 			}
 

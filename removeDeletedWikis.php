@@ -28,8 +28,10 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 class RemoveDeletedWikis extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->addDescription( "Remove any remaining entries in globalimagelinks, localuser and localnames for deleted wikis.\n"
-			. "This is probably best run against Commons due to globalusage tables" );
+		$this->addDescription( "Remove any remaining entries in globalimagelinks, localuser and "
+			. "localnames for deleted wikis.\nThis is probably best run against Commons due to "
+			. "globalusage tables"
+		);
 	}
 
 	public function execute() {

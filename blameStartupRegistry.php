@@ -111,18 +111,20 @@ class BlameStartupRegistry extends Maintenance {
 				$component = 'MobileFrontend';
 			} elseif ( strpos( $name, 'skins.monobook.' ) === 0 ) {
 				$component = 'MonoBook';
-			} elseif ( preg_match( '/^((jquery\.)?(wikibase|valueview)\b|mw\.config\.values\.wb)/', $name ) ) {
+			} elseif (
+				preg_match( '/^((jquery\.)?(wikibase|valueview)\b|mw\.config\.values\.wb)/', $name )
+			) {
 				// Does not use ExtensionRegistry yet
 				$component = 'Wikibase';
 			} elseif (
 				in_array( $name, [
-					'dataValues', 'dataValues.DataValue', 'dataValues.TimeValue','dataValues.values',
+					'dataValues', 'dataValues.DataValue', 'dataValues.TimeValue', 'dataValues.values',
 					'jquery.animateWithEvent', 'jquery.event.special.eachchange', 'jquery.inputautoexpand',
 					'jquery.ui.commonssuggester', 'jquery.ui.languagesuggester', 'jquery.ui.suggester',
-					'jquery.util.getDirectionality', 'promise-polyfill', 'util.ContentLanguages', 'util.Extendable',
-					'util.MessageProvider', 'util.MessageProviders', 'util.Notifier', 'util.highlightSubstring',
-					'util.inherit', 'valueFormatters', 'valueParsers', 'valueParsers.ValueParserStore',
-					'valueParsers.parsers', 'vue2', 'vuex'
+					'jquery.util.getDirectionality', 'promise-polyfill', 'util.ContentLanguages',
+					'util.Extendable', 'util.MessageProvider', 'util.MessageProviders', 'util.Notifier',
+					'util.highlightSubstring', 'util.inherit', 'valueFormatters', 'valueParsers',
+					'valueParsers.ValueParserStore', 'valueParsers.parsers', 'vue2', 'vuex'
 				] )
 			) {
 				$component = 'Wikibase';

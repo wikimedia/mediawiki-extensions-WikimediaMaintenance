@@ -55,7 +55,8 @@ class FixBeXOldRenames extends Maintenance {
 		$data = [
 			'movepages' => true,
 			'suppressredirects' => true,
-			'reason' => '[[m:Special:MyLanguage/Single User Login finalisation announcement|SUL finalization]]',
+			'reason' =>
+				'[[m:Special:MyLanguage/Single User Login finalisation announcement|SUL finalization]]',
 			'force' => true,
 		];
 		$globalRenameUser = new GlobalRenameUser(

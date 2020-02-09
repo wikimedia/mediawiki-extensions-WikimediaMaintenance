@@ -156,7 +156,9 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 					$name = $failedLangWikis[ $dbname ];
 				} else {
 					$sitecode = $sites[ $j ]['code'];
-					$sitename = !empty( $messageMatrix[ $sitecode ] ) ? $messageMatrix[ $sitecode ] : $sites[ $j ]['sitename'];
+					$sitename = !empty( $messageMatrix[ $sitecode ] )
+						? $messageMatrix[ $sitecode ]
+						: $sites[ $j ]['sitename'];
 					// Language conversion
 					$lang = $languages[ $langCode ];
 

@@ -26,7 +26,9 @@ use MediaWiki\MediaWikiServices;
 
 class GetPageCounts extends Maintenance {
 	public function __construct() {
-		$this->addDescription( 'Generates machine-readable statistics of pages on all wikis in the cluster' );
+		$this->addDescription(
+			'Generates machine-readable statistics of pages on all wikis in the cluster'
+		);
 		parent::__construct();
 	}
 
@@ -48,7 +50,12 @@ class GetPageCounts extends Maintenance {
 			}
 			$lb = $lbFactory->getMainLB( $wiki );
 			$dbr = $lb->getConnection( DB_REPLICA, [], $wiki );
-			$row = $dbr->selectRow( 'site_stats', [ 'ss_total_pages', 'ss_good_articles' ], '', __METHOD__ );
+			$row = $dbr->selectRow(
+				'site_stats',
+				[ 'ss_total_pages', 'ss_good_articles' ],
+				'',
+				__METHOD__
+			);
 			if ( !$row ) {
 				$this->fatalError( "Error: '$wiki' has empty site_stats" );
 			}
@@ -67,7 +74,9 @@ class GetPageCounts extends Maintenance {
 
 	private function dblist( $name ) {
 		if ( !defined( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ) {
-			$this->error( "Warning: MEDIAWIKI_DEPLOYMENT_DIR is not defined, no wikis will be blacklisted\n" );
+			$this->error(
+				"Warning: MEDIAWIKI_DEPLOYMENT_DIR is not defined, no wikis will be blacklisted\n"
+			);
 			return [];
 		}
 		// @phan-suppress-next-line PhanUndeclaredConstant

@@ -67,7 +67,10 @@ class CleanupBug41615 extends Maintenance {
 			// (log_id,log_type,log_action,log_timestamp,log_user,log_user_text,log_namespace,log_title,log_page,log_comment,log_params)
 			// VALUES (NULL,'delete','delete','20121031141555','276491','Guidomac','0','Doesn\'t_Matter','0','([[WP:IMMEDIATA|C1]]) Pagina o sottopagina vuota, di prova, senza senso o tautologica','a:0:{}')
 			$et = "(?:[^']|\')*"; // single-quote escaped item
-			if ( !preg_match( "! VALUES \(NULL,'delete','delete','\d+','\d+','$et','(\d+)','($et)','\d','$et','$et'\)!m", $iEntry, $m ) ) {
+			if ( !preg_match(
+				"! VALUES \(NULL,'delete','delete','\d+','\d+','$et','(\d+)','($et)','\d','$et','$et'\)!m",
+				$iEntry, $m
+			) ) {
 				$this->fatalError( "Could not parse '$iEntry'." );
 			}
 			$info['log_namespace'] = (int)$m[1];

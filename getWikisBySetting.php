@@ -37,7 +37,10 @@ class GetWikisBySetting extends Maintenance {
 		parent::__construct();
 		$this->addDescription( 'Returns a list of wikis where a given setting is set to a given value.' );
 		$this->addOption( 'setting', 'Setting name', true, true, 's' );
-		$this->addOption( 'value', 'Value to check against, if omitted the script will check for boolean true as value', false, true, 'v' );
+		$this->addOption( 'value',
+			'Value to check against, if omitted the script will check for boolean true as value',
+			false, true, 'v'
+		);
 		$this->addOption( 'not', 'Inverse comparison', false, false, '!' );
 	}
 

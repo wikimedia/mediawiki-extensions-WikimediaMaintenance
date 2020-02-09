@@ -25,7 +25,9 @@ class PurgeUrls extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Send purge requests to Varnish for listed urls' );
-		$this->addOption( 'cluster', 'The Varnish cluster to be contacted (default: cache_text).', false, true );
+		$this->addOption( 'cluster',
+			'The Varnish cluster to be contacted (default: cache_text).', false, true
+		);
 		$this->addOption( 'verbose', 'Show more output', false, false, 'v' );
 		$this->setBatchSize( 100 );
 	}
