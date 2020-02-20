@@ -19,7 +19,9 @@ fi
 # Assumes password is the same everywhere
 pass=$(echo 'echo $wgDBadminpassword;' | mwscript eval.php --wiki="enwiki");
 
+$sqlfile="${PWD%/*/*/*}/maintenance/storage/blobs.sql"
+
 for db in `<$FILE`;do
 	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u wikiadmin "-p$pass" -h $server && \
-	sed "s/blobs\>/$table/" blobs.sql | mysql -u wikiadmin "-p$pass" -h $server $db
+	sed "s/blobs\>/$table/" $sqlfile | mysql -u wikiadmin "-p$pass" -h $server $db
 done
