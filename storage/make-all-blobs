@@ -3,6 +3,9 @@ if [ -z $1 ];then
 	echo "Usage: make-all-blobs <server> [<table name>]"
 	exit 1
 fi
+
+. /etc/profile.d/mediawiki.sh
+
 server=$1
 if [ -z $2 ]; then
 	table=blobs
