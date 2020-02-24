@@ -224,6 +224,15 @@ class DumpInterwiki extends Maintenance {
 		}
 	}
 
+	private function removeComments( $array ) {
+		return array_filter( $array, function ( $element ) {
+			if ( substr( $element, 0, 1 ) === '#' ) {
+				return false;
+			}
+			return true;
+		} );
+	}
+
 	/**
 	 * @suppress PhanUndeclaredFunction getRealmSpecificFilename is deprecated in multiversion
 	 */
@@ -244,10 +253,10 @@ class DumpInterwiki extends Maintenance {
 		) ) );
 
 		// List of all database names
-		$this->dblist = array_map( "trim", file( $this->getOption( 'dblist', $default_all_dblist ) ) );
+		$this->dblist = $this->removeComments( array_map( "trim", file( $this->getOption( 'dblist', $default_all_dblist ) ) ) );
 
 		// Special-case databases
-		$this->specials = array_flip( array_map( "trim", file( $this->getOption( 'specialdbs', $default_special_dblist ) ) ) );
+		$this->specials = $this->removeComments( array_flip( array_map( "trim", file( $this->getOption( 'specialdbs', $default_special_dblist ) ) ) ) );
 
 		if ( $this->hasOption( 'o' ) ) {
 			try {
