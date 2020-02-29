@@ -63,9 +63,11 @@ class CleanupBug41615 extends Maintenance {
 				$this->fatalError( "Could not parse '$dEntry'." );
 			}
 			$info = [ 'wiki' => $m[1], 'page_id' => (int)$m[2] ];
+			// @phpcs:disable Generic.Files.LineLength
 			// 1351692955 itwiki INSERT /* ManualLogEntry::insert Guidomac */  INTO `logging`
 			// (log_id,log_type,log_action,log_timestamp,log_user,log_user_text,log_namespace,log_title,log_page,log_comment,log_params)
 			// VALUES (NULL,'delete','delete','20121031141555','276491','Guidomac','0','Doesn\'t_Matter','0','([[WP:IMMEDIATA|C1]]) Pagina o sottopagina vuota, di prova, senza senso o tautologica','a:0:{}')
+			// @phpcs:enable Generic.Files.LineLength
 			$et = "(?:[^']|\')*"; // single-quote escaped item
 			if ( !preg_match(
 				"! VALUES \(NULL,'delete','delete','\d+','\d+','$et','(\d+)','($et)','\d','$et','$et'\)!m",

@@ -256,6 +256,7 @@ $AnyLetter .= "]";
 	}
 
 	private function writeXmlHeader() {
+		// @phpcs:disable Generic.Files.LineLength
 		fwrite( $this->outFile, <<<EOT
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
@@ -270,6 +271,7 @@ $AnyLetter .= "]";
 
 EOT
 		);
+		// @phpcs:enable Generic.Files.LineLength
 	}
 
 	private function writeXmlFooter() {

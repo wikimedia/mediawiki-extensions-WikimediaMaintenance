@@ -85,7 +85,8 @@ class AddWiki extends Maintenance {
 
 		if ( $siteGroup === 'wiktionary' && strpos( $wgDBname, 'wiktionary' ) === false ) {
 			$this->fatalError(
-				'Wiktionaries must be created using --wiki aawiktionary due to the need to load Cognate classes.'
+				'Wiktionaries must be created using --wiki aawiktionary ' .
+					'due to the need to load Cognate classes.'
 			);
 		}
 
@@ -153,7 +154,8 @@ class AddWiki extends Maintenance {
 		);
 
 		// Make the main page (this should be idempotent)
-		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )->useDatabase( false )->plain() );
+		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )
+			->useDatabase( false )->plain() );
 		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
 		$article = WikiPage::factory( $title );
 		$ucSiteGroup = ucfirst( $siteGroup );
@@ -228,10 +230,12 @@ class AddWiki extends Maintenance {
 		$time = wfTimestamp( TS_RFC2822 );
 		UserMailer::send( new MailAddress( $wmgAddWikiNotify ),
 			new MailAddress( $wgPasswordSender ), "New wiki: $dbName",
-			"A new wiki was created by $user at $time for a $ucSiteGroup in $name ($lang).\nOnce the wiki is fully set up, it'll be visible at https://$domain"
+			"A new wiki was created by $user at $time for a $ucSiteGroup in $name ($lang).\n" .
+				"Once the wiki is fully set up, it'll be visible at https://$domain"
 		);
 
-		$this->output( "Done. sync the config as in https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration\n" );
+		$this->output( "Done. sync the config as in " .
+			"https://wikitech.wikimedia.org/wiki/Add_a_wiki#MediaWiki_configuration\n" );
 	}
 
 	/**
@@ -259,7 +263,8 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/db/mathoid.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/sql/TimedMediaHandler.sql" );
-		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" ); // Not actually enabled everywhere, but this is easier
+		// Not actually enabled everywhere, but this is easier
+		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" );
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/create_counts.sql" );
 		$dbw->sourceFile( "$IP/extensions/SecurePoll/SecurePoll.sql" );
 		$dbw->sourceFile( "$IP/extensions/Linter/sql/linter.sql" );
@@ -267,7 +272,9 @@ class AddWiki extends Maintenance {
 		// most wikis are wikibase client wikis and no harm to adding this everywhere
 		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/entity_usage.sql" );
 
-		if ( self::isPrivate( $dbName ) && in_array( $dbName, MWWikiversions::readDbListFile( 'flow' ) ) ) {
+		if ( self::isPrivate( $dbName )
+			&& in_array( $dbName, MWWikiversions::readDbListFile( 'flow' ) )
+		) {
 			// For private wikis, we set $wgFlowDefaultWikiDb = false
 			// instead they're on the local database, so create the tables
 			$dbw->sourceFile( "$IP/extensions/Flow/flow.sql" );
@@ -372,6 +379,7 @@ class AddWiki extends Maintenance {
 	 * @return string
 	 */
 	private function getFirstArticle( $ucsite, $name ) {
+		// @phpcs:disable Generic.Files.LineLength
 		return <<<EOT
 ==This subdomain is reserved for the creation of a [[wikimedia:Our projects|$ucsite]] in '''[[w:en:{$name}|{$name}]]''' language==
 
@@ -399,6 +407,7 @@ class AddWiki extends Maintenance {
 See Wikimedia's [[m:|Meta-Wiki]] for the coordination of these projects.
 
 EOT;
+		// @phpcs:enable Generic.Files.LineLength
 	}
 
 	/**
