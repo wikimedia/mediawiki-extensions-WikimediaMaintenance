@@ -236,10 +236,8 @@ class DumpInterwiki extends Maintenance {
 		} );
 	}
 
-	/**
-	 * @suppress PhanUndeclaredFunction getRealmSpecificFilename is deprecated in multiversion
-	 */
 	public function execute() {
+		global $wmgRealm;
 		$root = getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki';
 
 		if ( !file_exists( "$root/dblists" ) ) {
@@ -247,23 +245,24 @@ class DumpInterwiki extends Maintenance {
 				. " must be set to MediaWiki root directory." );
 		}
 
-		$default_all_dblist = getRealmSpecificFilename( "$root/dblists/all.dblist" );
-		$default_special_dblist = getRealmSpecificFilename( "$root/dblists/special.dblist" );
+		$dblistSpecial = "$root/dblists/special.dblist";
+		$dblistAll = $wmgRealm === 'labs' ? "$root/dblists/all.dblist" : "$root/dblists/all-labs.dblist";
+		$langlist = $wmgRealm === 'labs' ? "$root/langlist" : "$root/langlist-labs";
 
 		// List of language prefixes likely to be found in multi-language sites
 		$this->langlist = array_map( "trim", file( $this->getOption(
 			'langlist',
-			getRealmSpecificFilename( "$root/langlist" )
+			$langlist
 		) ) );
 
 		// List of all database names
 		$this->dblist = $this->removeComments(
-			array_map( "trim", file( $this->getOption( 'dblist', $default_all_dblist ) ) )
+			array_map( "trim", file( $this->getOption( 'dblist', $dblistAll ) ) )
 		);
 
 		// Special-case databases
 		$this->specials = $this->removeComments( array_flip(
-			array_map( "trim", file( $this->getOption( 'specialdbs', $default_special_dblist ) ) )
+			array_map( "trim", file( $this->getOption( 'specialdbs', $dblistSpecial ) ) )
 		) );
 
 		if ( $this->hasOption( 'o' ) ) {
