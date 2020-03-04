@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\SlotRecord;
 
 require_once __DIR__ . '/WikimediaCommandLine.inc';
 
@@ -42,12 +43,14 @@ while ( !feof( $file ) ) {
 		preg_replace( '/^Broken\//', '', $brokenTitle->getDBkey() ) );
 
 	# Check that the broken title is a redirect
-	$revision = Revision::newFromTitle( $brokenTitle );
+	$revision = MediaWikiServices::getInstance()
+		->getRevisionLookup()
+		->getRevisionByTitle( $brokenTitle );
 	if ( !$revision ) {
 		echo "Does not exist: $line\n";
 		continue;
 	}
-	$content = $revision->getContent();
+	$content = $revision->getContent( SlotRecord::MAIN );
 	$text = ContentHandler::getContentText( $content );
 	if ( $text === false ) {
 		echo "Cannot load text: $line\n";

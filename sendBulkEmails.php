@@ -20,6 +20,9 @@
  * @ingroup Wikimedia
  */
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\SlotRecord;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 /**
@@ -368,8 +371,10 @@ class SendBulkEmails extends Maintenance {
 			}
 			$this->optoutUrl = $title->getFullURL(
 				'', false, PROTO_CANONICAL );
-			$rev = Revision::newFromTitle( $title );
-			$content = ContentHandler::getContentText( $rev->getContent() );
+			$rev = MediaWikiServices::getInstance()
+				->getRevisionLookup()
+				->getRevisionByTitle( $title );
+			$content = ContentHandler::getContentText( $rev->getContent( SlotRecord::MAIN ) );
 			$inList = false;
 			foreach ( explode( "\n", $content ) as $line ) {
 				if ( !$inList ) {
