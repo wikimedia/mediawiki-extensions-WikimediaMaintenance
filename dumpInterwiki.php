@@ -246,8 +246,8 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		$dblistSpecial = "$root/dblists/special.dblist";
-		$dblistAll = $wmgRealm === 'labs' ? "$root/dblists/all.dblist" : "$root/dblists/all-labs.dblist";
-		$langlist = $wmgRealm === 'labs' ? "$root/langlist" : "$root/langlist-labs";
+		$dblistAll = $wmgRealm === 'labs' ? "$root/dblists/all-labs.dblist" : "$root/dblists/all.dblist";
+		$langlist = $wmgRealm === 'labs' ? "$root/langlist-labs" : "$root/langlist";
 
 		// List of language prefixes likely to be found in multi-language sites
 		$this->langlist = array_map( "trim", file( $this->getOption(
