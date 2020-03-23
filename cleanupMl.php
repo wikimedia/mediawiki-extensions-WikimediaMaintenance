@@ -64,9 +64,9 @@ while ( !feof( $file ) ) {
 
 	if ( $unbrokenTitle->exists() ) {
 		# Exists already, just delete this redirect
-		$success = WikiPage::factory( $brokenTitle )
-			->doDeleteArticle( 'Redundant redirect' );
-		if ( $success ) {
+		$status = WikiPage::factory( $brokenTitle )
+			->doDeleteArticleReal( 'Redundant redirect', $wgUser );
+		if ( $status->isOk() ) {
 			echo "Deleted: $line\n";
 		} else {
 			echo "Failed to delete: $line\n";
