@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 class MeasureZoneSizes extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -14,9 +16,10 @@ class MeasureZoneSizes extends Maintenance {
 		global $wgDBname;
 
 		$b1Name = $this->getOption( 'backend1' );
-		$b1 = FileBackendGroup::singleton()->get( $b1Name );
+		$fileBackendGroup = MediaWikiServices::getInstance()->getFileBackendGroup();
+		$b1 = $fileBackendGroup->get( $b1Name );
 		$b2Name = $this->getOption( 'backend2' );
-		$b2 = FileBackendGroup::singleton()->get( $b2Name );
+		$b2 = $fileBackendGroup->get( $b2Name );
 
 		$file = $this->getOption( 'outfile' );
 		$fast = $this->hasOption( 'fast' );

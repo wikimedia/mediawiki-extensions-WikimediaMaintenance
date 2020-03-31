@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../WikimediaMaintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 class SetZoneAccess extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -9,7 +11,8 @@ class SetZoneAccess extends Maintenance {
 	}
 
 	public function execute() {
-		$backend = FileBackendGroup::singleton()->get( $this->getOption( 'backend' ) );
+		$backend = MediaWikiServices::getInstance()->getFileBackendGroup()
+			->get( $this->getOption( 'backend' ) );
 		foreach ( [ 'public', 'thumb', 'transcoded', 'temp', 'deleted' ] as $zone ) {
 			$dir = $backend->getContainerStoragePath( "local-$zone" );
 			$secure = ( $zone === 'deleted' || $zone === 'temp' || $this->hasOption( 'private' ) )
