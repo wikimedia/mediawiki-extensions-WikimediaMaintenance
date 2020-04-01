@@ -40,7 +40,7 @@ class ChangeSkinPref extends Maintenance {
 
 	public function execute() {
 		$this->setSkin(
-			$this->getArg(),
+			$this->getArg( 0 ),
 			$this->getOption( 'skin', 'monobook' )
 		);
 	}
