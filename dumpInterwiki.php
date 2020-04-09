@@ -106,6 +106,7 @@ class DumpInterwiki extends Maintenance {
 	protected static $languageAliases = [
 		# Nasty legacy codes
 		'cz' => 'cs',
+		'be-x-old' => 'be-tarask',
 		'dk' => 'da',
 		'epo' => 'eo',
 		'jp' => 'ja',
@@ -122,7 +123,6 @@ class DumpInterwiki extends Maintenance {
 		'yue' => 'zh-yue',
 		'rup' => 'roa-rup',
 		'gsw' => 'als',
-		'be-tarask' => 'be-x-old',
 		'sgs' => 'bat-smg',
 		'egl' => 'eml',
 	];
