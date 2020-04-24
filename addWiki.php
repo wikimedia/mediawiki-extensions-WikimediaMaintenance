@@ -34,7 +34,7 @@ use Cognate\PopulateCognateSites;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
-use Wikibase\PopulateSitesTable;
+use Wikibase\Lib\Maintenance\PopulateSitesTable;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\LBFactory;
 
