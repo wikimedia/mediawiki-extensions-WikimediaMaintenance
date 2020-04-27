@@ -32,7 +32,8 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use Cognate\PopulateCognateSites;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Storage\RevisionStore;
+use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Revision\SlotRecord;
 use Wikibase\PopulateSitesTable;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\LBFactory;
@@ -157,12 +158,18 @@ class AddWiki extends Maintenance {
 		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )
 			->useDatabase( false )->plain() );
 		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
-		$article = WikiPage::factory( $title );
+		$wikiPage = WikiPage::factory( $title );
 		$ucSiteGroup = ucfirst( $siteGroup );
+		$user = User::newSystemUser( 'Maintenance script', [ 'steal' => true ] );
+		$summary = CommentStoreComment::newUnsavedComment( '' );
 
-		$article->doEditContent(
-			ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title ),
-			'',
+		$updater = $wikiPage->newPageUpdater( $user );
+		$updater->setContent(
+			SlotRecord::MAIN,
+			ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title )
+		);
+		$updater->saveRevision(
+			$summary,
 			EDIT_NEW | EDIT_AUTOSUMMARY
 		);
 
@@ -430,12 +437,11 @@ EOT;
 	/**
 	 * @param string $domain
 	 * @param string $language
-	 * @return Status
 	 */
 	private function setFundraisingLink( $domain, $language ) {
 		$title = Title::newFromText( "Mediawiki:Sitesupport-url" );
 		$this->output( "Writing sidebar donate link to " . $title->getPrefixedDBkey() . "\n" );
-		$article = WikiPage::factory( $title );
+		$wikiPage = WikiPage::factory( $title );
 
 		// There is likely a better way to create the link, but it seems like one
 		// cannot count on interwiki links at this point
@@ -448,9 +454,16 @@ EOT;
 			]
 		);
 
-		return $article->doEditContent(
-			ContentHandler::makeContent( $linkurl, $title ),
-			'Setting sidebar link',
+		$user = User::newSystemUser( 'Maintenance script', [ 'steal' => true ] );
+		$summary = CommentStoreComment::newUnsavedComment( 'Setting sidebar link' );
+
+		$updater = $wikiPage->newPageUpdater( $user );
+		$updater->setContent(
+			SlotRecord::MAIN,
+			ContentHandler::makeContent( $linkurl, $title )
+		);
+		$updater->saveRevision(
+			$summary,
 			EDIT_NEW
 		);
 	}
