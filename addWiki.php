@@ -255,6 +255,13 @@ class AddWiki extends Maintenance {
 			__METHOD__,
 			[ $this, 'noExecuteCommands' ]
 		);
+		$dbw->sourceFile(
+			$this->getDir() . '/tables-generated.sql',
+			null,
+			null,
+			__METHOD__,
+			[ $this, 'noExecuteCommands' ]
+		);
 		$dbw->sourceFile( "$IP/extensions/AntiSpoof/sql/patch-antispoof.mysql.sql" );
 		$dbw->sourceFile( "$IP/extensions/Babel/babel.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_changes.sql" );
