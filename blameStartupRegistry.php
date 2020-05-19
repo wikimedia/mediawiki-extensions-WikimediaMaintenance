@@ -23,7 +23,7 @@ use MediaWiki\MediaWikiServices;
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class BlameStartupRegistry extends Maintenance {
-	const COMP_UNKNOWN = 'unknown';
+	private const COMP_UNKNOWN = 'unknown';
 
 	public function __construct() {
 		parent::__construct();

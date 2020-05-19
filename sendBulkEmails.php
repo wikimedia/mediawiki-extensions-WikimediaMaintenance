@@ -44,17 +44,17 @@ class SendBulkEmails extends Maintenance {
 	/**
 	 * @var string $DEFAULT_START Opt-out list start marker
 	 */
-	const DEFAULT_START = '<!-- BEGIN OPT-OUT LIST -->';
+	private const DEFAULT_START = '<!-- BEGIN OPT-OUT LIST -->';
 
 	/**
 	 * @var string $DEFAULT_END Opt-out list end marker
 	 */
-	const DEFAULT_END = '<!-- END OPT-OUT LIST -->';
+	private const DEFAULT_END = '<!-- END OPT-OUT LIST -->';
 
 	/**
 	 * @var int $DEFAULT_DELAY Email send delay (seconds)
 	 */
-	const DEFAULT_DELAY = 5;
+	private const DEFAULT_DELAY = 5;
 
 	/**
 	 * @var float $start Unix epoch time

@@ -10,8 +10,8 @@ use MediaWiki\MediaWikiServices;
 
 class MakeSizeDBLists extends Maintenance {
 
-	const DB_SMALL = 10000;
-	const DB_MEDIUM = 1000000;
+	private const DB_SMALL = 10000;
+	private const DB_MEDIUM = 1000000;
 
 	public function __construct() {
 		parent::__construct();
