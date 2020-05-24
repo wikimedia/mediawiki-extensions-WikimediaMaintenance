@@ -229,7 +229,7 @@ class SendBulkEmails extends Maintenance {
 			$this->ok++;
 		} else {
 			$this->failed++;
-			$this->output( "ERROR - Send failed: {$status->getMessage()}\n" );
+			$this->output( "ERROR - Send failed: {$status->getMessage()->text()}\n" );
 		}
 		return true;
 	}
