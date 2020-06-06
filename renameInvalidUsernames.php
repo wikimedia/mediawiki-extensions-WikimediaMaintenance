@@ -49,7 +49,7 @@ class RenameInvalidUsernames extends Maintenance {
 			if ( $count > $this->mBatchSize ) {
 				$count = 0;
 				$this->output( "Sleep for 5 and waiting for slaves...\n" );
-				CentralAuthUser::waitForSlaves();
+				CentralAuthUtils::waitForReplicas();
 				wfWaitForSlaves();
 				sleep( 5 );
 				$this->output( "done.\n" );
