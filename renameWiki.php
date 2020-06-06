@@ -57,7 +57,8 @@ class RenameWiki extends Maintenance {
 		$this->output( "done.\n" );
 
 		$this->output( "Waiting for slaves...\n" );
-		wfWaitForSlaves();
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbFactory->waitForReplication();
 		$this->output( "done.\n" );
 
 		$this->output( "Renaming blob tables in ES from $from to $to...\n" );

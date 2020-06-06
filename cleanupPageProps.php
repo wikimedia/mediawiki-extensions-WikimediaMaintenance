@@ -20,6 +20,8 @@
  * @ingroup Wikimedia
  */
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class CleanupPageProps extends Maintenance {
@@ -32,6 +34,7 @@ class CleanupPageProps extends Maintenance {
 
 	public function execute() {
 		$dbw = wfGetDB( DB_MASTER );
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$high = $dbw->selectField( 'page_props', 'MAX(pp_page)', '', __METHOD__ );
 		$waitAfter = $this->getOption( 'wait-after', 500 );
 		$deleted = 0;
@@ -48,7 +51,7 @@ class CleanupPageProps extends Maintenance {
 			$affected = $dbw->affectedRows();
 			$deleted += $affected;
 			if ( $deleted >= $waitAfter ) {
-				wfWaitForSlaves();
+				$lbFactory->waitForReplication();
 				$deleted = 0;
 			}
 			$this->output( "$id, deleted $affected rows\n" );

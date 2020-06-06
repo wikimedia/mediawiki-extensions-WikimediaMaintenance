@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 /**
@@ -25,6 +27,7 @@ class FixBeXOldRenames extends Maintenance {
 			$this->output( "Reading from $list\n" );
 		}
 		$count = 0;
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		while ( $line = trim( fgets( $file ) ) ) {
 			$this->output( "$line\n" );
 			$this->rename( $line );
@@ -33,7 +36,7 @@ class FixBeXOldRenames extends Maintenance {
 				$count = 0;
 				$this->output( "Sleep for 5 and waiting for slaves..." );
 				CentralAuthUtils::waitForReplicas();
-				wfWaitForSlaves();
+				$lbFactory->waitForReplication();
 				sleep( 5 );
 				$this->output( "done.\n" );
 			}

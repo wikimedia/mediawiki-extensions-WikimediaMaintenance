@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\IPUtils;
 
 require_once __DIR__ . '/WikimediaCommandLine.inc';
@@ -54,7 +55,8 @@ function fixBug41778() {
 		}
 	}
 
-	wfWaitForSlaves();
+	$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+	$lbFactory->waitForReplication();
 
 	print "Regenerating field values\n";
 	$res = $dbw->select( 'ipblocks', '*', [ 'ipb_range_start LIKE \'v6-%\'' ], __FUNCTION__ );
@@ -74,7 +76,7 @@ function fixBug41778() {
 			]
 		);
 		if ( $i % 100 === 0 ) {
-			wfWaitForSlaves();
+			$lbFactory->waitForReplication();
 		}
 	}
 }

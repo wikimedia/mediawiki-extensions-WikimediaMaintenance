@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class FixUsabilityPrefs extends Maintenance {
@@ -9,6 +11,7 @@ class FixUsabilityPrefs extends Maintenance {
 
 	public function execute() {
 		$dbw = wfGetDB( DB_MASTER );
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
 		echo "Fixing usebetatoolbar\n";
 
@@ -34,7 +37,7 @@ class FixUsabilityPrefs extends Maintenance {
 				__METHOD__ );
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
-			wfWaitForSlaves( 10 );
+			$lbFactory->waitForReplication( [ 'ifWritesSince' => 10 ] );
 		}
 
 		echo "Fixing wikieditor-*\n";
@@ -60,7 +63,7 @@ class FixUsabilityPrefs extends Maintenance {
 				__METHOD__ );
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
-			wfWaitForSlaves( 10 );
+			$lbFactory->waitForReplication( [ 'ifWritesSince' => 10 ] );
 		}
 
 		$allIds = array_unique( $allIds );
@@ -77,7 +80,7 @@ class FixUsabilityPrefs extends Maintenance {
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$i++;
 			if ( $i % 1000 == 0 ) {
-				wfWaitForSlaves( 10 );
+				$lbFactory->waitForReplication( [ 'ifWritesSince' => 10 ] );
 			}
 		}
 

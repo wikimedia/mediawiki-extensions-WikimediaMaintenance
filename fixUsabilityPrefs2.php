@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class FixUsabilityPrefs2 extends Maintenance {
@@ -11,6 +13,8 @@ class FixUsabilityPrefs2 extends Maintenance {
 		$dbw = wfGetDB( DB_MASTER );
 
 		echo "Fixing usebetatoolbar\n";
+
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
 		$batchSize = 100;
 		$allIds = [];
@@ -34,7 +38,7 @@ class FixUsabilityPrefs2 extends Maintenance {
 				__METHOD__ );
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
-			wfWaitForSlaves( 10 );
+			$lbFactory->waitForReplication( [ 'ifWritesSince' => 10 ] );
 		}
 
 		echo "Fixing wikieditor-*\n";
@@ -60,7 +64,7 @@ class FixUsabilityPrefs2 extends Maintenance {
 				__METHOD__ );
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
-			wfWaitForSlaves( 10 );
+			$lbFactory->waitForReplication( [ 'ifWritesSince' => 10 ] );
 		}
 
 		$allIds = array_unique( $allIds );
@@ -87,7 +91,7 @@ class FixUsabilityPrefs2 extends Maintenance {
 				__METHOD__ );
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$allIds = array_merge( $allIds, $ids );
-			wfWaitForSlaves( 10 );
+			$lbFactory->waitForReplication( [ 'ifWritesSince' => 10 ] );
 		}
 
 		echo "Invalidating user cache\n";
@@ -102,7 +106,7 @@ class FixUsabilityPrefs2 extends Maintenance {
 			$this->commitTransaction( $dbw, __METHOD__ );
 			$i++;
 			if ( $i % 1000 == 0 ) {
-				wfWaitForSlaves( 10 );
+				$lbFactory->waitForReplication( [ 'ifWritesSince' => 10 ] );
 			}
 		}
 

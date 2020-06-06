@@ -91,5 +91,6 @@ while ( !feof( $file ) ) {
 
 	$dbw->commit( 'cleanupMI' );
 	sleep( 1 );
-	wfWaitForSlaves( 5 );
+	$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+	$lbFactory->waitForReplication( [ 'ifWritesSince' => 5 ] );
 }

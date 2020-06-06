@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class CleanupBug31576 extends Maintenance {
@@ -33,6 +36,7 @@ class CleanupBug31576 extends Maintenance {
 
 	public function processSynonym( $synonym ) {
 		$dbr = wfGetDB( DB_REPLICA );
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$pCount = 0;
 		$vCount = 0;
 		$this->output( "Fixing pages with template links to $synonym ...\n" );
@@ -70,7 +74,7 @@ class CleanupBug31576 extends Maintenance {
 				$from = $row->tl_from;
 			}
 			$this->output( "{$pCount}/{$vCount} pages processed\n" );
-			wfWaitForSlaves();
+			$lbFactory->waitForReplication();
 		}
 	}
 

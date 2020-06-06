@@ -21,6 +21,7 @@
  * @ingroup Wikimedia
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
@@ -64,6 +65,7 @@ class RemoveDeletedWikis extends Maintenance {
 		if ( !$dbw->tableExists( $table ) ) {
 			$this->fatalError( "Maintenance script cannot be run on this wiki as there is no $table table" );
 		}
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$this->output( "$table:\n" );
 		$count = 0;
 		do {
@@ -82,7 +84,7 @@ class RemoveDeletedWikis extends Maintenance {
 			$affected = $dbw->affectedRows();
 			$count += $affected;
 			$this->output( "$count\n" );
-			wfWaitForSlaves();
+			$lbFactory->waitForReplication();
 		} while ( $affected === 500 );
 		$this->output( "$count $table rows deleted\n" );
 	}
