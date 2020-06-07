@@ -30,9 +30,9 @@ function fixBug41778() {
 			'DROP INDEX ipb_range, ' .
 			'MODIFY ipb_range_start tinyblob NOT NULL, ' .
 			'MODIFY ipb_range_end tinyblob NOT NULL, ' .
-			'ADD INDEX ipb_range (ipb_range_start(20), ipb_range_end(20))' );
+			'ADD INDEX ipb_range (ipb_range_start(20), ipb_range_end(20))', __FUNCTION__ );
 	} else {
-		$res = $dbw->query( 'SHOW CREATE TABLE ipblocks' );
+		$res = $dbw->query( 'SHOW CREATE TABLE ipblocks', __FUNCTION__ );
 		$row = $res->fetchRow();
 		if ( !preg_match( '/KEY.*`ipb_range_start`(\((\d+)\))?/', $row['Create Table'], $m ) ) {
 			print "Unable to interpret SHOW CREATE TABLE output\n";
@@ -51,7 +51,7 @@ function fixBug41778() {
 			$dbw->query(
 				'ALTER TABLE ipblocks ' .
 				'DROP INDEX ipb_range, ' .
-				'ADD INDEX ipb_range (ipb_range_start(20), ipb_range_end(20))' );
+				'ADD INDEX ipb_range (ipb_range_start(20), ipb_range_end(20))', __FUNCTION__ );
 		}
 	}
 
@@ -73,7 +73,8 @@ function fixBug41778() {
 			],
 			/* WHERE */ [
 				'ipb_id' => $row->ipb_id,
-			]
+			],
+			__FUNCTION__
 		);
 		if ( $i % 100 === 0 ) {
 			$lbFactory->waitForReplication();

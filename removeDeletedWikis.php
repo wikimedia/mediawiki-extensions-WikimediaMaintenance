@@ -62,7 +62,7 @@ class RemoveDeletedWikis extends Maintenance {
 	 * @param string $wiki
 	 */
 	private function doDeletes( $dbw, $table, $column, $wiki ) {
-		if ( !$dbw->tableExists( $table ) ) {
+		if ( !$dbw->tableExists( $table, __METHOD__ ) ) {
 			$this->fatalError( "Maintenance script cannot be run on this wiki as there is no $table table" );
 		}
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();

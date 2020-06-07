@@ -51,7 +51,7 @@ class RenameWiki extends Maintenance {
 
 		$dbw = wfGetDB( DB_MASTER );
 		foreach ( $dbw->tableNames() as $table ) {
-			$dbw->query( "ALTER TABLE {$from}.{$table} RENAME TO {$to}.{$table}" );
+			$dbw->query( "ALTER TABLE {$from}.{$table} RENAME TO {$to}.{$table}", __METHOD__ );
 		}
 
 		$this->output( "done.\n" );
@@ -94,15 +94,15 @@ class RenameWiki extends Maintenance {
 				$store = $esFactory->getStore( 'DB', [ 'domain' => $to ] );
 				'@phan-var ExternalStoreDB $store';
 				$extdb = $store->getMaster( $cluster );
-				$extdb->query( "SET default_storage_engine=InnoDB" );
-				$extdb->query( "CREATE DATABASE IF NOT EXISTS {$to}" );
-				$extdb->query( "ALTER TABLE {$from}.blobs RENAME TO {$to}.blobs" );
+				$extdb->query( "SET default_storage_engine=InnoDB", __METHOD__ );
+				$extdb->query( "CREATE DATABASE IF NOT EXISTS {$to}", __METHOD__ );
+				$extdb->query( "ALTER TABLE {$from}.blobs RENAME TO {$to}.blobs", __METHOD__ );
 
 				$store = $esFactory->getStore( 'DB', [ 'domain' => $from ] );
 				'@phan-var ExternalStoreDB $store';
 				$extdb = $store->getMaster( $cluster );
 				$extdb->sourceFile( $this->getDir() . '/storage/blobs.sql' );
-				$extdb->commit();
+				$extdb->commit( __METHOD__ );
 			}
 		}
 		$this->output( "done.\n" );

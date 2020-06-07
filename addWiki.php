@@ -103,8 +103,8 @@ class AddWiki extends Maintenance {
 		if ( !in_array( 'main', $skipClusters, true ) ) {
 			// Set up the database on the same shard as the wiki this script is running on
 			$conn = $localLb->getConnection( DB_MASTER, [], $localLb::DOMAIN_ANY );
-			$conn->query( "SET storage_engine=InnoDB" );
-			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+			$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
 			$localLb->closeConnection( $conn );
 		}
 
@@ -131,8 +131,8 @@ class AddWiki extends Maintenance {
 			// extension1 is not in use.
 			$echoLB = $wgEchoCluster ? $lbFactory->getExternalLB( $wgEchoCluster ) : $localLb;
 			$conn = $echoLB->getConnection( DB_MASTER, [], $localLb::DOMAIN_ANY );
-			$conn->query( "SET storage_engine=InnoDB" );
-			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+			$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
 			$echoLB->closeConnection( $conn );
 
 			$echoDbW = $echoLB->getMaintenanceConnectionRef( DB_MASTER );
@@ -317,7 +317,7 @@ class AddWiki extends Maintenance {
 			$dbw->sourceFile( "$IP/extensions/OATHAuth/sql/mysql/tables.sql" );
 		}
 
-		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
+		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)", __METHOD__ );
 	}
 
 	/**
@@ -366,10 +366,10 @@ class AddWiki extends Maintenance {
 
 			// Create the database
 			$conn = $lb->getConnection( DB_MASTER, [], $lb::DOMAIN_ANY );
-			$conn->query( "SET default_storage_engine=InnoDB" );
+			$conn->query( "SET default_storage_engine=InnoDB", __METHOD__ );
 			// IF NOT EXISTS because two External Store clusters
 			// can use the same DB, but different blobs table entries.
-			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName" );
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
 			$lb->closeConnection( $conn );
 
 			// Hack x2
