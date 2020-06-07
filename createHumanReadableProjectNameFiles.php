@@ -3,6 +3,8 @@
  * @defgroup Wikimedia Wikimedia
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Generates i18n files for names of each Wikimedia project, in the specified directory
  */
@@ -26,7 +28,8 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 	 */
 	private function getLanguageCode( $projURL ) {
 		$url = "$projURL/w/api.php?action=query&meta=siteinfo&format=json";
-		$responseText = Http::get( $url );
+		$responseText = MediaWikiServices::getInstance()->getHttpRequestFactory()
+			->get( $url, [], __METHOD__ );
 		$response = FormatJson::decode( $responseText, true );
 		if ( isset( $response['query']['general']['lang'] ) ) {
 			return $response['query']['general']['lang'];
@@ -209,7 +212,11 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 	private function getSitematrixFromAPI() {
 		$url = "https://en.wikipedia.org/w/api.php?action=sitematrix&format=json&formatversion=2";
 
-		$response = FormatJson::decode( Http::get( $url ), true );
+		$response = FormatJson::decode(
+			MediaWikiServices::getInstance()->getHttpRequestFactory()
+				->get( $url, [], __METHOD__ ),
+			true
+		);
 
 		return $response['sitematrix'];
 	}
