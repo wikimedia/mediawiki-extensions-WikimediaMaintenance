@@ -10,7 +10,8 @@ if ( !$file ) {
 	exit( 1 );
 }
 
-$wgUser = User::newSystemUser( 'Malayalam cleanup script', [ 'steal' => true ] );
+$user = User::newSystemUser( 'Malayalam cleanup script', [ 'steal' => true ] );
+$wgUser = $user;
 
 $dbw = wfGetDB( DB_MASTER );
 
@@ -65,7 +66,7 @@ while ( !feof( $file ) ) {
 	if ( $unbrokenTitle->exists() ) {
 		# Exists already, just delete this redirect
 		$status = WikiPage::factory( $brokenTitle )
-			->doDeleteArticleReal( 'Redundant redirect', $wgUser );
+			->doDeleteArticleReal( 'Redundant redirect', $user );
 		if ( $status->isOk() ) {
 			echo "Deleted: $line\n";
 		} else {
@@ -78,7 +79,7 @@ while ( !feof( $file ) ) {
 			->getMovePageFactory()
 			->newMovePage( $brokenTitle, $unbrokenTitle )
 			->move(
-				$wgUser,
+				$user,
 				/*reason*/ 'Fixing broken redirect',
 				/*createRedirect*/ false
 			);
