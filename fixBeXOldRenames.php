@@ -34,7 +34,7 @@ class FixBeXOldRenames extends Maintenance {
 			$count++;
 			if ( $count > $this->mBatchSize ) {
 				$count = 0;
-				$this->output( "Sleep for 5 and waiting for slaves..." );
+				$this->output( "Sleep for 5 and waiting for replicas..." );
 				CentralAuthUtils::waitForReplicas();
 				$lbFactory->waitForReplication();
 				sleep( 5 );

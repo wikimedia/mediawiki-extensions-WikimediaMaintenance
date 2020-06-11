@@ -56,7 +56,7 @@ class RenameWiki extends Maintenance {
 
 		$this->output( "done.\n" );
 
-		$this->output( "Waiting for slaves...\n" );
+		$this->output( "Waiting for replicas...\n" );
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$lbFactory->waitForReplication();
 		$this->output( "done.\n" );
