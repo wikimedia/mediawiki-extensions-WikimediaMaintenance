@@ -3,6 +3,7 @@
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionRecord;
 use Wikimedia\Rdbms\DBReplicationWaitError;
 
 class UnsuppressCrossWiki extends Maintenance {
@@ -40,7 +41,7 @@ class UnsuppressCrossWiki extends Maintenance {
 			$localUser = User::newFromRow( $dbw->selectRow( $userQuery['tables'], $userQuery['fields'],
 				[ 'user_name' => $userName ], __METHOD__, [], $userQuery['joins'] ) );
 
-			$delUserBit = Revision::DELETED_USER;
+			$delUserBit = RevisionRecord::DELETED_USER;
 			$revWhere = ActorMigration::newMigration()->getWhere( $dbw, 'rev_user', $localUser );
 			$hiddenCount = 0;
 			foreach ( $revWhere['orconds'] as $cond ) {
