@@ -124,7 +124,7 @@ class BlameStartupRegistry extends Maintenance {
 					'jquery.util.getDirectionality', 'promise-polyfill', 'util.ContentLanguages',
 					'util.Extendable', 'util.MessageProvider', 'util.MessageProviders', 'util.Notifier',
 					'util.highlightSubstring', 'util.inherit', 'valueFormatters', 'valueParsers',
-					'valueParsers.ValueParserStore', 'valueParsers.parsers', 'vue2', 'vuex'
+					'valueParsers.ValueParserStore', 'valueParsers.parsers', 'vue2',
 				] )
 			) {
 				$component = 'Wikibase';
