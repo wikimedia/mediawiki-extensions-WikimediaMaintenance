@@ -124,7 +124,7 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'shorturl':
-				$files = [ 'shorturls.sql' ];
+				$files = [ 'tables-generated.sql' ];
 				$path = "$IP/extensions/ShortUrl/schemas";
 				break;
 
