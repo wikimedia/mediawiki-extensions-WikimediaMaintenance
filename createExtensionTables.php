@@ -143,7 +143,7 @@ class CreateExtensionTables extends Maintenance {
 
 			case 'wikibase':
 				$files = [ 'entity_usage.sql' ];
-				$path = "$IP/extensions/Wikibase/client/sql";
+				$path = "$IP/extensions/Wikibase/client/sql/mysql";
 				break;
 
 			case 'wikilove':
