@@ -126,7 +126,7 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'oathauth':
-				$files = [ 'tables.sql' ];
+				$files = [ 'tables-generated.sql' ];
 				$path = "$IP/extensions/OATHAuth/sql/mysql";
 				break;
 
