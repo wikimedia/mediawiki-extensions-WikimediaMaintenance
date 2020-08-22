@@ -147,7 +147,7 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'wikilove':
-				$files = [ 'WikiLoveLog.sql' ];
+				$files = [ 'tables-generated.sql' ];
 				$path = "$IP/extensions/WikiLove/patches";
 				break;
 
