@@ -300,7 +300,7 @@ class AddWiki extends Maintenance {
 			case 'wikinews':
 				break;
 			case 'wikisource':
-				$dbw->sourceFile( "$IP/extensions/ProofreadPage/sql/ProofreadIndex.sql" );
+				$dbw->sourceFile( "$IP/extensions/ProofreadPage/sql/tables-generated.sql" );
 				break;
 			case 'wikiversity':
 				break;
