@@ -269,7 +269,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/sql/global_block_whitelist.sql" );
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/db/mathoid.mysql.sql" );
-		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/sql/TimedMediaHandler.sql" );
+		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/sql/tables-generated.sql" );
 		// Not actually enabled everywhere, but this is easier
 		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" );
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/create_counts.sql" );
