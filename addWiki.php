@@ -277,7 +277,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/Linter/sql/linter.sql" );
 
 		// most wikis are wikibase client wikis and no harm to adding this everywhere
-		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/entity_usage.sql" );
+		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/mysql/entity_usage.sql" );
 
 		if ( self::isPrivate( $dbName )
 			&& in_array( $dbName, MWWikiversions::readDbListFile( 'flow' ) )
