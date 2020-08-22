@@ -263,7 +263,7 @@ class AddWiki extends Maintenance {
 			[ $this, 'noExecuteCommands' ]
 		);
 		$dbw->sourceFile( "$IP/extensions/AntiSpoof/sql/patch-antispoof.mysql.sql" );
-		$dbw->sourceFile( "$IP/extensions/Babel/babel.sql" );
+		$dbw->sourceFile( "$IP/extensions/Babel/sql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_changes.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/cu_log.sql" );
 		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/sql/global_block_whitelist.sql" );
