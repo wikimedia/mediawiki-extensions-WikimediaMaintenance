@@ -272,7 +272,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/sql/tables-generated.sql" );
 		// Not actually enabled everywhere, but this is easier
 		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" );
-		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/create_counts.sql" );
+		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/SecurePoll/SecurePoll.sql" );
 		$dbw->sourceFile( "$IP/extensions/Linter/sql/linter.sql" );
 
