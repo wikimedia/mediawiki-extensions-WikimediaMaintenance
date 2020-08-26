@@ -59,7 +59,9 @@ class ChangeSkinPref extends Maintenance {
 			$this->output( "{$userName}: Cleared skin preference\n" );
 			return;
 		}
-		if ( !array_key_exists( $newSkin, Skin::getSkinNames() ) ) {
+
+		$skinFactory = MediaWiki\MediaWikiServices::getInstance()->getSkinFactory();
+		if ( !array_key_exists( $newSkin, $skinFactory->getSkinNames() ) ) {
 			$this->fatalError( "$newSkin is not a valid skin" );
 		}
 		$skin = $user->getOption( 'skin' );
