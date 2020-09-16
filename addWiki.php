@@ -29,7 +29,6 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
-use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use Cognate\PopulateCognateSites;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionStore;
@@ -167,21 +166,6 @@ class AddWiki extends Maintenance {
 		);
 
 		$this->setFundraisingLink( $domain, $lang );
-
-		// Create new search index (this should be idempotent)
-		global $wgCirrusSearchWriteClusters, $wgCirrusSearchClusters;
-
-		$writableClusters = $wgCirrusSearchWriteClusters;
-		if ( $writableClusters === null ) {
-			$writableClusters = array_keys( $wgCirrusSearchClusters );
-		}
-
-		foreach ( $writableClusters as $cluster ) {
-			$searchIndex = $this->runChild( UpdateSearchIndexConfig::class );
-			$searchIndex->mOptions[ 'baseName' ] = $dbName;
-			$searchIndex->mOptions[ 'cluster' ] = $cluster;
-			$searchIndex->execute();
-		}
 
 		// Populate sites table (this should be idempotent)
 		$sitesPopulation = $this->runChild(
