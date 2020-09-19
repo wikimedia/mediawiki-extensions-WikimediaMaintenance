@@ -44,8 +44,8 @@ class CreateExtensionTables extends Maintenance {
 
 		switch ( strtolower( $extension ) ) {
 			case 'babel':
-				$files = [ 'babel.sql' ];
-				$path = "$IP/extensions/Babel";
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/Babel/sql";
 				break;
 
 			case 'echo':
