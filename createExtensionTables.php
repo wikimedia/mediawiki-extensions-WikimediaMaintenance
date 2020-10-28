@@ -34,7 +34,7 @@ class CreateExtensionTables extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster;
+		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster, $wgGEDatabaseCluster;
 
 		$dbw = $this->getDB( DB_MASTER );
 		$extension = $this->getArg( 0 );
@@ -80,6 +80,22 @@ class CreateExtensionTables extends Maintenance {
 				}
 				$files = [ 'flow.sql' ];
 				$path = "$IP/extensions/Flow";
+				break;
+
+			case 'growthexperiments':
+				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+				$geLB = $wgGEDatabaseCluster
+					? $lbFactory->getExternalLB( $wgGEDatabaseCluster )
+					: $lbFactory->getMainLB();
+				$conn = $geLB->getConnection( DB_MASTER, [], $geLB::DOMAIN_ANY );
+				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
+				$conn->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID(), __METHOD__ );
+				$geLB->closeConnection( $conn );
+
+				$dbw = $geLB->getConnection( DB_MASTER );
+
+				$files = [ 'growthexperiments_link_recommendations.sql' ];
+				$path = "$IP/extensions/GrowthExperiments/maintenance/mysql";
 				break;
 
 			case 'linter':
