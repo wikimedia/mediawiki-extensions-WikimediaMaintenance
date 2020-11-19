@@ -16,7 +16,7 @@ class MakeDumpList extends Maintenance {
 	public function execute() {
 		$linkBatch = new LinkBatch;
 		$batchSize = 0;
-		while ( false !== ( $line = fgets( STDIN ) ) ) {
+		while ( ( $line = fgets( STDIN ) ) !== false ) {
 			$line = trim( $line );
 			$title = Title::newFromText( $line );
 			if ( !$title ) {
