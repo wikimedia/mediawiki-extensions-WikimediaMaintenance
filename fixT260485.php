@@ -26,6 +26,9 @@ class FixT260485 extends \Maintenance {
 			'Do not actually change anything' );
 	}
 
+	/**
+	 * @suppress PhanPossiblyUndeclaredVariable $row is always set after the numRows() check
+	 */
 	public function execute() {
 		$this->loadMessages();
 
