@@ -79,7 +79,6 @@ class GetPageCounts extends Maintenance {
 			);
 			return [];
 		}
-		// @phan-suppress-next-line PhanUndeclaredConstant
 		$fileName = MEDIAWIKI_DEPLOYMENT_DIR . "/dblists/$name.dblist";
 		if ( !is_readable( $fileName ) ) {
 			$this->error( "Warning: can't read $fileName, no wikis will be blacklisted\n" );
