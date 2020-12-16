@@ -372,6 +372,7 @@ class AddWiki extends Maintenance {
 	private function getFirstArticle( $ucsite, $name ) {
 		// @phpcs:disable Generic.Files.LineLength
 		return <<<EOT
+<div dir="ltr" lang="en" class="mw-content-ltr">
 ==This subdomain is reserved for the creation of a [[wikimedia:Our projects|$ucsite]] in '''[[w:en:{$name}|{$name}]]''' language==
 
 * Please '''do not start editing''' this new site. This site has a test project on the [[incubator:|Wikimedia Incubator]] (or on the [[betawikiversity:|Beta Wikiversity]] or on the [[oldwikisource:|Old Wikisource]]) and it will be imported to here.
@@ -394,7 +395,7 @@ class AddWiki extends Maintenance {
 </span>
 
 See Wikimedia's [[m:|Meta-Wiki]] for the coordination of these projects.
-
+</div>
 EOT;
 		// @phpcs:enable Generic.Files.LineLength
 	}
