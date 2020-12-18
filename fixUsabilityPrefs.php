@@ -72,7 +72,7 @@ class FixUsabilityPrefs extends Maintenance {
 		$i = 0;
 		foreach ( $allIds as $id ) {
 			$user = User::newFromId( $id );
-			if ( !$user->isLoggedIn() ) {
+			if ( !$user->isRegistered() ) {
 				continue;
 			}
 			$this->beginTransaction( $dbw, __METHOD__ );
