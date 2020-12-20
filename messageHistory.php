@@ -7,14 +7,23 @@ use MediaWiki\Shell\Shell;
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class MessageHistory extends \Maintenance {
+	/** @var string|null */
 	private $dir;
+	/** @var string|null */
 	private $name;
+	/** @var string|null */
 	private $outputFileName;
+	/** @var string|null */
 	private $relPath;
+	/** @var string|null */
 	private $startTime;
+	/** @var array|null */
 	private $messageValues;
+	/** @var string|null */
 	private $currentCommit;
+	/** @var string|null */
 	private $currentTimestamp;
+	/** @var string|null */
 	private $startingCommit;
 
 	public function __construct() {

@@ -33,15 +33,28 @@ use MediaWiki\MediaWikiServices;
 class DumpInterwiki extends Maintenance {
 
 	/**
-	 * @var array
+	 * @var array|null
 	 */
-	protected $langlist, $dblist, $specials, $prefixLists;
+	protected $langlist;
+	/**
+	 * @var array|null
+	 */
+	protected $dblist;
+	/**
+	 * @var array|null
+	 */
+	protected $specials;
+	/**
+	 * @var array|null
+	 */
+	protected $prefixLists;
 
 	/**
-	 * @var CdbWriter|bool
+	 * @var CdbWriter|false
 	 */
 	protected $dbFile = false;
 
+	/** @var string */
 	protected $urlprotocol;
 
 	/**
@@ -130,6 +143,7 @@ class DumpInterwiki extends Maintenance {
 	/**
 	 * Special case prefix rewrites, for the benefit of Swedish which uses s:t
 	 * as an abbreviation for saint
+	 * @var array
 	 */
 	protected static $prefixRewrites = [
 		'svwiki' => [ 's' => 'src' ],

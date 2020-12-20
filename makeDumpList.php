@@ -11,6 +11,7 @@ class MakeDumpList extends Maintenance {
 		);
 	}
 
+	/** @var true[] */
 	private $templates = [];
 
 	public function execute() {

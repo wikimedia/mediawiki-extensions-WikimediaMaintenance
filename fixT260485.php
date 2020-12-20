@@ -11,6 +11,7 @@ require __DIR__ . '/WikimediaMaintenance.php';
  * Script to fix ipblocks.ipb_by_actor values corrupted by cross-wiki suppression (T260485).
  */
 class FixT260485 extends \Maintenance {
+	/** @var string[] */
 	private $messagePatterns;
 
 	public function __construct() {
@@ -143,7 +144,7 @@ class FixT260485 extends \Maintenance {
 	 * If it matches one, return the admin name parameter.
 	 *
 	 * @param string $reason
-	 * @return string|bool
+	 * @return string|false
 	 */
 	private function matchSuppressReason( $reason ) {
 		foreach ( $this->messagePatterns as $regex ) {
@@ -227,7 +228,7 @@ class FixT260485 extends \Maintenance {
 	 * UserIdentity.
 	 *
 	 * @param string $name
-	 * @return int|bool
+	 * @return int
 	 * @throws \Exception
 	 */
 	private function getActorId( $name ) {

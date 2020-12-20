@@ -11,6 +11,7 @@
 require_once __DIR__ . '/WikimediaCommandLine.inc';
 
 class SanityCheckRequest extends FauxRequest {
+	/** @var Title */
 	public $title;
 
 	public function __construct() {

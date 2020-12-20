@@ -70,7 +70,7 @@ class ImportUseModWikipedia extends Maintenance {
 	];
 
 	/**
-	 * Hack for observed substitution issues
+	 * @var string[] Hack for observed substitution issues
 	 */
 	public $skipSelfSubstitution = [
 		'Pythagorean_Theorem',

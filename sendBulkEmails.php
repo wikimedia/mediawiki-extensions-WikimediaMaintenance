@@ -243,7 +243,7 @@ class SendBulkEmails extends Maintenance {
 	 * @param array &$headers Email headers
 	 * @param string|array &$body Message body
 	 * @param Message|string &$error Explanation of any error encountered
-	 * @return bool True if mail should be sent; flase otherwise
+	 * @return bool True if mail should be sent; false otherwise
 	 */
 	public function onUserMailerTransformMessage(
 		$to, $from, &$subject, &$headers, &$body, &$error

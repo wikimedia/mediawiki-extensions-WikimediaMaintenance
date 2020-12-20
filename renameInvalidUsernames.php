@@ -18,6 +18,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  */
 class RenameInvalidUsernames extends Maintenance {
 
+	/** @var string|null */
 	protected $reason;
 
 	public function __construct() {

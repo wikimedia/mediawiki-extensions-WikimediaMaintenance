@@ -4,7 +4,12 @@
  * @ingroup Maintenance
  */
 class WMFSite {
-	public $suffix, $prefix, $url;
+	/** @var string */
+	public $suffix;
+	/** @var string */
+	public $prefix;
+	/** @var string */
+	public $url;
 
 	/**
 	 * @param string $suffix
