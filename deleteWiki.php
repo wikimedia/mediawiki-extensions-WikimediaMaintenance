@@ -83,12 +83,13 @@ class DeleteWiki extends Maintenance {
 		$dbw = $lb->getConnection( DB_MASTER );
 
 		$count = 0;
+		$batchSize = $this->getBatchSize();
 		do {
-			$dbw->query( "$query LIMIT {$this->mBatchSize}", __METHOD__ );
+			$dbw->query( "$query LIMIT {$batchSize}", __METHOD__ );
 			$lbFactory->waitForReplication( [ 'wiki' => $wiki ] );
 			$count += $dbw->affectedRows();
 			$this->output( "  $count\n" );
-		} while ( $dbw->affectedRows() >= $this->mBatchSize );
+		} while ( $dbw->affectedRows() >= $batchSize );
 
 		// The DELETE+LIMIT queries passed in are not replication-safe by themselves. However,
 		// as long as all rows meeting the WHERE clause are deleted, then all replicas will

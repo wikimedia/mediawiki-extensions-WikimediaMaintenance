@@ -38,10 +38,11 @@ class CleanupPageProps extends Maintenance {
 		$high = $dbw->selectField( 'page_props', 'MAX(pp_page)', '', __METHOD__ );
 		$waitAfter = $this->getOption( 'wait-after', 500 );
 		$deleted = 0;
-		for ( $id = 0; $id <= $high; $id += $this->mBatchSize ) {
+		$batchSize = $this->getBatchSize();
+		for ( $id = 0; $id <= $high; $id += $batchSize ) {
 			$dbw->delete( 'page_props',
 				[
-					"pp_page BETWEEN $id AND $id + {$this->mBatchSize}",
+					"pp_page BETWEEN $id AND $id + {$batchSize}",
 					// Clean up bogus entries left by MobileFrontend
 					'pp_propname' => 'page_top_level_section_count',
 					'pp_value' => 0,

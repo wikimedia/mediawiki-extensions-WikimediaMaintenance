@@ -6,9 +6,6 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class CleanupBug31576 extends Maintenance {
 
-	/** @var int|null */
-	protected $batchsize;
-
 	/** @var array */
 	protected $processed = [];
 
@@ -17,13 +14,10 @@ class CleanupBug31576 extends Maintenance {
 		$this->addDescription( "Cleans up templatelinks corruption caused by " .
 			"https://bugzilla.wikimedia.org/show_bug.cgi?id=31576"
 		);
-		$this->addOption( 'batchsize',
-			'Number of rows to process in one batch. Default: 50', false, true
-		);
+		$this->setBatchSize( 50 );
 	}
 
 	public function execute() {
-		$this->batchsize = $this->getOption( 'batchsize', 50 );
 		$magicWordFactory = \MediaWiki\MediaWikiServices::getInstance()->getMagicWordFactory();
 
 		$variableIDs = $magicWordFactory->getVariableIDs();
@@ -43,6 +37,7 @@ class CleanupBug31576 extends Maintenance {
 		$vCount = 0;
 		$this->output( "Fixing pages with template links to $synonym ...\n" );
 		$from = null;
+		$batchSize = $this->getBatchSize();
 		while ( true ) {
 			$where = [
 				'tl_namespace' => NS_TEMPLATE,
@@ -55,7 +50,7 @@ class CleanupBug31576 extends Maintenance {
 			$res = $dbr->select( 'templatelinks', [ 'tl_title', 'tl_from' ],
 				$where,
 				__METHOD__,
-				[ 'ORDER BY' => [ 'tl_title', 'tl_from' ], 'LIMIT' => $this->batchsize ]
+				[ 'ORDER BY' => [ 'tl_title', 'tl_from' ], 'LIMIT' => $batchSize ]
 			);
 			if ( $dbr->numRows( $res ) == 0 ) {
 				// No more rows, we're done

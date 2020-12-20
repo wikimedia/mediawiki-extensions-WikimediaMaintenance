@@ -7,6 +7,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 class FixUsabilityPrefs2 extends Maintenance {
 	public function __construct() {
 		parent::__construct();
+		$this->setBatchSize( 100 );
 	}
 
 	public function execute() {
@@ -16,7 +17,7 @@ class FixUsabilityPrefs2 extends Maintenance {
 
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
-		$batchSize = 100;
+		$batchSize = $this->getBatchSize();
 		$allIds = [];
 		while ( true ) {
 			$this->beginTransaction( $dbw, __METHOD__ );

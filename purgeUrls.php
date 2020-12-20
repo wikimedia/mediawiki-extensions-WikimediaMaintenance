@@ -69,7 +69,7 @@ class PurgeUrls extends Maintenance {
 	}
 
 	private function doPurge( array $urls ) {
-		$chunks = array_chunk( $urls, $this->mBatchSize );
+		$chunks = array_chunk( $urls, $this->getBatchSize() );
 		foreach ( $chunks as $chunk ) {
 			if ( $this->hasOption( 'verbose' ) ) {
 				$this->output( implode( "\n", $urls ) . "\n" );

@@ -27,12 +27,13 @@ class FixBeXOldRenames extends Maintenance {
 			$this->output( "Reading from $list\n" );
 		}
 		$count = 0;
+		$batchSize = $this->getBatchSize();
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		while ( $line = trim( fgets( $file ) ) ) {
 			$this->output( "$line\n" );
 			$this->rename( $line );
 			$count++;
-			if ( $count > $this->mBatchSize ) {
+			if ( $count > $batchSize ) {
 				$count = 0;
 				$this->output( "Sleep for 5 and waiting for replicas..." );
 				CentralAuthUtils::waitForReplicas();
