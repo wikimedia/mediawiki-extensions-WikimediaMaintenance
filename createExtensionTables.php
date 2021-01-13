@@ -94,7 +94,10 @@ class CreateExtensionTables extends Maintenance {
 
 				$dbw = $geLB->getConnection( DB_MASTER );
 
-				$files = [ 'growthexperiments_link_recommendations.sql' ];
+				$files = [
+					'growthexperiments_link_recommendations.sql',
+					'growthexperiments_link_submissions.sql',
+				];
 				$path = "$IP/extensions/GrowthExperiments/maintenance/mysql";
 				break;
 
