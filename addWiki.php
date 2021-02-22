@@ -49,6 +49,10 @@ class AddWiki extends Maintenance {
 			false,
 			true
 		);
+		$this->addOption( 'noedits',
+			'Skip editing of main page and fundraising link',
+			false
+		);
 	}
 
 	public function getDbType() {
@@ -153,19 +157,23 @@ class AddWiki extends Maintenance {
 		);
 
 		// Make the main page (this should be idempotent)
-		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )
-			->useDatabase( false )->plain() );
-		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
-		$article = WikiPage::factory( $title );
 		$ucSiteGroup = ucfirst( $siteGroup );
+		if ( !$this->getOption( 'noedits' ) ) {
+			$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )
+				->useDatabase( false )->plain() );
+			$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
+			$article = WikiPage::factory( $title );
 
-		$article->doEditContent(
-			ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title ),
-			'',
-			EDIT_NEW | EDIT_AUTOSUMMARY
-		);
+			$article->doEditContent(
+				ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title ),
+				'',
+				EDIT_NEW | EDIT_AUTOSUMMARY
+			);
 
-		$this->setFundraisingLink( $domain, $lang );
+			$this->setFundraisingLink( $domain, $lang );
+		} else {
+			$this->output( 'Skipping creation of mainpage and fundraising link, please do it manually' );
+		}
 
 		// Populate sites table (this should be idempotent)
 		$sitesPopulation = $this->runChild(
