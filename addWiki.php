@@ -88,7 +88,7 @@ class AddWiki extends Maintenance {
 
 		if ( $siteGroup === 'wiktionary' && strpos( $wgDBname, 'wiktionary' ) === false ) {
 			$this->fatalError(
-				'Wiktionaries must be created using --wiki aawiktionary ' .
+				'Wiktionaries must be created using --wiki mhwiktionary ' .
 					'due to the need to load Cognate classes.'
 			);
 		}
