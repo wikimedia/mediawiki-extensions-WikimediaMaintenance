@@ -98,7 +98,7 @@ class CreateExtensionTables extends Maintenance {
 					'growthexperiments_link_recommendations.sql',
 					'growthexperiments_link_submissions.sql',
 				];
-				$path = "$IP/extensions/GrowthExperiments/maintenance/mysql";
+				$path = "$IP/extensions/GrowthExperiments/maintenance/schemas/mysql";
 				break;
 
 			case 'linter':
