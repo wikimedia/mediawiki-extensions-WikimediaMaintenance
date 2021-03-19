@@ -91,7 +91,7 @@ class ImportUseModWikipedia extends Maintenance {
 
 	public $rc = [];
 	public $textCache = [];
-	public $blacklist = [];
+	public $ignoredTitles = [];
 
 	public $FS, $FS1, $FS2, $FS3;
 	public $FreeLinkPattern, $UrlPattern, $LinkPattern, $InterLinkPattern;
@@ -415,7 +415,7 @@ EOT
 		$title = $params['rctitle'];
 		$editTime = $params['timestamp'];
 
-		if ( isset( $this->blacklist[$title] ) ) {
+		if ( isset( $this->ignoredTitles[$title] ) ) {
 			return;
 		}
 		$this->doPendingOps( $editTime );
@@ -427,7 +427,7 @@ EOT
 			$linkSubstitutes = $this->resolveFailedDiff( $origText, $params['diff'] );
 			if ( !$linkSubstitutes ) {
 				$this->printLatin1( "$editTime $title DIFF FAILED\n" );
-				$this->blacklist[$title] = true;
+				$this->ignoredTitles[$title] = true;
 				return;
 			}
 			$this->printLatin1( "$editTime $title requires substitutions:\n" );
@@ -440,7 +440,7 @@ EOT
 			$text = $this->patch( $origText, $params['diff'] );
 			if ( $text === false ) {
 				$this->printLatin1( "$editTime $title STILL FAILS!\n" );
-				$this->blacklist[$title] = true;
+				$this->ignoredTitles[$title] = true;
 				return;
 			}
 

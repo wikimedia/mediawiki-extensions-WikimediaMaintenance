@@ -75,13 +75,13 @@ class GetPageCounts extends Maintenance {
 	private function dblist( $name ) {
 		if ( !defined( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ) {
 			$this->error(
-				"Warning: MEDIAWIKI_DEPLOYMENT_DIR is not defined, no wikis will be blacklisted\n"
+				"Warning: MEDIAWIKI_DEPLOYMENT_DIR is not defined, no wikis will be ignored\n"
 			);
 			return [];
 		}
 		$fileName = MEDIAWIKI_DEPLOYMENT_DIR . "/dblists/$name.dblist";
 		if ( !is_readable( $fileName ) ) {
-			$this->error( "Warning: can't read $fileName, no wikis will be blacklisted\n" );
+			$this->error( "Warning: can't read $fileName, no wikis will be ignored\n" );
 			return [];
 		}
 		return array_map( 'trim', file( $fileName ) );
