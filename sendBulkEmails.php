@@ -62,6 +62,11 @@ class SendBulkEmails extends Maintenance {
 	private $start = 0;
 
 	/**
+	 * @var int Count of blocked users not sent emails
+	 */
+	private $blocked = 0;
+
+	/**
 	 * @var int Count of users not found in database
 	 */
 	private $missing = 0;
@@ -137,6 +142,11 @@ class SendBulkEmails extends Maintenance {
 	private $delay = self::DEFAULT_DELAY;
 
 	/**
+	 * @var bool Whether blocked users should be excluded from being sent emails
+	 */
+	private $excludeBlocked = false;
+
+	/**
 	 * @var bool Dry run (no email send) guard
 	 */
 	private $dryRun = false;
@@ -161,6 +171,7 @@ class SendBulkEmails extends Maintenance {
 			'Opt-out list end marker', false, true );
 		$this->addOption( 'delay',
 			'Time to wait between emails (seconds)', false, true );
+		$this->addOption( 'exclude-blocked', 'Exclude users that are blocked' );
 		$this->addOption( 'dry-run', 'Do not send emails' );
 	}
 
@@ -174,6 +185,7 @@ class SendBulkEmails extends Maintenance {
 		$this->optoutEnd = $this->getOption( 'optout-end', self::DEFAULT_END );
 		$this->optout = $this->getOptOutList();
 		$this->delay = $this->getOption( 'delay', self::DEFAULT_DELAY );
+		$this->excludeBlocked = $this->hasOption( 'exclude-blocked' );
 		$this->dryRun = $this->hasOption( 'dry-run' );
 
 		Hooks::register(
@@ -207,6 +219,11 @@ class SendBulkEmails extends Maintenance {
 		if ( !$user || !$user->getId() ) {
 			$this->missing++;
 			$this->output( "ERROR - Unknown user {$username}\n" );
+			return false;
+		}
+		if ( $this->excludeBlocked && $user->getBlock() ) {
+			$this->blocked++;
+			$this->output( "WARNING - User {$username} is blocked\n" );
 			return false;
 		}
 		if ( !$user->canReceiveEmail() ) {
@@ -271,6 +288,7 @@ class SendBulkEmails extends Maintenance {
 			' missing: %d (%.1f%%);' .
 			' noreceive: %d (%.1f%%);' .
 			' optedout: %d (%.1f%%);' .
+			' blocked: %d (%.1f%%);' .
 			"\n";
 		$this->output( sprintf( $format,
 			wfTimestamp( TS_DB ),
@@ -279,7 +297,8 @@ class SendBulkEmails extends Maintenance {
 			$this->failed,    $this->reportPcnt( $this->failed ),
 			$this->missing,   $this->reportPcnt( $this->missing ),
 			$this->noreceive, $this->reportPcnt( $this->noreceive ),
-			$this->optedout,  $this->reportPcnt( $this->optedout )
+			$this->optedout,  $this->reportPcnt( $this->optedout ),
+			$this->blocked,   $this->reportPcnt( $this->blocked )
 		) );
 	}
 
