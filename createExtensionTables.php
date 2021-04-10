@@ -97,6 +97,7 @@ class CreateExtensionTables extends Maintenance {
 				$files = [
 					'growthexperiments_link_recommendations.sql',
 					'growthexperiments_link_submissions.sql',
+					'growthexperiments_mentee_data.sql',
 				];
 				$path = "$IP/extensions/GrowthExperiments/maintenance/schemas/mysql";
 				break;
