@@ -95,10 +95,10 @@ class CreateExtensionTables extends Maintenance {
 				$dbw = $geLB->getConnection( DB_MASTER );
 
 				$files = [
-					'growthexperiments_link_recommendations.sql',
-					'growthexperiments_link_submissions.sql',
-					'growthexperiments_mentee_data.sql',
-					'growthexperiments_mentor_mentee.sql',
+					'growthexperiments_link_recommendations' => 'growthexperiments_link_recommendations.sql',
+					'growthexperiments_link_submissions' => 'growthexperiments_link_submissions.sql',
+					'growthexperiments_mentee_data' => 'growthexperiments_mentee_data.sql',
+					'growthexperiments_mentor_mentee' => 'growthexperiments_mentor_mentee.sql',
 				];
 				$path = "$IP/extensions/GrowthExperiments/maintenance/schemas/mysql";
 				break;
@@ -176,11 +176,16 @@ class CreateExtensionTables extends Maintenance {
 				$this->fatalError( "This script is not configured to create tables for $extension\n" );
 		}
 
-		$this->output( "Creating $extension tables..." );
-		foreach ( $files as $file ) {
+		$this->output( "Creating $extension tables...\n" );
+		foreach ( $files as $table => $file ) {
+			if ( !is_numeric( $table ) && $dbw->tableExists( $table ) ) {
+				$this->output( "  $table already exists\n" );
+				continue;
+			}
+			$this->output( "  sourcing $file\n" );
 			$dbw->sourceFile( "$path/$file" );
 		}
-		$this->output( "done!\n" );
+		$this->output( "  done!\n" );
 	}
 }
 
