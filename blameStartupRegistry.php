@@ -153,7 +153,7 @@ class BlameStartupRegistry extends Maintenance {
 		$overview['startup_js']['bytes'] = $startupJsBytes;
 		$totalBytes += $startupJsBytes;
 
-		uasort( $overview, function ( $a, $b ) {
+		uasort( $overview, static function ( $a, $b ) {
 			return $b['bytes'] - $a['bytes'];
 		} );
 

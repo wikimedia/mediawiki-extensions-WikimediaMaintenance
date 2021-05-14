@@ -151,7 +151,7 @@ class AddWiki extends Maintenance {
 		// causing it to use the DB name of the wiki the script is running on due to T200471.
 		MediaWikiServices::getInstance()->redefineService(
 			'RevisionStore',
-			function ( MediaWikiServices $services ) use ( $dbName ): RevisionStore {
+			static function ( MediaWikiServices $services ) use ( $dbName ): RevisionStore {
 				return $services->getRevisionStoreFactory()->getRevisionStore( $dbName );
 			}
 		);
