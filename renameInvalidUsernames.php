@@ -84,7 +84,7 @@ class RenameInvalidUsernames extends Maintenance {
 		$oldUser = User::newFromRow( $row );
 
 		$caUser = new CentralAuthUser( $oldUser->getName(), CentralAuthUser::READ_LATEST );
-		$maintScript = User::newFromName( 'Maintenance script' );
+		$maintScript = User::newFromName( User::MAINTENANCE_SCRIPT_USER );
 		$session = [
 			'userId' => $maintScript->getId(),
 			'ip' => '127.0.0.1',
@@ -153,7 +153,7 @@ class RenameInvalidUsernames extends Maintenance {
 				[
 					'from' => $oldUser->getName(),
 					'to' => $newCAUser->getName(),
-					'renamer' => 'Maintenance script',
+					'renamer' => User::MAINTENANCE_SCRIPT_USER,
 					'movepages' => true,
 					'suppressredirects' => true,
 					'promotetoglobal' => true,
