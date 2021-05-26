@@ -267,6 +267,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/SecurePoll/SecurePoll.sql" );
 		$dbw->sourceFile( "$IP/extensions/Linter/sql/tables-generated.sql" );
+		$dbw->sourceFile( "$IP/extensions/DiscussionTools/sql/mysql/discussiontools_subscription.sql" );
 
 		// most wikis are wikibase client wikis and no harm to adding this everywhere
 		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/mysql/entity_usage.sql" );

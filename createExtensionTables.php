@@ -48,6 +48,13 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Babel/sql";
 				break;
 
+			case 'discussiontools':
+				$files = [
+					'discussiontools_subscription' => 'discussiontools_subscription.sql'
+				];
+				$path = "$IP/extensions/DiscussionTools/sql/mysql";
+				break;
+
 			case 'echo':
 				$this->output( "Using special database connection for Echo" );
 
