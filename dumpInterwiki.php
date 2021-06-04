@@ -80,6 +80,7 @@ class DumpInterwiki extends Maintenance {
 		global $wmgRealm;
 
 		return [
+			[ 'c', $this->urlprotocol . '//commons.wikimedia' . $this->end . '/wiki/$1', 1 ],
 			[ 'm', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
 			[ 'meta', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
 			[
