@@ -49,7 +49,7 @@ class FixBeXOldRenames extends Maintenance {
 		$oldUser = User::newFromName( $oldname );
 		$oldUser->mName = $oldname;
 		$newUser = User::newFromName( str_replace( '_', '-', $oldname ), 'usable' );
-		$maintScript = User::newFromName( 'Maintenance script' );
+		$maintScript = User::newFromName( User::MAINTENANCE_SCRIPT_USER );
 		$session = [
 			'userId' => $maintScript->getId(),
 			'ip' => '127.0.0.1',
