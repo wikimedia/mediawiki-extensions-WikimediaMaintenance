@@ -124,20 +124,21 @@ class DumpInterwiki extends Maintenance {
 		'epo' => 'eo',
 		'jp' => 'ja',
 		'minnan' => 'zh-min-nan',
-		'nb' => 'no',
 		'zh-cfr' => 'zh-min-nan',
 		'zh-cn' => 'zh',
 		'zh-tw' => 'zh',
 		# Real ISO language codes to our fake ones
-		'nan' => 'zh-min-nan',
-		'vro' => 'fiu-vro',
 		'cmn' => 'zh',
-		'lzh' => 'zh-classical',
-		'yue' => 'zh-yue',
-		'rup' => 'roa-rup',
-		'gsw' => 'als',
-		'sgs' => 'bat-smg',
 		'egl' => 'eml',
+		'en-simple' => 'simple', # T283149
+		'gsw' => 'als',
+		'lzh' => 'zh-classical',
+		'nan' => 'zh-min-nan',
+		'nb' => 'no',
+		'rup' => 'roa-rup',
+		'sgs' => 'bat-smg',
+		'vro' => 'fiu-vro',
+		'yue' => 'zh-yue',
 	];
 
 	/**
