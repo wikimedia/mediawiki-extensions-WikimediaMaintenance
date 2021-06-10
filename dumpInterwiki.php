@@ -92,7 +92,6 @@ class DumpInterwiki extends Maintenance {
 		return [
 			[ 'm', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
 			[ 'meta', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
-			[ 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ],
 			[
 				'd',
 				$this->urlprotocol . ( $wmgRealm === 'labs' ? '//wikidata' : '//www.wikidata' )
