@@ -164,13 +164,18 @@ class AddWiki extends Maintenance {
 			$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
 			$article = WikiPage::factory( $title );
 
-			$article->doEditContent(
+			$editor = User::newSystemUser(
+				'Maintenance script',
+				[ 'steal' => true ]
+			);
+			$article->doUserEditContent(
 				ContentHandler::makeContent( $this->getFirstArticle( $ucSiteGroup, $name ), $title ),
+				$editor,
 				'',
 				EDIT_NEW | EDIT_AUTOSUMMARY
 			);
 
-			$this->setFundraisingLink( $domain, $lang );
+			$this->setFundraisingLink( $domain, $lang, $editor );
 		} else {
 			$this->output( 'Skipping creation of mainpage and fundraising link, please do it manually' );
 		}
@@ -430,9 +435,10 @@ EOT;
 	/**
 	 * @param string $domain
 	 * @param string $language
+	 * @param User $editor
 	 * @return Status
 	 */
-	private function setFundraisingLink( $domain, $language ) {
+	private function setFundraisingLink( $domain, $language, User $editor ) {
 		$title = Title::newFromText( "Mediawiki:Sitesupport-url" );
 		$this->output( "Writing sidebar donate link to " . $title->getPrefixedDBkey() . "\n" );
 		$article = WikiPage::factory( $title );
@@ -448,8 +454,9 @@ EOT;
 			]
 		);
 
-		return $article->doEditContent(
+		return $article->doUserEditContent(
 			ContentHandler::makeContent( $linkurl, $title ),
+			$editor,
 			'Setting sidebar link',
 			EDIT_NEW
 		);
