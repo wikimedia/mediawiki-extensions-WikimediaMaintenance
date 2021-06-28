@@ -244,7 +244,7 @@ class FixT260485 extends \Maintenance {
 			return $actor;
 		}
 
-		$dbw = $this->getDB( DB_MASTER );
+		$dbw = $this->getDB( DB_PRIMARY );
 		$dbw->insert(
 			'actor',
 			[
@@ -286,7 +286,7 @@ class FixT260485 extends \Maintenance {
 
 		$actor = $this->getActorId( $this->prefixName( $adminName ) );
 		$this->output( "UPDATE: changing ipb_id {$blockId} from actor $oldActor to $actor $adminName\n" );
-		$dbw = $this->getDB( DB_MASTER );
+		$dbw = $this->getDB( DB_PRIMARY );
 		$dbw->update(
 			'ipblocks',
 			[ 'ipb_by_actor' => $actor ],

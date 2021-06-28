@@ -36,7 +36,7 @@ class CreateExtensionTables extends Maintenance {
 	public function execute() {
 		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster, $wgGEDatabaseCluster;
 
-		$dbw = $this->getDB( DB_MASTER );
+		$dbw = $this->getDB( DB_PRIMARY );
 		$extension = $this->getArg( 0 );
 
 		$files = [];
@@ -62,12 +62,12 @@ class CreateExtensionTables extends Maintenance {
 				$echoLB = $wgEchoCluster
 					? $lbFactory->getExternalLB( $wgEchoCluster )
 					: $lbFactory->getMainLB();
-				$conn = $echoLB->getConnection( DB_MASTER, [], $echoLB::DOMAIN_ANY );
+				$conn = $echoLB->getConnection( DB_PRIMARY, [], $echoLB::DOMAIN_ANY );
 				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
 				$conn->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID(), __METHOD__ );
 				$echoLB->closeConnection( $conn );
 
-				$dbw = $echoLB->getConnection( DB_MASTER );
+				$dbw = $echoLB->getConnection( DB_PRIMARY );
 
 				$files = [ 'echo.sql' ];
 				$path = "$IP/extensions/Echo";
@@ -94,12 +94,12 @@ class CreateExtensionTables extends Maintenance {
 				$geLB = $wgGEDatabaseCluster
 					? $lbFactory->getExternalLB( $wgGEDatabaseCluster )
 					: $lbFactory->getMainLB();
-				$conn = $geLB->getConnection( DB_MASTER, [], $geLB::DOMAIN_ANY );
+				$conn = $geLB->getConnection( DB_PRIMARY, [], $geLB::DOMAIN_ANY );
 				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
 				$conn->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID(), __METHOD__ );
 				$geLB->closeConnection( $conn );
 
-				$dbw = $geLB->getConnection( DB_MASTER );
+				$dbw = $geLB->getConnection( DB_PRIMARY );
 
 				$files = [
 					'growthexperiments_link_recommendations' => 'growthexperiments_link_recommendations.sql',

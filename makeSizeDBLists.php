@@ -27,7 +27,7 @@ class MakeSizeDBLists extends Maintenance {
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			try {
 				$lb = $lbFactory->getMainLB( $wiki );
-				$db = $lb->getConnection( DB_MASTER, [], $wiki );
+				$db = $lb->getConnection( DB_PRIMARY, [], $wiki );
 			} catch ( Exception $e ) {
 				// Probably just wikitech etc, skip!
 				continue;

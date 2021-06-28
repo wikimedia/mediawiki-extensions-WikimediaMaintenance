@@ -11,7 +11,7 @@ class FixUsabilityPrefs2 extends Maintenance {
 	}
 
 	public function execute() {
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 
 		echo "Fixing usebetatoolbar\n";
 

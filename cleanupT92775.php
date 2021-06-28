@@ -26,7 +26,7 @@ class CleanupT92775 extends Maintenance {
 			$ids[] = $row->log_id;
 		}
 
-		wfGetDB( DB_MASTER )->update(
+		wfGetDB( DB_PRIMARY )->update(
 			'logging',
 			[ 'log_params' => "1 week\nanononly,nocreate" ],
 			[ 'log_id' => $ids ],

@@ -49,7 +49,7 @@ class RenameWiki extends Maintenance {
 		$this->output( "Sleeping 5 seconds...\n" );
 		sleep( 5 );
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 		foreach ( $dbw->tableNames() as $table ) {
 			$dbw->query( "ALTER TABLE {$from}.{$table} RENAME TO {$to}.{$table}", __METHOD__ );
 		}

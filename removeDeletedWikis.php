@@ -41,7 +41,7 @@ class RemoveDeletedWikis extends Maintenance {
 			$this->fatalError( 'Unable to open deleted.dblist' );
 		}
 
-		$dbw = $this->getDB( DB_MASTER );
+		$dbw = $this->getDB( DB_PRIMARY );
 		$cadbw = CentralAuthUser::getCentralDB();
 		foreach ( $wikis as $wiki ) {
 			$wiki = rtrim( $wiki );

@@ -34,7 +34,7 @@ foreach ( $lines as $line ) {
 $lbFactory = MediaWiki\MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 foreach ( $opsByWiki as $wiki => $ops ) {
 	$lb = $lbFactory->getMainLB( $wiki );
-	$db = $lb->getConnection( DB_MASTER, [], $wiki );
+	$db = $lb->getConnection( DB_PRIMARY, [], $wiki );
 
 	foreach ( $ops as $op ) {
 		$msg = "{$op['id']} -> {$op['ns']}:{$op['dbk']}";

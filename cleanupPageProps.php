@@ -33,7 +33,7 @@ class CleanupPageProps extends Maintenance {
 	}
 
 	public function execute() {
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$high = $dbw->selectField( 'page_props', 'MAX(pp_page)', '', __METHOD__ );
 		$waitAfter = $this->getOption( 'wait-after', 500 );

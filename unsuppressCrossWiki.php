@@ -36,7 +36,7 @@ class UnsuppressCrossWiki extends Maintenance {
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		foreach ( $wikis as $wiki ) {
 			$lb = $lbFactory->getMainLB( $wiki );
-			$dbw = $lb->getConnection( DB_MASTER, [], $wiki );
+			$dbw = $lb->getConnection( DB_PRIMARY, [], $wiki );
 			# Get local ID like $user->localUserData( $wiki ) does
 			$localUser = User::newFromRow( $dbw->selectRow( $userQuery['tables'], $userQuery['fields'],
 				[ 'user_name' => $userName ], __METHOD__, [], $userQuery['joins'] ) );

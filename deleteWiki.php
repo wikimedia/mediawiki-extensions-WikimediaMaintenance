@@ -80,7 +80,7 @@ class DeleteWiki extends Maintenance {
 	private function cleanupWikiDb( $wiki, $query ) {
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$lb = $lbFactory->getMainLB( $wiki );
-		$dbw = $lb->getConnection( DB_MASTER );
+		$dbw = $lb->getConnection( DB_PRIMARY );
 
 		$count = 0;
 		$batchSize = $this->getBatchSize();

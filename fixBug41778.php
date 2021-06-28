@@ -9,7 +9,7 @@ require_once __DIR__ . '/WikimediaCommandLine.inc';
  * @suppress SecurityCheck-XSS
  */
 function fixBug41778() {
-	$dbw = wfGetDB( DB_MASTER );
+	$dbw = wfGetDB( DB_PRIMARY );
 
 	$maxLength = $dbw->selectField(
 		'information_schema.columns',

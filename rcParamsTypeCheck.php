@@ -20,7 +20,7 @@ class RcParamsTypeCheck extends Maintenance {
 		$count = 0;
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			$lb = $lbFactory->getMainLB( $wiki );
-			$db = $lb->getMaintenanceConnectionRef( DB_MASTER, [], $wiki );
+			$db = $lb->getMaintenanceConnectionRef( DB_PRIMARY, [], $wiki );
 			$field = $db->fieldInfo( 'recentchanges', 'rc_params' );
 			if ( $field->type() !== "blob" ) {
 				echo $wiki . "\n";
