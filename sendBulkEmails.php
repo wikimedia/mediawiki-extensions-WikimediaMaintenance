@@ -393,9 +393,10 @@ class SendBulkEmails extends Maintenance {
 			$rev = MediaWikiServices::getInstance()
 				->getRevisionLookup()
 				->getRevisionByTitle( $title );
-			$content = ContentHandler::getContentText( $rev->getContent( SlotRecord::MAIN ) );
+			$content = $rev->getContent( SlotRecord::MAIN );
+			$contentText = ( $content instanceof TextContent ) ? $content->getText() : null;
 			$inList = false;
-			foreach ( explode( "\n", $content ) as $line ) {
+			foreach ( explode( "\n", $contentText ) as $line ) {
 				if ( !$inList ) {
 					if ( $line == $this->optoutStart ) {
 						$inList = true;
