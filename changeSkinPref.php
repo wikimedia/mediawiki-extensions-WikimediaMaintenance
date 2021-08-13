@@ -26,6 +26,9 @@
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
+
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class ChangeSkinPref extends Maintenance {
@@ -46,31 +49,35 @@ class ChangeSkinPref extends Maintenance {
 	}
 
 	private function setSkin( $userName, $newSkin ) {
+		$services = MediaWikiServices::getInstance();
+		$userFactory = $services->getUserFactory();
+		$userOptionsManager = $services->getUserOptionsManager();
 		$user = $this->hasOption( 'userid' ) ?
-			User::newFromId( $userName ) :
-			User::newFromName( $userName );
-		$wiki = wfWikiID();
+			$userFactory->newFromId( $userName ) :
+			$userFactory->newFromName( $userName );
+		$wiki = WikiMap::getCurrentWikiId();
 		if ( !$user || $user->getId() === 0 ) {
 			$this->fatalError( "User $userName does not exist or is invalid." );
+			throw new LogicException( 'Unreachable' );
 		}
 		if ( $this->hasOption( 'clear' ) ) {
-			$user->setOption( 'skin', null );
-			$user->saveSettings();
+			$userOptionsManager->setOption( $user, 'skin', null );
+			$userOptionsManager->saveOptions( $user );
 			$this->output( "{$userName}: Cleared skin preference\n" );
 			return;
 		}
 
-		$skinFactory = MediaWiki\MediaWikiServices::getInstance()->getSkinFactory();
+		$skinFactory = $services->getSkinFactory();
 		if ( !array_key_exists( $newSkin, $skinFactory->getSkinNames() ) ) {
 			$this->fatalError( "$newSkin is not a valid skin" );
 		}
-		$skin = $user->getOption( 'skin' );
+		$skin = $userOptionsManager->getOption( $user, 'skin' );
 		if ( $skin === $newSkin ) {
 			$this->output( "{$userName}@{$wiki}: Skin already set to $newSkin; nothing to do.\n" );
 			return;
 		}
-		$user->setOption( 'skin', $newSkin );
-		$user->saveSettings();
+		$userOptionsManager->setOption( $user, 'skin', $newSkin );
+		$userOptionsManager->saveOptions( $user );
 		$this->output( "{$userName}@{$wiki}: Changed from $skin to $newSkin\n" );
 	}
 }
