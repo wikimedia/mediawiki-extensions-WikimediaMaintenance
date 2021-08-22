@@ -54,7 +54,7 @@ class RenameInvalidUsernames extends Maintenance {
 			if ( $count > $batchSize ) {
 				$count = 0;
 				$this->output( "Sleep for 5 and waiting for replicas...\n" );
-				CentralAuthUtils::waitForReplicas();
+				CentralAuthServices::getDatabaseManager()->waitForReplication();
 				$lbFactory->waitForReplication();
 				sleep( 5 );
 				$this->output( "done.\n" );
@@ -170,7 +170,7 @@ class RenameInvalidUsernames extends Maintenance {
 	}
 
 	protected function getCurrentRenameCount() {
-		$row = CentralAuthUser::getCentralDB()->selectRow(
+		$row = CentralAuthServices::getDatabaseManager()->getCentralDB( DB_PRIMARY )->selectRow(
 			[ 'renameuser_status' ],
 			[ 'COUNT(*) as count' ],
 			[],

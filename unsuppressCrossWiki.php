@@ -10,21 +10,13 @@ class UnsuppressCrossWiki extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( "Globally unsuppress a user name" );
-		$this->addOption( 'user', 'The username to operate on', false, true );
-		$this->addOption( 'userid', 'The user id to operate on', false, true );
+		$this->addOption( 'user', 'The username to operate on', true, true );
 	}
 
 	public function execute() {
-		if ( $this->hasOption( 'user' ) ) {
-			$user = CentralAuthUser::getMasterInstanceByName( $this->getOption( 'user' ) );
-		} elseif ( $this->hasOption( 'userid' ) ) {
-			$user = CentralAuthUser::newMasterInstanceFromId( $this->getOption( 'userid' ) );
-		} else {
-			$this->fatalError( "A \"user\" or \"userid\" must be set to unsuppress for" );
-		}
+		$user = CentralAuthUser::getPrimaryInstanceByName( $this->getOption( 'user' ) );
 
-		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable T240141
-		if ( !$user || !$user->exists() ) {
+		if ( !$user->exists() ) {
 			$user = $this->hasOption( 'user' ) ? $this->getOption( 'user' ) : $this->getOption( 'userid' );
 			echo "Cannot unsuppress non-existent user {$user}!\n";
 			exit( 0 );
