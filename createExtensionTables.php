@@ -132,7 +132,7 @@ class CreateExtensionTables extends Maintenance {
 
 			case 'oauth':
 				$files = [ 'OAuth.sql' ];
-				$path = "$IP/extensions/OAuth/backend/schema/mysql";
+				$path = "$IP/extensions/OAuth/schema";
 				break;
 
 			case 'ores':
