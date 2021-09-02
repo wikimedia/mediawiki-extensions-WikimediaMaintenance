@@ -43,15 +43,19 @@ class BlameStartupRegistry extends Maintenance {
 		global $IP;
 
 		$rl = MediaWikiServices::getInstance()->getResourceLoader();
-		$context = new ResourceLoaderContext( $rl, new FauxRequest( [] ) );
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$context = new ResourceLoaderContext( $rl, new FauxRequest( [
+			'lang' => $contLang->getCode(),
+			'skin' => 'vector',
+		] ) );
 		$moduleNames = $rl->getModuleNames();
 		echo "Checking " . count( $moduleNames ) . " modules...\n\n";
 
-		$overview = [
+		$startupBreakdown = [
 			self::COMP_UNKNOWN => [ 'modules' => 0, 'bytes' => 0, 'names' => [] ],
 		];
-		$totalCount = 0;
-		$totalBytes = 0;
+		$startupCount = 0;
+		$startupBytes = 0;
 
 		$coreModuleNames = array_keys( require "$IP/resources/Resources.php" );
 		$extModuleNames = []; // from module name to extension name
@@ -85,10 +89,22 @@ class BlameStartupRegistry extends Maintenance {
 				// Ignore
 				$versionHash = '';
 			}
-			// Use index number only, and in a way that's stable over time
-			// (so round down in the component's favour, by starting at 0)
+
+			// Approximate ResourceLoader::makeLoaderRegisterScript() for dependencies.
+			//
+			// Turn `[str,str,str]` dependencies into `[101,102,103]` like production.
+			// But, instead of using the offsets of the complete registry,
+			// we approximate it with array keys of the local dependency array.
+			// This has the benefit of being stable over time, instead of varying
+			// based on relative position in the registry. It also rounds down
+			// in the component's favour by always starting at 0.
 			$deps = array_keys( $module->getDependencies( $context ) );
+
+			// Approximate ResourceLoaderStartUpModule::getGroupId().
+			// The string is not used in production. Replace all non-null values
+			// with a fixed size digit.
 			$group = $module->getGroup() === null ? null : 10;
+
 			$source = $module->getSource() === 'local' ? null : $module->getSource();
 			$skipFn = $module->getSkipFunction();
 			if ( $skipFn !== null ) {
@@ -97,7 +113,7 @@ class BlameStartupRegistry extends Maintenance {
 			$registration = [ $name, $versionHash, $deps, $group, $source, $skipFn ];
 			self::trimArray( $registration );
 
-			$bytes = strlen( json_encode( $registration ) );
+			$startupBytes = strlen( json_encode( $registration ) );
 
 			if ( in_array( $name, $coreModuleNames, true ) ) {
 				$component = 'MediaWiki core';
@@ -137,12 +153,15 @@ class BlameStartupRegistry extends Maintenance {
 				$component = 'Wikibase';
 			} else {
 				$component = self::COMP_UNKNOWN;
-				$overview[$component]['names'][] = $name;
+				$startupBreakdown[$component]['names'][] = $name;
 			}
-			$overview[$component]['modules'] = ( $overview[$component]['modules'] ?? 0 ) + 1;
-			$overview[$component]['bytes'] = ( $overview[$component]['bytes'] ?? 0 ) + $bytes;
-			$totalCount += 1;
-			$totalBytes += $bytes;
+
+			$startupBreakdown[$component]['modules'] = ( $startupBreakdown[$component]['modules'] ?? 0 ) + 1;
+			$startupBreakdown[$component]['startupBytes'] =
+				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable https://github.com/phan/phan/issues/4617
+				( $startupBreakdown[$component]['startupBytes'] ?? 0 ) + $startupBytes;
+			$startupCount += 1;
+			$startupBytes += $startupBytes;
 		}
 
 		// Measure the internal JS code as its own special component
@@ -150,19 +169,19 @@ class BlameStartupRegistry extends Maintenance {
 		$startupJs = ResourceLoader::filter( 'minify-js', $startupJs, [ 'cache' => false ] );
 		$startupJsBytes = strlen( gzencode( $startupJs, 9 ) );
 		unset( $startupJs );
-		$overview['startup_js']['modules'] = 0;
-		$overview['startup_js']['bytes'] = $startupJsBytes;
-		$totalBytes += $startupJsBytes;
+		$startupBreakdown['startup_js']['modules'] = 0;
+		$startupBreakdown['startup_js']['startupBytes'] = $startupJsBytes;
+		$startupBytes += $startupJsBytes;
 
-		uasort( $overview, static function ( $a, $b ) {
-			return $b['bytes'] - $a['bytes'];
+		uasort( $startupBreakdown, static function ( $a, $b ) {
+			return $b['startupBytes'] - $a['startupBytes'];
 		} );
 
-		echo "| Component | Modules | Bytes\n";
+		echo "| Component | Modules | Startup bytes\n";
 		echo "|-- |-- |--\n";
-		foreach ( $overview as $component => $info ) {
+		foreach ( $startupBreakdown as $component => $info ) {
 			$moduleStr = $info['modules'];
-			$byteStr = number_format( $info['bytes'] );
+			$byteStr = number_format( $info['startupBytes'] );
 			echo sprintf( "| %-20s | %5s | %8s\n",
 				$component,
 				$moduleStr,
@@ -170,18 +189,18 @@ class BlameStartupRegistry extends Maintenance {
 			);
 		}
 
-		if ( $overview[self::COMP_UNKNOWN]['names'] ) {
+		if ( $startupBreakdown[self::COMP_UNKNOWN]['names'] ) {
 			echo "\n";
-			echo "Unknown component: " . implode( ", ", $overview[self::COMP_UNKNOWN]['names'] );
+			echo "Unknown component: " . implode( ", ", $startupBreakdown[self::COMP_UNKNOWN]['names'] );
 			echo "\n";
 		}
 
 		if ( $this->hasOption( 'record-stats' ) ) {
 			echo "\n";
-			echo "Sending stats to Graphite...\n";
+			echo "Sending stats...\n";
 			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
 			$wiki = wfWikiId();
-			foreach ( $overview as $component => $info ) {
+			foreach ( $startupBreakdown as $component => $info ) {
 				if ( $info['modules'] > 0 ) {
 					$stats->gauge(
 						sprintf( 'resourceloader_startup_modules.%s.%s',
@@ -190,22 +209,22 @@ class BlameStartupRegistry extends Maintenance {
 						$info['modules']
 					);
 				}
-				if ( $info['bytes'] > 0 ) {
+				if ( $info['startupBytes'] > 0 ) {
 					$stats->gauge(
 						sprintf( 'resourceloader_startup_bytes.%s.%s',
 							$wiki, $component
 						),
-						$info['bytes']
+						$info['startupBytes']
 					);
 				}
 			}
 			$stats->gauge(
 				sprintf( 'resourceloader_startup_modules_total.%s', $wiki ),
-				$totalCount
+				$startupCount
 			);
 			$stats->gauge(
 				sprintf( 'resourceloader_startup_bytes_total.%s', $wiki ),
-				$totalBytes
+				$startupBytes
 			);
 			echo "Done!\n";
 		}
