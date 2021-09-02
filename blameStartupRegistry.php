@@ -22,6 +22,13 @@ use MediaWiki\MediaWikiServices;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+/**
+ * To test this locally, simply run it without parameters:
+ *
+ *     $ php extensions/WikimediaMaintenance/blameStartupRegistry.php
+ *
+ * The extension does not need to be installed first.
+ */
 class BlameStartupRegistry extends Maintenance {
 	private const COMP_UNKNOWN = 'unknown';
 
@@ -138,14 +145,8 @@ class BlameStartupRegistry extends Maintenance {
 			$totalBytes += $bytes;
 		}
 
-		// Measure the internal JS code as special component
-		$startupJs = file_get_contents( "$IP/resources/src/startup/startup.js" )
-			. file_get_contents( "$IP/resources/src/startup/mediawiki.js" )
-			. file_get_contents( "$IP/resources/src/startup/mediawiki.requestIdleCallback.js" );
-		// ... make variables constant,
-		$startupJs = preg_replace( '/\$VARS\.[a-zA-Z]+/', 'null', $startupJs );
-		// ... and strip code substitutions.
-		$startupJs = preg_replace( '/\$CODE\.[a-zA-Z]+\(\);/', '', $startupJs );
+		// Measure the internal JS code as its own special component
+		$startupJs = $this->getInternalStartupJs( $rl, $context );
 		$startupJs = ResourceLoader::filter( 'minify-js', $startupJs, [ 'cache' => false ] );
 		$startupJsBytes = strlen( gzencode( $startupJs, 9 ) );
 		unset( $startupJs );
@@ -208,6 +209,34 @@ class BlameStartupRegistry extends Maintenance {
 			);
 			echo "Done!\n";
 		}
+	}
+
+	/**
+	 * Get the portion of the startup module response that is constant.
+	 *
+	 * This is for startup.js and mw.loader client, without any module registrations.
+	 *
+	 * @param ResourceLoader $rl
+	 * @param ResourceLoaderContext $context
+	 * @return string JavaScript code
+	 */
+	private function getInternalStartupJs( ResourceLoader $rl, ResourceLoaderContext $context ): string {
+		// Avoid hardcoding which files are included by ResourceLoaderStartUpModule::getScript.
+		// Instead, subclass it and stub out getModuleRegistrations().
+		$startupModule = new class() extends ResourceLoaderStartUpModule {
+
+			public function getModuleRegistrations( ResourceLoaderContext $context ): string {
+				return '';
+			}
+
+		};
+		$startupModule->setConfig( $rl->getConfig() );
+
+		// The modules=startup request requires use of only=scripts
+		$derivative = new DerivativeResourceLoaderContext( $context );
+		$derivative->setOnly( 'scripts' );
+
+		return $startupModule->getScript( $derivative );
 	}
 
 	private static function trimArray( array &$array ) {
