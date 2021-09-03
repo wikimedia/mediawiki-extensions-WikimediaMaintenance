@@ -56,6 +56,9 @@ class BlameStartupRegistry extends Maintenance {
 		];
 		$startupCount = 0;
 		$startupBytes = 0;
+		$contentBreakdown = [
+			/* module name => [ component => str, transferSize => int, decodedSize => int ] */
+		];
 
 		$coreModuleNames = array_keys( require "$IP/resources/Resources.php" );
 		$extModuleNames = []; // from module name to extension name
@@ -78,7 +81,7 @@ class BlameStartupRegistry extends Maintenance {
 
 		foreach ( $moduleNames as $name ) {
 			$module = $rl->getModule( $name );
-			if ( $module instanceof ResourceLoaderStartUpModule ) {
+			if ( !$module || $module instanceof ResourceLoaderStartUpModule ) {
 				continue;
 			}
 
@@ -114,6 +117,26 @@ class BlameStartupRegistry extends Maintenance {
 			self::trimArray( $registration );
 
 			$startupBytes = strlen( json_encode( $registration ) );
+
+			// Approximate transfer size per module.
+			// The true size in production will be smaller than our estimate here, because
+			// in production modules can be freely combined with other unrelated modules
+			// in a single batch request, and web servers will apply response compression
+			// across module boundaries. That's great for performance, but also means that
+			// each individual byte is not attributable to a (single) module, and the cost
+			// reduction can vary highly depending on what features the user has interacted
+			// with in the past.
+			$contentContext = new DerivativeResourceLoaderContext( $context );
+			// Generate a pure only=styles response for styles modules,
+			// and an mw.loader.implement() response for general modules.
+			$contentContext->setOnly(
+				$module->getType() === ResourceLoaderModule::LOAD_STYLES
+					? ResourceLoaderModule::TYPE_STYLES
+					: ResourceLoaderModule::TYPE_COMBINED
+			);
+			$content = $rl->makeModuleResponse( $contentContext, [ $name => $module ] );
+			$contentTransferSize = strlen( gzencode( $content, 9 ) );
+			$contentDecodedSize = strlen( $content );
 
 			if ( in_array( $name, $coreModuleNames, true ) ) {
 				$component = 'MediaWiki core';
@@ -162,6 +185,12 @@ class BlameStartupRegistry extends Maintenance {
 				( $startupBreakdown[$component]['startupBytes'] ?? 0 ) + $startupBytes;
 			$startupCount += 1;
 			$startupBytes += $startupBytes;
+
+			$contentBreakdown[$name] = [
+				'component' => $component,
+				'transferSize' => $contentTransferSize,
+				'decodedSize' => $contentDecodedSize,
+			];
 		}
 
 		// Measure the internal JS code as its own special component
@@ -182,7 +211,7 @@ class BlameStartupRegistry extends Maintenance {
 		foreach ( $startupBreakdown as $component => $info ) {
 			$moduleStr = $info['modules'];
 			$byteStr = number_format( $info['startupBytes'] );
-			echo sprintf( "| %-20s | %5s | %8s\n",
+			echo sprintf( "| %-20s | %5s | %8s B\n",
 				$component,
 				$moduleStr,
 				$byteStr
@@ -194,6 +223,18 @@ class BlameStartupRegistry extends Maintenance {
 			echo "Unknown component: " . implode( ", ", $startupBreakdown[self::COMP_UNKNOWN]['names'] );
 			echo "\n";
 		}
+
+		echo "\n";
+		echo "| Module | transferSize | decodedSize\n";
+		echo "|-- |-- |--\n";
+		foreach ( $contentBreakdown as $name => $info ) {
+			echo sprintf( "| %-50s | %8s B | %8s B\n",
+				$name,
+				number_format( $info['transferSize'] ),
+				number_format( $info['decodedSize'] )
+			);
+		}
+		echo "\n";
 
 		if ( $this->hasOption( 'record-stats' ) ) {
 			echo "\n";
@@ -226,6 +267,22 @@ class BlameStartupRegistry extends Maintenance {
 				sprintf( 'resourceloader_startup_bytes_total.%s', $wiki ),
 				$startupBytes
 			);
+			foreach ( $contentBreakdown as $name => $info ) {
+				$statName = strtr( $name, '.', '_' );
+				$stats->gauge(
+					sprintf( 'resourceloader_module_transfersize_bytes.%s.%s.%s',
+						$wiki, $info['component'], $statName
+					),
+					$info['transferSize']
+				);
+				$stats->gauge(
+					sprintf( 'resourceloader_module_decodedsize_bytes.%s.%s.%s',
+						$wiki, $info['component'], $statName
+					),
+					$info['decodedSize']
+				);
+			}
+
 			echo "Done!\n";
 		}
 	}
