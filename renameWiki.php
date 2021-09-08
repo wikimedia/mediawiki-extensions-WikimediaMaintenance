@@ -93,14 +93,14 @@ class RenameWiki extends Maintenance {
 				/** @var ExternalStoreDB $store */
 				$store = $esFactory->getStore( 'DB', [ 'domain' => $to ] );
 				'@phan-var ExternalStoreDB $store';
-				$extdb = $store->getMaster( $cluster );
+				$extdb = $store->getPrimary( $cluster );
 				$extdb->query( "SET default_storage_engine=InnoDB", __METHOD__ );
 				$extdb->query( "CREATE DATABASE IF NOT EXISTS {$to}", __METHOD__ );
 				$extdb->query( "ALTER TABLE {$from}.blobs RENAME TO {$to}.blobs", __METHOD__ );
 
 				$store = $esFactory->getStore( 'DB', [ 'domain' => $from ] );
 				'@phan-var ExternalStoreDB $store';
-				$extdb = $store->getMaster( $cluster );
+				$extdb = $store->getPrimary( $cluster );
 				$extdb->sourceFile( $this->getDir() . '/storage/blobs.sql' );
 				$extdb->commit( __METHOD__ );
 			}

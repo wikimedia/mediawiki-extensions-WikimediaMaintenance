@@ -360,7 +360,7 @@ class AddWiki extends Maintenance {
 			$cluster = $m[1];
 			$this->output( "Initialising external storage $cluster...\n" );
 
-			// @note: avoid ExternalStoreDB::getMaster() as that is intended for internal use
+			// @note: avoid ExternalStoreDB::getPrimary() as that is intended for internal use
 			$lb = $lbFactory->getExternalLB( $cluster );
 
 			// Create the database
