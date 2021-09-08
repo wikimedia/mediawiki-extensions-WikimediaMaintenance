@@ -58,10 +58,11 @@ class ChangeSkinPref extends Maintenance {
 		$wiki = WikiMap::getCurrentWikiId();
 		if ( !$user || $user->getId() === 0 ) {
 			$this->fatalError( "User $userName does not exist or is invalid." );
-			throw new LogicException( 'Unreachable' );
 		}
 		if ( $this->hasOption( 'clear' ) ) {
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 			$userOptionsManager->setOption( $user, 'skin', null );
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 			$userOptionsManager->saveOptions( $user );
 			$this->output( "{$userName}: Cleared skin preference\n" );
 			return;
@@ -71,12 +72,15 @@ class ChangeSkinPref extends Maintenance {
 		if ( !array_key_exists( $newSkin, $skinFactory->getSkinNames() ) ) {
 			$this->fatalError( "$newSkin is not a valid skin" );
 		}
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 		$skin = $userOptionsManager->getOption( $user, 'skin' );
 		if ( $skin === $newSkin ) {
 			$this->output( "{$userName}@{$wiki}: Skin already set to $newSkin; nothing to do.\n" );
 			return;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 		$userOptionsManager->setOption( $user, 'skin', $newSkin );
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 		$userOptionsManager->saveOptions( $user );
 		$this->output( "{$userName}@{$wiki}: Changed from $skin to $newSkin\n" );
 	}

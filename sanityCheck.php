@@ -27,6 +27,9 @@ class SanityCheckRequest extends FauxRequest {
 	}
 }
 
+/**
+ * @return never
+ */
 function doSanityCheck() {
 	$req = new SanityCheckRequest;
 	$context = new RequestContext;
