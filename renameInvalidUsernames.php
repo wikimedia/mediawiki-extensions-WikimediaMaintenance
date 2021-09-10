@@ -1,5 +1,9 @@
 <?php
 
+use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUser;
+use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserDatabaseUpdates;
+use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserLogger;
+use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserStatus;
 use MediaWiki\MediaWikiServices;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
