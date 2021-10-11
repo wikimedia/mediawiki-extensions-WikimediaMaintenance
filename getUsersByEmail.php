@@ -65,7 +65,7 @@ class GetUsersByEmail extends Maintenance {
 			];
 		}
 
-		$this->output( json_encode( $json_data, JSON_PRETTY_PRINT ) . '\n' );
+		$this->output( json_encode( $json_data, JSON_PRETTY_PRINT ) . "\n" );
 	}
 }
 
