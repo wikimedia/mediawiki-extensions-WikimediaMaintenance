@@ -221,7 +221,7 @@ class AddWiki extends Maintenance {
 		$wgConf->wikis[] = $dbName;
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$cache->delete( $cache->makeGlobalKey( 'massmessage', 'urltodb' ) );
-		MediaWiki\MassMessage\DatabaseLookup::getDBName( '' ); // Forces re-cache
+		MediaWiki\MassMessage\Lookup\DatabaseLookup::getDBName( '' ); // Forces re-cache
 
 		$user = getenv( 'SUDO_USER' );
 		$time = wfTimestamp( TS_RFC2822 );
