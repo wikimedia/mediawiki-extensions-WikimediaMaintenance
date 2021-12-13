@@ -55,7 +55,7 @@ class BlameStartupRegistry extends Maintenance {
 			self::COMP_UNKNOWN => [ 'modules' => 0, 'bytes' => 0, 'names' => [] ],
 		];
 		$startupCount = 0;
-		$startupBytes = 0;
+		$startupBytesTotal = 0;
 		$contentBreakdown = [
 			/* module name => [ component => str, transferSize => int, decodedSize => int ] */
 		];
@@ -184,7 +184,7 @@ class BlameStartupRegistry extends Maintenance {
 				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable https://github.com/phan/phan/issues/4617
 				( $startupBreakdown[$component]['startupBytes'] ?? 0 ) + $startupBytes;
 			$startupCount += 1;
-			$startupBytes += $startupBytes;
+			$startupBytesTotal += $startupBytes;
 
 			$contentBreakdown[$name] = [
 				'component' => $component,
@@ -200,7 +200,7 @@ class BlameStartupRegistry extends Maintenance {
 		unset( $startupJs );
 		$startupBreakdown['startup_js']['modules'] = 0;
 		$startupBreakdown['startup_js']['startupBytes'] = $startupJsBytes;
-		$startupBytes += $startupJsBytes;
+		$startupBytesTotal += $startupJsBytes;
 
 		uasort( $startupBreakdown, static function ( $a, $b ) {
 			return $b['startupBytes'] - $a['startupBytes'];
@@ -265,7 +265,7 @@ class BlameStartupRegistry extends Maintenance {
 			);
 			$stats->gauge(
 				sprintf( 'resourceloader_startup_bytes_total.%s', $wiki ),
-				$startupBytes
+				$startupBytesTotal
 			);
 			foreach ( $contentBreakdown as $name => $info ) {
 				$statName = strtr( $name, '.', '_' );
