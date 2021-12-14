@@ -98,7 +98,8 @@ class AddWiki extends Maintenance {
 		}
 		$name = $languageNames[$lang];
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$services = MediaWikiServices::getInstance();
+		$lbFactory = $services->getDBLoadBalancerFactory();
 		$localLb = $lbFactory->getMainLB();
 
 		$this->output( "Creating database $dbName for $lang.$siteGroup ($name)\n" );
@@ -149,7 +150,7 @@ class AddWiki extends Maintenance {
 		// T212881: Redefine the RevisionStore service to explicitly use the new DB name.
 		// Otherwise, ExternalStoreDB would be instantiated with an implicit database domain,
 		// causing it to use the DB name of the wiki the script is running on due to T200471.
-		MediaWikiServices::getInstance()->redefineService(
+		$services->redefineService(
 			'RevisionStore',
 			static function ( MediaWikiServices $services ) use ( $dbName ): RevisionStore {
 				return $services->getRevisionStoreFactory()->getRevisionStore( $dbName );
@@ -162,7 +163,7 @@ class AddWiki extends Maintenance {
 			$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )
 				->useDatabase( false )->plain() );
 			$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
-			$article = WikiPage::factory( $title );
+			$article = $services->getWikiPageFactory()->newFromTitle( $title );
 
 			$editor = User::newSystemUser(
 				'Maintenance script',
@@ -219,7 +220,7 @@ class AddWiki extends Maintenance {
 		global $wgConf;
 		// Even if the dblists have been updated, it's not in $wgConf yet
 		$wgConf->wikis[] = $dbName;
-		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		$cache = $services->getMainWANObjectCache();
 		$cache->delete( $cache->makeGlobalKey( 'massmessage', 'urltodb' ) );
 		MediaWiki\MassMessage\Lookup\DatabaseLookup::getDBName( '' ); // Forces re-cache
 
@@ -441,7 +442,7 @@ EOT;
 	private function setFundraisingLink( $domain, $language, User $editor ) {
 		$title = Title::newFromText( "Mediawiki:Sitesupport-url" );
 		$this->output( "Writing sidebar donate link to " . $title->getPrefixedDBkey() . "\n" );
-		$article = WikiPage::factory( $title );
+		$article = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 
 		// There is likely a better way to create the link, but it seems like one
 		// cannot count on interwiki links at this point
