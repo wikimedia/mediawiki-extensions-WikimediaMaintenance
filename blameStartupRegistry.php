@@ -240,46 +240,48 @@ class BlameStartupRegistry extends Maintenance {
 			echo "\n";
 			echo "Sending stats...\n";
 			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-			$wiki = WikiMap::getCurrentWikiId();
+			$wikiFmt = strtr( WikiMap::getCurrentWikiId(), '.', '_' );
 			foreach ( $startupBreakdown as $component => $info ) {
+				$componentFmt = strtr( $component, '.', '_' );
 				if ( $info['modules'] > 0 ) {
 					$stats->gauge(
 						sprintf( 'resourceloader_startup_modules.%s.%s',
-							$wiki, $component
+							$wikiFmt, $componentFmt
 						),
-						$info['modules']
+						(int)$info['modules']
 					);
 				}
 				if ( $info['startupBytes'] > 0 ) {
 					$stats->gauge(
 						sprintf( 'resourceloader_startup_bytes.%s.%s',
-							$wiki, $component
+							$wikiFmt, $componentFmt
 						),
-						$info['startupBytes']
+						(int)$info['startupBytes']
 					);
 				}
 			}
 			$stats->gauge(
-				sprintf( 'resourceloader_startup_modules_total.%s', $wiki ),
-				$startupCount
+				sprintf( 'resourceloader_startup_modules_total.%s', $wikiFmt ),
+				(int)$startupCount
 			);
 			$stats->gauge(
-				sprintf( 'resourceloader_startup_bytes_total.%s', $wiki ),
-				$startupBytesTotal
+				sprintf( 'resourceloader_startup_bytes_total.%s', $wikiFmt ),
+				(int)$startupBytesTotal
 			);
 			foreach ( $contentBreakdown as $name => $info ) {
-				$statName = strtr( $name, '.', '_' );
+				$componentFmt = strtr( $info['component'], '.', '_' );
+				$nameFmt = strtr( $name, '.', '_' );
 				$stats->gauge(
 					sprintf( 'resourceloader_module_transfersize_bytes.%s.%s.%s',
-						$wiki, $info['component'], $statName
+						$wikiFmt, $componentFmt, $nameFmt
 					),
-					$info['transferSize']
+					(int)$info['transferSize']
 				);
 				$stats->gauge(
 					sprintf( 'resourceloader_module_decodedsize_bytes.%s.%s.%s',
-						$wiki, $info['component'], $statName
+						$wikiFmt, $componentFmt, $nameFmt
 					),
-					$info['decodedSize']
+					(int)$info['decodedSize']
 				);
 			}
 
