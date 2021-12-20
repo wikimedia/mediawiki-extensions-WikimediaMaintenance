@@ -7,4 +7,4 @@ if ( $IP === false ) {
 }
 
 // Require base maintenance class
-require_once "$IP/maintenance/commandLine.inc";
+require_once "$IP/maintenance/CommandLineInc.php";
