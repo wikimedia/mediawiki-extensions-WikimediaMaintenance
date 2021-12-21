@@ -64,7 +64,7 @@ class CreateExtensionTables extends Maintenance {
 					: $lbFactory->getMainLB();
 				$conn = $echoLB->getConnection( DB_PRIMARY, [], $echoLB::DOMAIN_ANY );
 				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
-				$conn->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID(), __METHOD__ );
+				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
 				$echoLB->closeConnection( $conn );
 
 				$dbw = $echoLB->getConnection( DB_PRIMARY );
@@ -96,7 +96,7 @@ class CreateExtensionTables extends Maintenance {
 					: $lbFactory->getMainLB();
 				$conn = $geLB->getConnection( DB_PRIMARY, [], $geLB::DOMAIN_ANY );
 				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
-				$conn->query( "CREATE DATABASE IF NOT EXISTS " . wfWikiID(), __METHOD__ );
+				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
 				$geLB->closeConnection( $conn );
 
 				$dbw = $geLB->getConnection( DB_PRIMARY );

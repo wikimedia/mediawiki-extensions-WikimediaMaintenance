@@ -240,7 +240,7 @@ class BlameStartupRegistry extends Maintenance {
 			echo "\n";
 			echo "Sending stats...\n";
 			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-			$wiki = wfWikiId();
+			$wiki = WikiMap::getCurrentWikiId();
 			foreach ( $startupBreakdown as $component => $info ) {
 				if ( $info['modules'] > 0 ) {
 					$stats->gauge(
