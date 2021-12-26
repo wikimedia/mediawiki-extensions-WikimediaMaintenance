@@ -121,7 +121,7 @@ class RenameInvalidUsernames extends Maintenance {
 				CentralAuthUser::getInstance( $newUser ),
 				new GlobalRenameUserStatus( $newUser->getName() ),
 				'JobQueueGroup::singleton',
-				new GlobalRenameUserDatabaseUpdates(),
+				new GlobalRenameUserDatabaseUpdates( CentralAuthServices::getDatabaseManager() ),
 				new GlobalRenameUserLogger( $maintScript ),
 				$session
 			);
