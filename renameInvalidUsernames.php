@@ -120,7 +120,7 @@ class RenameInvalidUsernames extends Maintenance {
 				$newUser,
 				CentralAuthUser::getInstance( $newUser ),
 				new GlobalRenameUserStatus( $newUser->getName() ),
-				'JobQueueGroup::singleton',
+				MediaWikiServices::getInstance()->getJobQueueGroupFactory(),
 				new GlobalRenameUserDatabaseUpdates( CentralAuthServices::getDatabaseManager() ),
 				new GlobalRenameUserLogger( $maintScript ),
 				$session
