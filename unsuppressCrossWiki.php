@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use Wikimedia\Rdbms\DBReplicationWaitError;
