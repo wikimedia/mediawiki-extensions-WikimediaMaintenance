@@ -105,6 +105,7 @@ class RenameInvalidUsernames extends Maintenance {
 			'force' => true,
 		];
 
+		$jobQueueGroupFactory = MediaWikiServices::getInstance()->getJobQueueGroupFactory();
 		if ( $caUser->exists() && $caUser->isAttached() ) {
 			$newUser = User::newFromName(
 				$newName ?? 'Invalid username ' . (string)$caUser->getId(), 'usable'
@@ -121,7 +122,7 @@ class RenameInvalidUsernames extends Maintenance {
 				$newUser,
 				CentralAuthUser::getInstance( $newUser ),
 				new GlobalRenameUserStatus( $newUser->getName() ),
-				MediaWikiServices::getInstance()->getJobQueueGroupFactory(),
+				$jobQueueGroupFactory,
 				new GlobalRenameUserDatabaseUpdates( CentralAuthServices::getDatabaseManager() ),
 				new GlobalRenameUserLogger( $maintScript ),
 				$session
@@ -170,7 +171,7 @@ class RenameInvalidUsernames extends Maintenance {
 				]
 			);
 
-			JobQueueGroup::singleton( $wiki )->push( $job );
+			$jobQueueGroupFactory->makeJobQueueGroup( $wiki )->push( $job );
 			// Log it
 			$logger = new GlobalRenameUserLogger( $maintScript );
 			$logger->logPromotion( $oldUser->getName(), $wiki, $newCAUser->getName(), $this->reason );
