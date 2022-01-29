@@ -144,11 +144,8 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'pageassessments':
-				$files = [
-					'addProjectsTable.sql',
-					'addReviewsTable.sql',
-				];
-				$path = "$IP/extensions/PageAssessments/db";
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/PageAssessments/db/mysql";
 				break;
 
 			case 'shorturl':
