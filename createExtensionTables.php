@@ -163,7 +163,7 @@ class CreateExtensionTables extends Maintenance {
 					'translate_messageindex.sql',
 					'translate_reviews.sql',
 				];
-				$path = "$IP/extensions/Translate/sql";
+				$path = "$IP/extensions/Translate/sql/mysql";
 				break;
 
 			case 'wikibase':
