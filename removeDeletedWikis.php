@@ -21,6 +21,7 @@
  * @ingroup Wikimedia
  */
 
+use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 

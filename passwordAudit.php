@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Extension\CentralAuth\CentralAuthServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class PasswordAudit extends Maintenance {
