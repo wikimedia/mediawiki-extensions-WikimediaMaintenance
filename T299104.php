@@ -171,8 +171,11 @@ class UpdateUserSkinPreferences extends Maintenance {
 				$userIdsHasPropertyVectorSkinVersionAndSkin
 			);
 
+			if ( !$doInsert ) {
+				continue;
+			}
 			foreach ( $userIdsWithPropertyVectorSkinVersion2MissingPropertySkin as $userIdMissingPropertySkin ) {
-				if ( !$dryRun && $doInsert ) {
+				if ( !$dryRun ) {
 					// Insert the missing user skin preference to vector-2022.
 					$dbw->insert(
 						$table,
@@ -186,10 +189,8 @@ class UpdateUserSkinPreferences extends Maintenance {
 					$lbFactory->waitForReplication();
 				}
 				$insertsFoundUserIds[] = $userIdMissingPropertySkin;
-				if ( $doInsert ) {
-					$this->output( "$insertWord row for user id $userIdMissingPropertySkin with 'skin' set to"
-						. " 'vector-2022'.\n" );
-				}
+				$this->output( "$insertWord row for user id $userIdMissingPropertySkin with 'skin' set to"
+					. " 'vector-2022'.\n" );
 			}
 		}
 
