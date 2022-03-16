@@ -42,7 +42,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  *
  * @par Usage example:
  * @code
- * php extensions/WikimediaMaintenance/T299104.php --commit --global
+ * php extensions/WikimediaMaintenance/T299104.php --commit --global --insert
  * @endcode
  *
  * @see bug T299104
@@ -53,6 +53,7 @@ class UpdateUserSkinPreferences extends Maintenance {
 		$this->addDescription( 'Updates users skin preferences to match vector skin version.' );
 		$this->addOption( 'global', 'Update user skin preferences globally' );
 		$this->addOption( 'commit', 'Actually update user skin preferences' );
+		$this->addOption( 'insert', 'Run the inserts in addition to the updates' );
 		$this->setBatchSize( 50 );
 	}
 
@@ -101,6 +102,7 @@ class UpdateUserSkinPreferences extends Maintenance {
 		$dryRun = !$commit;
 		$updateWord = $dryRun ? 'Would update' : 'Updated';
 		$insertWord = $dryRun ? 'Would insert' : 'Inserted';
+		$doInsert = $this->hasOption( 'insert' );
 
 		if ( !$dryRun ) {
 			$this->warn( 'skin', 'vector', 'vector-2022' );
@@ -170,7 +172,7 @@ class UpdateUserSkinPreferences extends Maintenance {
 			);
 
 			foreach ( $userIdsWithPropertyVectorSkinVersion2MissingPropertySkin as $userIdMissingPropertySkin ) {
-				if ( !$dryRun ) {
+				if ( !$dryRun && $doInsert ) {
 					// Insert the missing user skin preference to vector-2022.
 					$dbw->insert(
 						$table,
@@ -184,8 +186,10 @@ class UpdateUserSkinPreferences extends Maintenance {
 					$lbFactory->waitForReplication();
 				}
 				$insertsFoundUserIds[] = $userIdMissingPropertySkin;
-				$this->output( "$insertWord row for user id $userIdMissingPropertySkin with"
-					. " 'skin' set to 'vector-2022'.\n" );
+				if ( $doInsert ) {
+					$this->output( "$insertWord row for user id $userIdMissingPropertySkin with 'skin' set to"
+						. " 'vector-2022'.\n" );
+				}
 			}
 		}
 
@@ -194,7 +198,11 @@ class UpdateUserSkinPreferences extends Maintenance {
 
 		$this->output( "\ntook: " . (int)( microtime( true ) - $start ) . "\n" );
 		$this->output( "$updateWord $preferenceWord preferences affecting $updatesFound rows" . PHP_EOL );
-		$this->output( "$insertWord $preferenceWord preferences affecting $insertsFound rows" . PHP_EOL );
+		if ( $doInsert ) {
+			$this->output( "$insertWord $preferenceWord preferences affecting $insertsFound rows" . PHP_EOL );
+		} else {
+			$this->output( "No rows inserted. Use --insert option if this is needed." . PHP_EOL );
+		}
 		return true;
 	}
 
