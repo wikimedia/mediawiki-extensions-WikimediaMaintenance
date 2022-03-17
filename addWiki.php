@@ -45,7 +45,7 @@ class AddWiki extends Maintenance {
 		$this->addArg( 'dbname', 'Name of database to create, e.g. enwiki' );
 		$this->addArg( 'domain', 'Domain name of the wiki, e.g. en.wikipedia.org' );
 		$this->addOption( 'skipclusters',
-			'Comma-separated DB clusters to skip schema changes for (main,extstore,echo,ext1)',
+			'Comma-separated DB clusters to skip schema changes for (main,extstore,echo,growth)',
 			false,
 			true
 		);
@@ -72,7 +72,7 @@ class AddWiki extends Maintenance {
 
 	public function execute() {
 		global $IP, $wmgVersionNumber, $wmgAddWikiNotify,
-			$wgPasswordSender, $wgDBname, $wgEchoCluster;
+			$wgPasswordSender, $wgDBname, $wgEchoCluster, $wgGEDatabaseCluster;
 
 		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
 			$this->fatalError( '$wmgVersionNumber is not set, please use MWScript.php wrapper.' );
@@ -124,6 +124,30 @@ class AddWiki extends Maintenance {
 		if ( !in_array( 'main', $skipClusters, true ) ) {
 			// Create all required tables from core and extensions
 			$this->createMainClusterSchema( $dbw, $dbName, $siteGroup );
+		}
+
+		if (
+			!in_array( 'growth', $skipClusters, true ) &&
+			$siteGroup === 'wikipedia'
+		) {
+			// init GrowthExperiment's databases if a Wikipedia is created
+			$growthLB = $wgGEDatabaseCluster ? $lbFactory->getExternalLB( $wgGEDatabaseCluster ) : $localLb;
+
+			$conn = $growthLB->getConnection( DB_PRIMARY, [], $localLb::DOMAIN_ANY );
+			$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
+			$growthLB->closeConnection( $conn );
+
+			$growthDbw = $growthLB->getMaintenanceConnectionRef( DB_PRIMARY );
+			$files = [
+				'growthexperiments_link_recommendations.sql',
+				'growthexperiments_link_submissions.sql',
+				'growthexperiments_mentee_data.sql',
+				'growthexperiments_mentor_mentee.sql'
+			];
+			foreach ( $files as $file ) {
+				$growthDbw->sourceFile( "$IP/extensions/GrowthExperiments/maintenance/schemas/mysql/$file" );
+			}
 		}
 
 		if (
