@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 class MakeDumpList extends Maintenance {
@@ -44,17 +46,23 @@ class MakeDumpList extends Maintenance {
 
 	public function doBatch( $linkBatch ) {
 		$dbr = wfGetDB( DB_REPLICA );
+		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
+		$queryInfo = $linksMigration->getQueryInfo( 'templatelinks' );
+		list( $nsField, $titleField ) = $linksMigration->getTitleFields( 'templatelinks' );
 		$conds = [
 			$linkBatch->constructSet( 'page', $dbr ),
 			'page_id=tl_from'
 		];
 		$res = $dbr->select(
-			[ 'page', 'templatelinks' ],
-			[ 'tl_namespace', 'tl_title' ],
+			array_merge( [ 'page' ], $queryInfo['tables'] ),
+			[ $nsField, $titleField ],
 			$conds,
-			__METHOD__ );
+			__METHOD__,
+			[],
+			$queryInfo['joins']
+		);
 		foreach ( $res as $row ) {
-			$title = Title::makeTitle( $row->tl_namespace, $row->tl_title );
+			$title = Title::makeTitle( $row->$nsField, $row->$titleField );
 			$this->templates[$title->getPrefixedDBkey()] = true;
 		}
 	}
