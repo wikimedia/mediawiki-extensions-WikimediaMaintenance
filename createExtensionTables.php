@@ -116,13 +116,8 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'newsletter':
-				$files = [
-					'nl_newsletters.sql',
-					'nl_issues.sql',
-					'nl_subscriptions.sql',
-					'nl_publishers.sql',
-				];
-				$path = "$IP/extensions/Newsletter/sql";
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/Newsletter/sql/mysql";
 				break;
 
 			case 'oathauth':
