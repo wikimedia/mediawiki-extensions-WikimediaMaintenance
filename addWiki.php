@@ -288,7 +288,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/Babel/sql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/CheckUser/schema/mysql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/sql/mysql/tables-generated-global_block_whitelist.sql" );
-		$dbw->sourceFile( "$IP/extensions/AbuseFilter/db_patches/mysql/abusefilter.sql" );
+		$dbw->sourceFile( "$IP/extensions/AbuseFilter/db_patches/mysql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/Math/sql/mysql/mathoid.sql" );
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/sql/tables-generated.sql" );
 		// Not actually enabled everywhere, but this is easier
