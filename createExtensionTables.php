@@ -136,11 +136,8 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'ores':
-				$files = [
-					'ores_model.sql',
-					'ores_classification.sql',
-				];
-				$path = "$IP/extensions/ORES/sql";
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/ORES/sql/mysql";
 				break;
 
 			case 'pageassessments':
