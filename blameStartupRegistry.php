@@ -19,6 +19,8 @@
  * @ingroup Wikimedia
  */
 use MediaWiki\MediaWikiServices;
+use MediaWiki\ResourceLoader as RL;
+use MediaWiki\ResourceLoader\ResourceLoader;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
@@ -44,7 +46,7 @@ class BlameStartupRegistry extends Maintenance {
 
 		$rl = MediaWikiServices::getInstance()->getResourceLoader();
 		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-		$context = new ResourceLoaderContext( $rl, new FauxRequest( [
+		$context = new RL\Context( $rl, new FauxRequest( [
 			'lang' => $contLang->getCode(),
 			'skin' => 'vector',
 		] ) );
@@ -81,11 +83,11 @@ class BlameStartupRegistry extends Maintenance {
 
 		foreach ( $moduleNames as $name ) {
 			$module = $rl->getModule( $name );
-			if ( !$module || $module instanceof ResourceLoaderStartUpModule ) {
+			if ( !$module || $module instanceof RL\StartUpModule ) {
 				continue;
 			}
 
-			// Approximate what ResourceLoaderStartUpModule does
+			// Approximate what RL\StartUpModule does
 			try {
 				$versionHash = $module->getVersionHash( $context );
 			} catch ( Exception $e ) {
@@ -103,7 +105,7 @@ class BlameStartupRegistry extends Maintenance {
 			// in the component's favour by always starting at 0.
 			$deps = array_keys( $module->getDependencies( $context ) );
 
-			// Approximate ResourceLoaderStartUpModule::getGroupId().
+			// Approximate RL\StartUpModule::getGroupId().
 			// The string is not used in production. Replace all non-null values
 			// with a fixed size digit.
 			$group = $module->getGroup() === null ? null : 10;
@@ -126,13 +128,13 @@ class BlameStartupRegistry extends Maintenance {
 			// each individual byte is not attributable to a (single) module, and the cost
 			// reduction can vary highly depending on what features the user has interacted
 			// with in the past.
-			$contentContext = new DerivativeResourceLoaderContext( $context );
+			$contentContext = new RL\DerivativeContext( $context );
 			// Generate a pure only=styles response for styles modules,
 			// and an mw.loader.implement() response for general modules.
 			$contentContext->setOnly(
-				$module->getType() === ResourceLoaderModule::LOAD_STYLES
-					? ResourceLoaderModule::TYPE_STYLES
-					: ResourceLoaderModule::TYPE_COMBINED
+				$module->getType() === RL\Module::LOAD_STYLES
+					? RL\Module::TYPE_STYLES
+					: RL\Module::TYPE_COMBINED
 			);
 			$content = $rl->makeModuleResponse( $contentContext, [ $name => $module ] );
 			$contentTransferSize = strlen( gzencode( $content, 9 ) );
@@ -295,15 +297,15 @@ class BlameStartupRegistry extends Maintenance {
 	 * This is for startup.js and mw.loader client, without any module registrations.
 	 *
 	 * @param ResourceLoader $rl
-	 * @param ResourceLoaderContext $context
+	 * @param RL\Context $context
 	 * @return string JavaScript code
 	 */
-	private function getInternalStartupJs( ResourceLoader $rl, ResourceLoaderContext $context ): string {
-		// Avoid hardcoding which files are included by ResourceLoaderStartUpModule::getScript.
+	private function getInternalStartupJs( ResourceLoader $rl, RL\Context $context ): string {
+		// Avoid hardcoding which files are included by RL\StartUpModule::getScript.
 		// Instead, subclass it and stub out getModuleRegistrations().
-		$startupModule = new class() extends ResourceLoaderStartUpModule {
+		$startupModule = new class() extends RL\StartUpModule {
 
-			public function getModuleRegistrations( ResourceLoaderContext $context ): string {
+			public function getModuleRegistrations( RL\Context $context ): string {
 				return '';
 			}
 
@@ -311,7 +313,7 @@ class BlameStartupRegistry extends Maintenance {
 		$startupModule->setConfig( $rl->getConfig() );
 
 		// The modules=startup request requires use of only=scripts
-		$derivative = new DerivativeResourceLoaderContext( $context );
+		$derivative = new RL\DerivativeContext( $context );
 		$derivative->setOnly( 'scripts' );
 
 		return $startupModule->getScript( $derivative );
