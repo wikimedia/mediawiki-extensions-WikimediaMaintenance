@@ -107,7 +107,7 @@ class CreateExtensionTables extends Maintenance {
 					'growthexperiments_mentee_data' => 'growthexperiments_mentee_data.sql',
 					'growthexperiments_mentor_mentee' => 'growthexperiments_mentor_mentee.sql',
 				];
-				$path = "$IP/extensions/GrowthExperiments/maintenance/schemas/mysql";
+				$path = "$IP/extensions/GrowthExperiments/sql/mysql";
 				break;
 
 			case 'linter':
