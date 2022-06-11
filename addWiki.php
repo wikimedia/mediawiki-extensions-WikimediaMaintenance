@@ -307,7 +307,7 @@ class AddWiki extends Maintenance {
 		) {
 			// For private wikis, we set $wgFlowDefaultWikiDb = false
 			// instead they're on the local database, so create the tables
-			$dbw->sourceFile( "$IP/extensions/Flow/sql/flow.sql" );
+			$dbw->sourceFile( "$IP/extensions/Flow/sql/mysql/tables-generated.sql" );
 		}
 
 		// Add project specific extension table additions here
