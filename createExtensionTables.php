@@ -69,8 +69,8 @@ class CreateExtensionTables extends Maintenance {
 
 				$dbw = $echoLB->getConnection( DB_PRIMARY );
 
-				$files = [ 'echo.sql' ];
-				$path = "$IP/extensions/Echo/sql";
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/Echo/sql/mysql";
 				break;
 
 			case 'flaggedrevs':
