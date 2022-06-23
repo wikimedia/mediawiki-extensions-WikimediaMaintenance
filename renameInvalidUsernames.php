@@ -44,7 +44,7 @@ class RenameInvalidUsernames extends Maintenance {
 		$list = $this->getOption( 'list' );
 		$file = fopen( $list, 'r' );
 		if ( $file === false ) {
-			$this->output( "ERROR - Could not open file: $list" );
+			$this->output( "ERROR - Could not open file: $list\n" );
 			exit( 1 );
 		} else {
 			$this->output( "Reading from $list\n" );
