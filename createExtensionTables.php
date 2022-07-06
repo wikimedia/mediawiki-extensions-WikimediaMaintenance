@@ -85,8 +85,8 @@ class CreateExtensionTables extends Maintenance {
 							" be created on the project database, which is the scope of this script."
 					);
 				}
-				$files = [ 'flow.sql' ];
-				$path = "$IP/extensions/Flow/sql";
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/Flow/sql/mysql";
 				break;
 
 			case 'growthexperiments':
