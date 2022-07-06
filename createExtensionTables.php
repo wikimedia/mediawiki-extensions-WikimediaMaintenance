@@ -86,7 +86,7 @@ class CreateExtensionTables extends Maintenance {
 					);
 				}
 				$files = [ 'flow.sql' ];
-				$path = "$IP/extensions/Flow";
+				$path = "$IP/extensions/Flow/sql";
 				break;
 
 			case 'growthexperiments':
