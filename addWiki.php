@@ -164,7 +164,7 @@ class AddWiki extends Maintenance {
 			$echoLB->closeConnection( $conn );
 
 			$echoDbW = $echoLB->getMaintenanceConnectionRef( DB_PRIMARY );
-			$echoDbW->sourceFile( "$IP/extensions/Echo/echo.sql" );
+			$echoDbW->sourceFile( "$IP/extensions/Echo/sql/echo.sql" );
 		}
 
 		if ( !in_array( 'extstore', $skipClusters, true ) ) {
