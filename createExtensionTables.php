@@ -74,7 +74,7 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'flaggedrevs':
-				$files = [ 'FlaggedRevs.sql' ];
+				$files = [ 'tables-generated.sql' ];
 				$path = "$IP/extensions/FlaggedRevs/backend/schema/mysql";
 				break;
 
