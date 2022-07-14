@@ -126,8 +126,8 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'oauth':
-				$files = [ 'OAuth.sql' ];
-				$path = "$IP/extensions/OAuth/schema";
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/OAuth/schema/mysql";
 				break;
 
 			case 'ores':
