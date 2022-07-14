@@ -292,7 +292,7 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/Math/sql/mysql/mathoid.sql" );
 		$dbw->sourceFile( "$IP/extensions/TimedMediaHandler/sql/tables-generated.sql" );
 		// Not actually enabled everywhere, but this is easier
-		$dbw->sourceFile( "$IP/extensions/GeoData/sql/externally-backed.sql" );
+		$dbw->sourceFile( "$IP/extensions/GeoData/sql/mysql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/SecurePoll/sql/mysql/tables.sql" );
 		$dbw->sourceFile( "$IP/extensions/Linter/sql/tables-generated.sql" );
