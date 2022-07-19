@@ -109,7 +109,6 @@ class AddWiki extends Maintenance {
 			$conn = $localLb->getConnection( DB_PRIMARY, [], $localLb::DOMAIN_ANY );
 			$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
-			$localLb->closeConnection( $conn );
 		}
 
 		// Close connections and make future ones use the new database as the local domain
@@ -136,7 +135,6 @@ class AddWiki extends Maintenance {
 			$conn = $growthLB->getConnection( DB_PRIMARY, [], $localLb::DOMAIN_ANY );
 			$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
-			$growthLB->closeConnection( $conn );
 
 			$growthDbw = $growthLB->getMaintenanceConnectionRef( DB_PRIMARY );
 			$files = [
@@ -161,7 +159,6 @@ class AddWiki extends Maintenance {
 			$conn = $echoLB->getConnection( DB_PRIMARY, [], $localLb::DOMAIN_ANY );
 			$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
-			$echoLB->closeConnection( $conn );
 
 			$echoDbW = $echoLB->getMaintenanceConnectionRef( DB_PRIMARY );
 			$echoDbW->sourceFile( "$IP/extensions/Echo/sql/mysql/tables-generated.sql" );
@@ -392,7 +389,6 @@ class AddWiki extends Maintenance {
 			// IF NOT EXISTS because two External Store clusters
 			// can use the same DB, but different blobs table entries.
 			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
-			$lb->closeConnection( $conn );
 
 			// Hack x2
 			/** @var ExternalStoreDB $store */
