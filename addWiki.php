@@ -209,8 +209,8 @@ class AddWiki extends Maintenance {
 		);
 
 		$sitesPopulation->setDB( $dbw );
-		$sitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
-		$sitesPopulation->mOptions[ 'force-protocol' ] = 'https';
+		$sitesPopulation->setOption( 'site-group', $siteGroup );
+		$sitesPopulation->setOption( 'force-protocol', 'https' );
 		$sitesPopulation->execute();
 
 		// Repopulate Cognate sites table (this should be idempotent)
@@ -220,7 +220,7 @@ class AddWiki extends Maintenance {
 				"$IP/extensions/Cognate/maintenance/populateCognateSites.php"
 			);
 			$cognateSitesPopulation->setDB( $dbw );
-			$cognateSitesPopulation->mOptions[ 'site-group' ] = $siteGroup;
+			$cognateSitesPopulation->setOption( 'site-group', $siteGroup );
 			$cognateSitesPopulation->execute();
 		}
 
@@ -231,9 +231,9 @@ class AddWiki extends Maintenance {
 		);
 
 		$setZones->setDB( $dbw );
-		$setZones->mOptions['backend'] = 'local-multiwrite';
+		$setZones->setOption( 'backend', 'local-multiwrite' );
 		if ( $this->isPrivate( $dbName ) ) {
-			$setZones->mOptions['private'] = 1;
+			$setZones->setOption( 'private', 1 );
 		}
 		$setZones->execute();
 
