@@ -1,7 +1,7 @@
 <?php
 /**
  * Why yes, this *is* another special-purpose Wikimedia maintenance script!
- * Should be fixed up and generalized.
+ * Should be fixed up (T48141) and generalized.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,21 +45,8 @@ class RenameWiki extends Maintenance {
 		$from = $this->getArg( 0 );
 		$to = $this->getArg( 1 );
 
-		$this->output( "Renaming core tables...\n" );
-		$this->output( "Sleeping 5 seconds...\n" );
-		sleep( 5 );
-
-		$dbw = wfGetDB( DB_PRIMARY );
-		foreach ( $dbw->tableNames() as $table ) {
-			$dbw->query( "ALTER TABLE {$from}.{$table} RENAME TO {$to}.{$table}", __METHOD__ );
-		}
-
-		$this->output( "done.\n" );
-
-		$this->output( "Waiting for replicas...\n" );
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-		$lbFactory->waitForReplication();
-		$this->output( "done.\n" );
+		$this->output( "Note: this script does not rename most database tables.\n" );
+		// the script used to pretend to rename core tables, see change I1b9fa6bc7d and I0ff249b620
 
 		$this->output( "Renaming blob tables in ES from $from to $to...\n" );
 		$this->output( "Sleeping 5 seconds...\n" );
