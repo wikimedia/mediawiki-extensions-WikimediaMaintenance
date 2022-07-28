@@ -291,7 +291,7 @@ class AddWiki extends Maintenance {
 		// Not actually enabled everywhere, but this is easier
 		$dbw->sourceFile( "$IP/extensions/GeoData/sql/mysql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/BetaFeatures/sql/tables-generated.sql" );
-		$dbw->sourceFile( "$IP/extensions/SecurePoll/sql/mysql/tables.sql" );
+		$dbw->sourceFile( "$IP/extensions/SecurePoll/sql/mysql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/Linter/sql/tables-generated.sql" );
 		$dbw->sourceFile( "$IP/extensions/DiscussionTools/sql/mysql/discussiontools_subscription.sql" );
 		$dbw->sourceFile( "$IP/extensions/DiscussionTools/sql/mysql/discussiontools_persistent.sql" );
