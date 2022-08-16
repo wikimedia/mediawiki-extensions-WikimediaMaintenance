@@ -24,6 +24,7 @@
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IMaintainableDatabase;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
@@ -63,6 +64,7 @@ class RemoveDeletedWikis extends Maintenance {
 	 * @param string $wiki
 	 */
 	private function doDeletes( $dbw, $table, $column, $wiki ) {
+		'@phan-var IMaintainableDatabase $dbw';
 		if ( !$dbw->tableExists( $table, __METHOD__ ) ) {
 			$this->fatalError( "Maintenance script cannot be run on this wiki as there is no $table table" );
 		}

@@ -1,4 +1,7 @@
 <?php
+
+use Wikimedia\Rdbms\IMaintainableDatabase;
+
 require_once __DIR__ . '/../WikimediaCommandLine.inc';
 
 $bad = 0;
@@ -7,6 +10,7 @@ $lbFactory = MediaWiki\MediaWikiServices::getInstance()->getDBLoadBalancerFactor
 foreach ( $wgLocalDatabases as $wiki ) {
 	$lb = $lbFactory->getMainLB( $wiki );
 	$db = $lb->getConnection( DB_REPLICA, [], $wiki );
+	'@phan-var IMaintainableDatabase $db';
 	if ( $db->tableExists( 'blob_tracking', 'testRctComplete' ) ) {
 		$notDone = $db->selectField( 'blob_tracking', '1',
 			[ 'bt_moved' => 0 ], 'testRctComplete' );
