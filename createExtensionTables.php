@@ -50,7 +50,8 @@ class CreateExtensionTables extends Maintenance {
 
 			case 'discussiontools':
 				$files = [
-					'discussiontools_subscription' => 'discussiontools_subscription.sql'
+					'discussiontools_subscription' => 'discussiontools_subscription.sql',
+					'discussiontools_items' => 'discussiontools_persistent.sql',
 				];
 				$path = "$IP/extensions/DiscussionTools/sql/mysql";
 				break;
