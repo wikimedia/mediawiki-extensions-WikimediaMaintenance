@@ -90,7 +90,6 @@ class RenameInvalidUsernames extends Maintenance {
 
 		$oldUser = User::newFromRow( $row );
 
-		// @phan-suppress-next-line SecurityCheck-SQLInjection
 		$caUser = new CentralAuthUser( $oldUser->getName(), CentralAuthUser::READ_LATEST );
 		$maintScript = User::newFromName( User::MAINTENANCE_SCRIPT_USER );
 		$session = [
@@ -134,7 +133,6 @@ class RenameInvalidUsernames extends Maintenance {
 			$newUser = User::newFromName(
 				$newName ?? 'Invalid username ' . (string)$oldUser->getId() . $suffix, 'usable'
 			);
-			// @phan-suppress-next-line SecurityCheck-SQLInjection
 			$newCAUser = new CentralAuthUser( $newUser->getName(), CentralAuthUser::READ_LATEST );
 			if ( $newCAUser->exists() ) {
 				$this->output( "ERROR: {$newCAUser->getName()} already exists!\n" );
