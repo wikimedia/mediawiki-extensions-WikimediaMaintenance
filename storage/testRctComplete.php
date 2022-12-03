@@ -2,7 +2,7 @@
 
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
-require_once __DIR__ . '/../WikimediaCommandLine.inc';
+require_once __DIR__ . '/../WikimediaCommandLineInc.php';
 
 $bad = 0;
 $good = 0;

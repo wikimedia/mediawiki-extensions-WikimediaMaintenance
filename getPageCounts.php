@@ -20,7 +20,7 @@
  * @ingroup Wikimedia
  */
 
-require_once __DIR__ . '/WikimediaCommandLine.inc';
+require_once __DIR__ . '/WikimediaCommandLineInc.php';
 
 use MediaWiki\MediaWikiServices;
 
