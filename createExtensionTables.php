@@ -89,6 +89,11 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Flow/sql/mysql";
 				break;
 
+			case 'geodata':
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/GeoData/sql/mysql";
+				break;
+
 			case 'growthexperiments':
 				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 				$geLB = $wgGEDatabaseCluster
