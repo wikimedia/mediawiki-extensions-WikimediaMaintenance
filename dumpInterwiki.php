@@ -310,7 +310,8 @@ class DumpInterwiki extends Maintenance {
 
 		// Extract the intermap from meta
 		$url = 'https://meta.wikimedia.org/w/index.php?title=Interwiki_map&action=raw';
-		$intermap = Http::get( $url, [ 'timeout' => 30 ], __METHOD__ );
+		$intermap = MediaWikiServices::getInstance()->getHttpRequestFactory()
+			->get( $url, [ 'timeout' => 30 ], __METHOD__ );
 		$lines = array_map( 'trim', explode( "\n", trim( $intermap ) ) );
 
 		if ( !$lines || count( $lines ) < 2 ) {
