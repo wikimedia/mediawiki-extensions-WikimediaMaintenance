@@ -8,7 +8,7 @@
 // Use WikimediaCommandLine.inc instead of WikimediaMaintenance so that the code
 // can be parsed after the autoloader is started, so that we can have
 // SanityCheckRequest in the same file as the execution code.
-require_once __DIR__ . '/WikimediaCommandLine.inc';
+require_once __DIR__ . '/WikimediaCommandLineInc.php';
 
 class SanityCheckRequest extends FauxRequest {
 	/** @var Title */
