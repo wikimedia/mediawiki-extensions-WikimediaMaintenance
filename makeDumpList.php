@@ -17,7 +17,8 @@ class MakeDumpList extends Maintenance {
 	private $templates = [];
 
 	public function execute() {
-		$linkBatch = new LinkBatch;
+		$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
+		$linkBatch = $linkBatchFactory->newLinkBatch();
 		$batchSize = 0;
 		while ( ( $line = fgets( STDIN ) ) !== false ) {
 			$line = trim( $line );
@@ -32,7 +33,7 @@ class MakeDumpList extends Maintenance {
 			$batchSize++;
 			if ( $batchSize > 100 ) {
 				$this->doBatch( $linkBatch );
-				$linkBatch = new LinkBatch;
+				$linkBatch = $linkBatchFactory->newLinkBatch();
 				$batchSize = 0;
 			}
 		}
