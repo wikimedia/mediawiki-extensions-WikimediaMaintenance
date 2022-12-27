@@ -84,8 +84,6 @@ class AddWiki extends Maintenance {
 		$domain = $this->getArg( 3 );
 		$skipClusters = explode( ',', $this->getOption( 'skipclusters', '' ) );
 
-		$languageNames = Language::fetchLanguageNames();
-
 		if ( $siteGroup === 'wiktionary' && strpos( $wgDBname, 'wiktionary' ) === false ) {
 			$this->fatalError(
 				'Wiktionaries must be created using --wiki mhwiktionary ' .
@@ -93,12 +91,13 @@ class AddWiki extends Maintenance {
 			);
 		}
 
+		$services = MediaWikiServices::getInstance();
+		$languageNames = $services->getLanguageNameUtils()->getLanguageNames();
 		if ( !isset( $languageNames[$lang] ) ) {
 			$this->fatalError( "Language $lang not found in Names.php" );
 		}
 		$name = $languageNames[$lang];
 
-		$services = MediaWikiServices::getInstance();
 		$lbFactory = $services->getDBLoadBalancerFactory();
 		$localLb = $lbFactory->getMainLB();
 
