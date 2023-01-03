@@ -48,6 +48,11 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/Babel/sql";
 				break;
 
+			case 'checkuser':
+				$files = [ 'tables-generated.sql' ];
+				$path = "$IP/extensions/CheckUser/schema/mysql";
+				break;
+
 			case 'discussiontools':
 				$files = [
 					'discussiontools_subscription' => 'discussiontools_subscription.sql',
