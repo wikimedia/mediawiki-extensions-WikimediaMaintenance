@@ -10,6 +10,7 @@ $cfg['directory_list'] = array_merge(
 	[
 		// all files from the root and the folders
 		'.',
+		'../../extensions/AbuseFilter',
 		'../../extensions/CentralAuth',
 		'../../extensions/CirrusSearch',
 		'../../extensions/cldr',
@@ -24,6 +25,7 @@ $cfg['exclude_analysis_directory_list'] = array_merge(
 	[
 		// all is coming from the vendor in mediawiki/core
 		'vendor',
+		'../../extensions/AbuseFilter',
 		'../../extensions/CentralAuth',
 		'../../extensions/CirrusSearch',
 		'../../extensions/cldr',
