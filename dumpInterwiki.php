@@ -112,8 +112,6 @@ class DumpInterwiki extends Maintenance {
 		'dk' => 'da',
 		'epo' => 'eo',
 		'jp' => 'ja',
-		'minnan' => 'zh-min-nan',
-		'zh-cfr' => 'zh-min-nan',
 		'zh-cn' => 'zh',
 		'zh-tw' => 'zh',
 		# Real ISO language codes to our fake ones
