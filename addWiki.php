@@ -74,7 +74,8 @@ class AddWiki extends Maintenance {
 		global $IP, $wmgVersionNumber, $wmgAddWikiNotify,
 			$wgPasswordSender, $wgDBname, $wgEchoCluster, $wgGEDatabaseCluster;
 
-		if ( !$wmgVersionNumber ) { // set in CommonSettings.php
+		// set in CommonSettings.php
+		if ( !$wmgVersionNumber ) {
 			$this->fatalError( '$wmgVersionNumber is not set, please use MWScript.php wrapper.' );
 		}
 
@@ -115,7 +116,7 @@ class AddWiki extends Maintenance {
 
 		// Get a connection to the new database
 		$dbw = $localLb->getMaintenanceConnectionRef( DB_PRIMARY );
-		if ( $dbw->getDBname() !== $dbName ) { // sanity
+		if ( $dbw->getDBname() !== $dbName ) {
 			$this->fatalError( "Expected connection to '$dbName', not '{$dbw->getDBname()}'" );
 		}
 
@@ -242,7 +243,8 @@ class AddWiki extends Maintenance {
 		$wgConf->wikis[] = $dbName;
 		$cache = $services->getMainWANObjectCache();
 		$cache->delete( $cache->makeGlobalKey( 'massmessage', 'urltodb' ) );
-		MediaWiki\MassMessage\Lookup\DatabaseLookup::getDBName( '' ); // Forces re-cache
+		// Forces re-cache
+		MediaWiki\MassMessage\Lookup\DatabaseLookup::getDBName( '' );
 
 		$user = getenv( 'SUDO_USER' );
 		$time = wfTimestamp( TS_RFC2822 );
@@ -298,7 +300,7 @@ class AddWiki extends Maintenance {
 		// most wikis are wikibase client wikis and no harm to adding this everywhere
 		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/mysql/entity_usage.sql" );
 
-		if ( self::isPrivate( $dbName )
+		if ( $this->isPrivate( $dbName )
 			&& in_array( $dbName, MWWikiversions::readDbListFile( 'flow' ) )
 		) {
 			// For private wikis, we set $wgFlowDefaultWikiDb = false
@@ -332,7 +334,7 @@ class AddWiki extends Maintenance {
 				break;
 		}
 
-		if ( self::isPrivateOrFishbowl( $dbName ) ) {
+		if ( $this->isPrivateOrFishbowl( $dbName ) ) {
 			$dbw->sourceFile( "$IP/extensions/OATHAuth/sql/mysql/tables-generated.sql" );
 		}
 
