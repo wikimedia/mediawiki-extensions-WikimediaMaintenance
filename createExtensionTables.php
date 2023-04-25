@@ -22,6 +22,7 @@
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\WikiMap\WikiMap;
 
 /**
  * Creates the necessary tables to install various extensions on a WMF wiki
