@@ -188,7 +188,7 @@ class SendBulkEmails extends Maintenance {
 		$this->excludeBlocked = $this->hasOption( 'exclude-blocked' );
 		$this->dryRun = $this->hasOption( 'dry-run' );
 
-		Hooks::register(
+		MediaWikiServices::getInstance()->getHookContainer()->register(
 			'UserMailerTransformMessage',
 			[ $this, 'onUserMailerTransformMessage' ]
 		);
