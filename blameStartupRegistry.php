@@ -19,6 +19,7 @@
  * @ingroup Wikimedia
  */
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\WikiMap\WikiMap;

@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\Request\FauxRequest;
+
 /**
  * Pre-deployment sanity check.
  *
