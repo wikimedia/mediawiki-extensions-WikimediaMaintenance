@@ -471,7 +471,6 @@ class DumpInterwiki extends Maintenance {
 	/**
 	 * @param array $entry
 	 * @param string $source
-	 * @throws MWException
 	 */
 	private function makeLink( $entry, $source ) {
 		if ( isset( self::$prefixRewrites[$source] )
