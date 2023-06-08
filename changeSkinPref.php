@@ -57,8 +57,8 @@ class ChangeSkinPref extends Maintenance {
 			$userFactory->newFromId( $userName ) :
 			$userFactory->newFromName( $userName );
 		$wiki = WikiMap::getCurrentWikiId();
-		if ( !$user || $user->getId() === 0 ) {
-			$this->fatalError( "User $userName does not exist or is invalid." );
+		if ( !$user || !$user->isNamed() ) {
+			$this->fatalError( "User $userName does not exist or is invalid or is a temporary user." );
 		}
 		if ( $this->hasOption( 'clear' ) ) {
 			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
