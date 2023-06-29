@@ -1,13 +1,14 @@
 <?php
 
+use MediaWiki\Extension\CentralAuth\CentralAuthDatabaseManager;
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
-use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUser;
-use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserDatabaseUpdates;
+use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameFactory;
 use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserLogger;
 use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserStatus;
 use MediaWiki\Extension\CentralAuth\GlobalRename\LocalRenameJob\LocalRenameUserJob;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ILBFactory;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
@@ -25,11 +26,16 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  */
 class RenameInvalidUsernames extends Maintenance {
 
+	private ILBFactory $lbFactory;
+	private CentralAuthDatabaseManager $caDatabaseManager;
+	private GlobalRenameFactory $globalRenameFactory;
+
 	/** @var string|null */
 	protected $reason;
 
 	public function __construct() {
 		parent::__construct();
+		$this->requireExtension( 'CentralAuth' );
 		$this->addDescription( 'Rename invalid usernames to a generic one based on their user id' );
 		$this->setBatchSize( 30 );
 		$this->addOption( 'list',
@@ -37,6 +43,13 @@ class RenameInvalidUsernames extends Maintenance {
 			. 'Column 1 is the wiki, 2 the user ID, and (optional) 3 is the new name.',
 			true, true );
 		$this->addOption( 'reason', 'Rename reason to use for the renames', true, true );
+	}
+
+	private function initServices() {
+		$services = MediaWikiServices::getInstance();
+		$this->lbFactory = $services->getDBLoadBalancerFactory();
+		$this->caDatabaseManager = $services->get( 'CentralAuth.CentralAuthDatabaseManager' );
+		$this->globalRenameFactory = $services->get( 'CentralAuth.GlobalRenameFactory' );
 	}
 
 	public function execute() {
@@ -51,7 +64,6 @@ class RenameInvalidUsernames extends Maintenance {
 		}
 		$count = 0;
 		$batchSize = $this->getBatchSize();
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		while ( $line = trim( fgets( $file ) ) ) {
 			$this->output( "$line\n" );
 			// xxwiki	#####
@@ -61,8 +73,8 @@ class RenameInvalidUsernames extends Maintenance {
 			if ( $count > $batchSize ) {
 				$count = 0;
 				$this->output( "Sleep for 5 and waiting for replicas...\n" );
-				CentralAuthServices::getDatabaseManager()->waitForReplication();
-				$lbFactory->waitForReplication();
+				$this->caDatabaseManager->waitForReplication();
+				$this->lbFactory->waitForReplication();
 				sleep( 5 );
 				$this->output( "done.\n" );
 				$count = $this->getCurrentRenameCount();
@@ -107,27 +119,22 @@ class RenameInvalidUsernames extends Maintenance {
 
 		$jobQueueGroupFactory = MediaWikiServices::getInstance()->getJobQueueGroupFactory();
 		if ( $caUser->exists() && $caUser->isAttached() ) {
-			$newUser = User::newFromName(
-				$newName ?? 'Invalid username ' . (string)$caUser->getId(), 'usable'
-			);
-			$newCAUser = CentralAuthUser::getInstance( $newUser );
+			$newName = $newName ?? 'Invalid username ' . (string)$caUser->getId();
+
+			$newCAUser = CentralAuthUser::getInstanceByName( $newName );
 			if ( $newCAUser->exists() ) {
 				$this->output( "ERROR: {$newCAUser->getName()} already exists!\n" );
 				return;
 			}
-			$globalRenameUser = new GlobalRenameUser(
-				$maintScript,
-				$oldUser,
-				CentralAuthUser::getInstance( $oldUser ),
-				$newUser,
-				CentralAuthUser::getInstance( $newUser ),
-				new GlobalRenameUserStatus( $newUser->getName() ),
-				$jobQueueGroupFactory,
-				new GlobalRenameUserDatabaseUpdates( CentralAuthServices::getDatabaseManager() ),
-				new GlobalRenameUserLogger( $maintScript ),
-				$session
-			);
-			$globalRenameUser->rename( $data );
+
+			$this->globalRenameFactory
+				->newGlobalRenameUser(
+					$maintScript,
+					$caUser,
+					$newName
+				)
+				->withSession( $session )
+				->rename( $data );
 		} else { // Not attached, do a promote to global rename
 			$suffix = '~' . str_replace( '_', '-', $wiki );
 			$newUser = User::newFromName(
