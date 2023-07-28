@@ -88,6 +88,12 @@ class DumpInterwiki extends Maintenance {
 					. $this->end . '/wiki/$1',
 				1
 			],
+			[
+				'f',
+				$this->urlprotocol . ( $wmgRealm === 'labs' ? '//wikifunctions' : '//www.wikifunctions' )
+					. $this->end . '/wiki/$1',
+				1
+			],
 		];
 	}
 
