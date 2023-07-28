@@ -332,7 +332,7 @@ class DumpInterwiki extends Maintenance {
 				$url = $matches[2];
 				if ( preg_match(
 					'/(?:\/\/|\.)(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|' .
-						'wikinews|wikiversity|wikivoyage|wikimediafoundation|mediawiki|wikidata)\.org/',
+						'wikinews|wikiversity|wikivoyage|wikimediafoundation|mediawiki|wikidata|wikifunctions)\.org/',
 					$url )
 				) {
 					$local = 1;
