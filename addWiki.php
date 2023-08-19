@@ -32,6 +32,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use Cognate\PopulateCognateSites;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
 use Wikibase\Lib\Maintenance\PopulateSitesTable;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\LBFactory;

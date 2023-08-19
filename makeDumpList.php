@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 

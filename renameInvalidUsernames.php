@@ -8,6 +8,7 @@ use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserStatus;
 use MediaWiki\Extension\CentralAuth\GlobalRename\LocalRenameJob\LocalRenameUserJob;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILBFactory;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
