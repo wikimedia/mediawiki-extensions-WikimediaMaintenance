@@ -56,7 +56,7 @@ class BlameStartupRegistry extends Maintenance {
 		echo "Checking " . count( $moduleNames ) . " modules...\n\n";
 
 		$startupBreakdown = [
-			self::COMP_UNKNOWN => [ 'modules' => 0, 'bytes' => 0, 'names' => [] ],
+			self::COMP_UNKNOWN => [ 'modules' => 0, 'startupBytes' => 0, 'names' => [] ],
 		];
 		$startupCount = 0;
 		$startupBytesTotal = 0;
@@ -185,7 +185,6 @@ class BlameStartupRegistry extends Maintenance {
 
 			$startupBreakdown[$component]['modules'] = ( $startupBreakdown[$component]['modules'] ?? 0 ) + 1;
 			$startupBreakdown[$component]['startupBytes'] =
-				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable https://github.com/phan/phan/issues/4617
 				( $startupBreakdown[$component]['startupBytes'] ?? 0 ) + $startupBytes;
 			$startupCount += 1;
 			$startupBytesTotal += $startupBytes;
