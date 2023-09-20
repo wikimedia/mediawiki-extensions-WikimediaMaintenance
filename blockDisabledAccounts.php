@@ -95,7 +95,7 @@ class BlockDisabledAccounts extends Maintenance {
 		$block->setTarget( $user );
 		$block->setBlocker( $scriptUser );
 		$block->setReason( $reason );
-		$block->mExpiry = 'infinity';
+		$block->setExpiry( 'infinity' );
 		$block->isEmailBlocked( true );
 		$block->isUsertalkEditAllowed( false );
 
