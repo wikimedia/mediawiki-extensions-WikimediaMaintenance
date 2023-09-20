@@ -311,13 +311,15 @@ class BlameStartupRegistry extends Maintenance {
 			}
 
 		};
+		$startupModule->setName( 'startup' );
 		$startupModule->setConfig( $rl->getConfig() );
 
 		// The modules=startup request requires use of only=scripts
 		$derivative = new RL\DerivativeContext( $context );
 		$derivative->setOnly( 'scripts' );
+		$derivative->setRaw( true );
 
-		return $startupModule->getScript( $derivative );
+		return $rl->makeModuleResponse( $derivative, [ 'startup' => $startupModule ] );
 	}
 
 	private static function trimArray( array &$array ) {
