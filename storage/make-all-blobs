@@ -22,10 +22,12 @@ fi
 # Assumes password is the same everywhere
 pass=$(echo 'echo $wgDBadminpassword;' | mwscript eval.php --wiki="enwiki");
 
+username=$(echo 'echo $wgDBadminuser;' | mwscript eval.php --wiki="enwiki");
+
 sqlfile="${PWD%/*/*/*}/maintenance/storage/blobs.sql"
 
 for db in `grep -v '^#' <$FILE`;do
 	echo "$db"
-	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u wikiadmin "-p$pass" -h $server && \
-	sed "s/blobs\>/$table/" $sqlfile | mysql -u wikiadmin "-p$pass" -h $server $db
+	echo "CREATE DATABASE IF NOT EXISTS $db" | mysql -u $username "-p$pass" -h $server && \
+	sed "s/blobs\>/$table/" $sqlfile | mysql -u $username "-p$pass" -h $server $db
 done
