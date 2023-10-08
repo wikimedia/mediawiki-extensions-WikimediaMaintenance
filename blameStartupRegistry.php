@@ -251,7 +251,7 @@ class BlameStartupRegistry extends Maintenance {
 						sprintf( 'resourceloader_startup_modules.%s.%s',
 							$wikiFmt, $componentFmt
 						),
-						(int)$info['modules']
+						$info['modules']
 					);
 				}
 				if ( $info['startupBytes'] > 0 ) {
@@ -259,17 +259,17 @@ class BlameStartupRegistry extends Maintenance {
 						sprintf( 'resourceloader_startup_bytes.%s.%s',
 							$wikiFmt, $componentFmt
 						),
-						(int)$info['startupBytes']
+						$info['startupBytes']
 					);
 				}
 			}
 			$stats->gauge(
 				sprintf( 'resourceloader_startup_modules_total.%s', $wikiFmt ),
-				(int)$startupCount
+				$startupCount
 			);
 			$stats->gauge(
 				sprintf( 'resourceloader_startup_bytes_total.%s', $wikiFmt ),
-				(int)$startupBytesTotal
+				$startupBytesTotal
 			);
 			foreach ( $contentBreakdown as $name => $info ) {
 				$componentFmt = strtr( $info['component'], '.', '_' );
@@ -278,13 +278,13 @@ class BlameStartupRegistry extends Maintenance {
 					sprintf( 'resourceloader_module_transfersize_bytes.%s.%s.%s',
 						$wikiFmt, $componentFmt, $nameFmt
 					),
-					(int)$info['transferSize']
+					$info['transferSize']
 				);
 				$stats->gauge(
 					sprintf( 'resourceloader_module_decodedsize_bytes.%s.%s.%s',
 						$wikiFmt, $componentFmt, $nameFmt
 					),
-					(int)$info['decodedSize']
+					$info['decodedSize']
 				);
 			}
 
