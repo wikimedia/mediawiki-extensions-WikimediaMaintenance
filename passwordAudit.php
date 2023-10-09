@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
+use MediaWiki\MainConfigNames;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
@@ -43,8 +44,11 @@ class PasswordAudit extends Maintenance {
 
 			$this->output( "Working on '$username'..." );
 
-			$passwordFactory = new PasswordFactory();
-			$passwordFactory->init( RequestContext::getMain()->getConfig() );
+			$config = RequestContext::getMain()->getConfig();
+			$passwordFactory = new PasswordFactory(
+				$config->get( MainConfigNames::PasswordConfig ),
+				$config->get( MainConfigNames::PasswordDefault )
+			);
 
 			if ( $ca ) {
 				$hash = $dbr->selectField(
