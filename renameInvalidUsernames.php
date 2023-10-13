@@ -120,7 +120,7 @@ class RenameInvalidUsernames extends Maintenance {
 
 		$jobQueueGroupFactory = MediaWikiServices::getInstance()->getJobQueueGroupFactory();
 		if ( $caUser->exists() && $caUser->isAttached() ) {
-			$newName = $newName ?? 'Invalid username ' . (string)$caUser->getId();
+			$newName ??= 'Invalid username ' . (string)$caUser->getId();
 
 			$newCAUser = CentralAuthUser::getInstanceByName( $newName );
 			if ( $newCAUser->exists() ) {
