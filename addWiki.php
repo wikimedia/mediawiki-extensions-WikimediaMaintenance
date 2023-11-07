@@ -46,7 +46,7 @@ class AddWiki extends Maintenance {
 		$this->addArg( 'dbname', 'Name of database to create, e.g. enwiki' );
 		$this->addArg( 'domain', 'Domain name of the wiki, e.g. en.wikipedia.org' );
 		$this->addOption( 'skipclusters',
-			'Comma-separated DB clusters to skip schema changes for (main,extstore,echo,growth)',
+			'Comma-separated DB clusters to skip schema changes for (main,extstore,echo,growth,mediamoderation)',
 			false,
 			true
 		);
@@ -72,8 +72,8 @@ class AddWiki extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wmgVersionNumber, $wmgAddWikiNotify,
-			$wgPasswordSender, $wgDBname, $wgEchoCluster, $wgGEDatabaseCluster;
+		global $IP, $wmgVersionNumber, $wmgAddWikiNotify, $wgPasswordSender,
+			   $wgDBname, $wgEchoCluster, $wgGEDatabaseCluster, $wgVirtualDomainsMapping;
 
 		// set in CommonSettings.php
 		if ( !$wmgVersionNumber ) {
@@ -163,6 +163,23 @@ class AddWiki extends Maintenance {
 
 			$echoDbW = $echoLB->getMaintenanceConnectionRef( DB_PRIMARY );
 			$echoDbW->sourceFile( "$IP/extensions/Echo/sql/mysql/tables-generated.sql" );
+		}
+
+		if ( !in_array( 'mediamoderation', $skipClusters, true ) ) {
+			// Init the MediaModeration table.
+			$mmLB = $localLb;
+			if ( isset( $wgVirtualDomainsMapping['virtual-mediamoderation'] ) ) {
+				$config = $wgVirtualDomainsMapping['virtual-mediamoderation'];
+				if ( isset( $config['cluster'] ) ) {
+					$mmLB = $lbFactory->getExternalLB( $config['cluster'] );
+				}
+			}
+			$conn = $mmLB->getConnection( DB_PRIMARY, [], $localLb::DOMAIN_ANY );
+			$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
+			$conn->query( "CREATE DATABASE IF NOT EXISTS $dbName", __METHOD__ );
+
+			$mmDbW = $mmLB->getMaintenanceConnectionRef( DB_PRIMARY );
+			$mmDbW->sourceFile( "$IP/extensions/MediaModeration/schema/mysql/tables-generated.sql" );
 		}
 
 		if ( !in_array( 'extstore', $skipClusters, true ) ) {
