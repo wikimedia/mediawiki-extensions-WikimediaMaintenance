@@ -141,7 +141,9 @@ class CreateExtensionTables extends Maintenance {
 
 				$dbw = $mmLB->getConnection( DB_PRIMARY );
 
-				$files = [ 'tables-generated.sql' ];
+				$files = [
+					'mediamoderation_scan' => 'tables-generated.sql'
+				];
 				$path = "$IP/extensions/MediaModeration/schema/mysql";
 				break;
 
