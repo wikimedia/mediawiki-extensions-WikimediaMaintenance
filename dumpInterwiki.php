@@ -29,28 +29,41 @@ use MediaWiki\MediaWikiServices;
  * @ingroup Wikimedia
  */
 class DumpInterwiki extends Maintenance {
-	/**
-	 * @var array|null
-	 */
-	protected $langlist;
-	/**
-	 * @var array|null
-	 */
-	protected $dblist;
-	/**
-	 * @var array|null
-	 */
-	protected $specials;
-	/**
-	 * @var array|null
-	 */
-	protected $prefixLists;
-	/** @var string */
-	protected $urlprotocol;
-	/**
-	 * @var string
-	 */
-	protected $end = '.org';
+	protected ?array $langlist;
+	protected ?array $dblist;
+	protected ?array $specials;
+	protected string $realm;
+	protected string $mwconfigDir;
+	protected ?array $prefixLists;
+	protected string $urlprotocol;
+	protected string $end;
+
+	public function __construct() {
+		parent::__construct();
+		$this->addDescription( "Build constant slightly compact database of interwiki prefixes." );
+		$this->addOption( 'mwconfig-dir',
+			'Path to operations/mediawiki-config checkout. '
+				. 'Used for langlist, all.dblist and special.dblist',
+			false, true );
+		$this->addOption( 'target-realm', 'One of "labs" (beta.wmflabs.org) or "production".',
+			false, true );
+		$this->addOption( 'insecure', 'Output wikimedia interwiki urls using HTTP instead of HTTPS',
+			false, false );
+
+		// Set --mwconfig-dir and --target-realm automatically in Beta Cluster
+		// to ease debugging and for workflow backward compatibility.
+		global $wmgRealm;
+		$this->realm = $this->getOption( 'target-realm', $wmgRealm === 'labs' ? 'labs' : 'production' );
+		$this->mwconfigDir = $this->getOption( 'mwconfig-dir',
+			getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki' );
+
+		$this->end = $this->realm === 'labs' ? '.beta.wmflabs.org' : '.org';
+
+		if ( !file_exists( "$this->mwconfigDir/dblists" ) ) {
+			$this->fatalError( "--mwconfig-dir is unset or invalid. "
+				. "Unable to find dblists directory in $this->mwconfigDir" );
+		}
+	}
 
 	/**
 	 * Returns an array of multi-language sites
@@ -77,21 +90,19 @@ class DumpInterwiki extends Maintenance {
 	 * @return array
 	 */
 	protected function getExtraLinks() {
-		global $wmgRealm;
-
 		return [
 			[ 'c', $this->urlprotocol . '//commons.wikimedia' . $this->end . '/wiki/$1', 1 ],
 			[ 'm', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
 			[ 'meta', $this->urlprotocol . '//meta.wikimedia' . $this->end . '/wiki/$1', 1 ],
 			[
 				'd',
-				$this->urlprotocol . ( $wmgRealm === 'labs' ? '//wikidata' : '//www.wikidata' )
+				$this->urlprotocol . ( $this->realm === 'labs' ? '//wikidata' : '//www.wikidata' )
 					. $this->end . '/wiki/$1',
 				1
 			],
 			[
 				'f',
-				$this->urlprotocol . ( $wmgRealm === 'labs' ? '//wikifunctions' : '//www.wikifunctions' )
+				$this->urlprotocol . ( $this->realm === 'labs' ? '//wikifunctions' : '//www.wikifunctions' )
 					. $this->end . '/wiki/$1',
 				1
 			],
@@ -223,21 +234,6 @@ class DumpInterwiki extends Maintenance {
 		}
 	}
 
-	public function __construct() {
-		parent::__construct();
-		$this->addDescription( "Build constant slightly compact database of interwiki prefixes." );
-		$this->addOption( 'langlist', 'File with one language code per line', false, true );
-		$this->addOption( 'dblist', 'File with one db per line', false, true );
-		$this->addOption( 'specialdbs', "File with one 'special' db per line", false, true );
-		$this->addOption( 'insecure', 'Output wikimedia interwiki urls using HTTP instead of HTTPS',
-			false, false );
-
-		global $wmgRealm;
-		if ( $wmgRealm === 'labs' ) {
-			$this->end = '.beta.wmflabs.org';
-		}
-	}
-
 	private function removeComments( $array ) {
 		return array_filter( $array, static function ( $element ) {
 			return strpos( $element, '#' ) !== 0;
@@ -245,33 +241,22 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	public function execute() {
-		global $wmgRealm;
-		$root = getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki';
-
-		if ( !file_exists( "$root/dblists" ) ) {
-			$this->fatalError( "Can't run script: MEDIAWIKI_DEPLOYMENT_DIR environment variable"
-				. " must be set to MediaWiki root directory." );
-		}
-
-		$dblistSpecial = "$root/dblists/special.dblist";
-		$dblistAll = $wmgRealm === 'labs' ? "$root/dblists/all-labs.dblist" : "$root/dblists/all.dblist";
-		$langlist = $wmgRealm === 'labs' ? "$root/langlist-labs" : "$root/langlist";
+		$dblistSpecial = "{$this->mwconfigDir}/dblists/special.dblist";
+		$dblistAll = $this->realm === 'labs'
+			? "{$this->mwconfigDir}/dblists/all-labs.dblist"
+			: "{$this->mwconfigDir}/dblists/all.dblist";
+		$langlist = $this->realm === 'labs'
+			? "{$this->mwconfigDir}/langlist-labs"
+			: "{$this->mwconfigDir}/langlist";
 
 		// List of language prefixes likely to be found in multi-language sites
-		$this->langlist = array_map( "trim", file( $this->getOption(
-			'langlist',
-			$langlist
-		) ) );
+		$this->langlist = array_map( "trim", file( $langlist ) );
 
 		// List of all database names
-		$this->dblist = $this->removeComments(
-			array_map( "trim", file( $this->getOption( 'dblist', $dblistAll ) ) )
-		);
+		$this->dblist = $this->removeComments( array_map( "trim", file( $dblistAll ) ) );
 
 		// Special-case databases
-		$this->specials = $this->removeComments( array_flip(
-			array_map( "trim", file( $this->getOption( 'specialdbs', $dblistSpecial ) ) )
-		) );
+		$this->specials = $this->removeComments( array_flip( array_map( "trim", file( $dblistSpecial ) ) ) );
 
 		// TODO: Use Wikimedia\StaticArrayWriter.
 		$this->output( "<?php\n" );
@@ -290,8 +275,6 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	private function getRebuildInterwikiDump() {
-		global $wmgRealm;
-
 		$sites = $this->getSites();
 		$extraLinks = $this->getExtraLinks();
 
@@ -300,7 +283,7 @@ class DumpInterwiki extends Maintenance {
 		foreach ( $this->langlist as $lang ) {
 			$reserved[$lang] = 1;
 		}
-		if ( $wmgRealm === 'production' ) {
+		if ( $this->realm === 'production' ) {
 			foreach ( self::$languageAliases as $alias => $lang ) {
 				$reserved[$alias] = 1;
 			}
@@ -440,8 +423,6 @@ class DumpInterwiki extends Maintenance {
 	 * @param string $source
 	 */
 	private function makeLanguageLinks( &$site, $source ) {
-		global $wmgRealm;
-
 		// Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
 			$this->makeLink(
@@ -451,7 +432,7 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		// Language aliases
-		if ( $wmgRealm === 'production' ) {
+		if ( $this->realm === 'production' ) {
 			foreach ( self::$languageAliases as $alias => $lang ) {
 				// Very special edge case: T214400
 				if ( $site->suffix === 'wiktionary' && $alias === 'yue' ) {
