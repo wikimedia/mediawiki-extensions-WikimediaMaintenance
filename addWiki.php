@@ -354,6 +354,7 @@ class AddWiki extends Maintenance {
 
 		if ( $this->isPrivateOrFishbowl( $dbName ) ) {
 			$dbw->sourceFile( "$IP/extensions/OATHAuth/sql/mysql/tables-generated.sql" );
+			$dbw->sourceFile( "$IP/extensions/LoginNotify/sql/mysql/tables-generated.sql" );
 		}
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)", __METHOD__ );
