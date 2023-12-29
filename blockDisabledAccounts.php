@@ -3,6 +3,8 @@
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\User\UserArray;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 

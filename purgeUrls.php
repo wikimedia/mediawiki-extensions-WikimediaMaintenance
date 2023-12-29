@@ -21,6 +21,8 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Deferred\CdnCacheUpdate;
+
 class PurgeUrls extends Maintenance {
 	public function __construct() {
 		parent::__construct();

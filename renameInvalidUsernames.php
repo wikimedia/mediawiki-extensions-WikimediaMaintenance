@@ -9,6 +9,7 @@ use MediaWiki\Extension\CentralAuth\GlobalRename\LocalRenameJob\LocalRenameUserJ
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Wikimedia\Rdbms\ILBFactory;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';

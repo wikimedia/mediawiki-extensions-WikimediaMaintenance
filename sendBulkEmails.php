@@ -22,7 +22,9 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 

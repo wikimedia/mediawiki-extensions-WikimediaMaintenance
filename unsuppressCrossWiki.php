@@ -5,6 +5,8 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\User\ActorMigration;
+use MediaWiki\User\User;
 use Wikimedia\Rdbms\DBReplicationWaitError;
 
 class UnsuppressCrossWiki extends Maintenance {
