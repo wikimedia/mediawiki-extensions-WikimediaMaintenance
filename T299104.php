@@ -22,6 +22,7 @@
  * @ingroup Wikimedia
  */
 
+use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\MediaWikiServices;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
@@ -67,10 +68,9 @@ class UpdateUserSkinPreferences extends Maintenance {
 			if ( ExtensionRegistry::getInstance()->isLoaded( 'CentralAuth' ) &&
 				ExtensionRegistry::getInstance()->isLoaded( 'GlobalPreferences' )
 			) {
-				$dbw = MediaWikiServices::getInstance()->get( 'CentralAuth.CentralAuthDatabaseManager' )
-					->getCentralDB( DB_PRIMARY );
-				$dbr = MediaWikiServices::getInstance()->get( 'CentralAuth.CentralAuthDatabaseManager' )
-					->getCentralDB( DB_REPLICA );
+				$caDbManager = CentralAuthServices::getDatabaseManager();
+				$dbw = $caDbManager->getCentralPrimaryDB();
+				$dbr = $caDbManager->getCentralReplicaDB();
 			} else {
 				$this->output( "This script cannot be run globally because the required extensions are missing:"
 					. " CentralAuth and GlobalPreferences." . PHP_EOL );

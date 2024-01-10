@@ -38,7 +38,7 @@ class MakeUserPrefixMailingList extends Maintenance {
 		$format = strtolower( $this->getOption( 'format', 'securepoll' ) );
 		$activeDays = $this->getOption( 'activedays' );
 
-		$dbc = CentralAuthServices::getDatabaseManager()->getCentralDB( DB_REPLICA );
+		$dbc = CentralAuthServices::getDatabaseManager()->getCentralReplicaDB();
 		$lbf = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$queryBuilder = $dbc->newSelectQueryBuilder()
 			->select( [ 'gu_name', 'gu_home_db', 'gu_email', 'global_lang' => 'gp_value' ] )
@@ -121,7 +121,7 @@ class MakeUserPrefixMailingList extends Maintenance {
 	 */
 	private function getActiveWiki( $userName, $activeDays ) {
 		$databaseManager = CentralAuthServices::getDatabaseManager();
-		$dbc = $databaseManager->getCentralDB( DB_REPLICA );
+		$dbc = $databaseManager->getCentralReplicaDB();
 		$wikis = $dbc->newSelectQueryBuilder()
 			->select( 'lu_wiki' )
 			->from( 'localuser' )
