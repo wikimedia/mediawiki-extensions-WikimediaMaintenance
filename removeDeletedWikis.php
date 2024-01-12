@@ -44,7 +44,7 @@ class RemoveDeletedWikis extends Maintenance {
 		}
 
 		$dbw = $this->getDB( DB_PRIMARY );
-		$cadbw = CentralAuthServices::getDatabaseManager()->getCentralDB( DB_PRIMARY );
+		$cadbw = CentralAuthServices::getDatabaseManager()->getCentralPrimaryDB();
 		foreach ( $wikis as $wiki ) {
 			$wiki = rtrim( $wiki );
 			$this->output( "$wiki:\n" );
