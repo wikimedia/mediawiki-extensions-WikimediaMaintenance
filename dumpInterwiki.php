@@ -249,7 +249,7 @@ class DumpInterwiki extends Maintenance {
 		$root = getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki';
 
 		if ( !file_exists( "$root/dblists" ) ) {
-			throw new Exception( "Can't run script: MEDIAWIKI_DEPLOYMENT_DIR environment variable"
+			$this->fatalError( "Can't run script: MEDIAWIKI_DEPLOYMENT_DIR environment variable"
 				. " must be set to MediaWiki root directory." );
 		}
 
