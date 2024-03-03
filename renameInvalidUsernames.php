@@ -4,7 +4,6 @@ use MediaWiki\Extension\CentralAuth\CentralAuthDatabaseManager;
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameFactory;
 use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserLogger;
-use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserStatus;
 use MediaWiki\Extension\CentralAuth\GlobalRename\LocalRenameJob\LocalRenameUserJob;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\MediaWikiServices;
@@ -147,13 +146,14 @@ class RenameInvalidUsernames extends Maintenance {
 				$this->output( "ERROR: {$newCAUser->getName()} already exists!\n" );
 				return;
 			}
-			$statuses = new GlobalRenameUserStatus( $oldUser->getName() );
-			$success = $statuses->setStatuses( [ [
-				'ru_wiki' => $wiki,
-				'ru_oldname' => $oldUser->getName(),
-				'ru_newname' => $newCAUser->getName(),
-				'ru_status' => 'queued'
-			] ] );
+			$success = $this->globalRenameFactory
+				->newGlobalRenameUserStatus( $oldUser->getName() )
+				->setStatuses( [ [
+					'ru_wiki' => $wiki,
+					'ru_oldname' => $oldUser->getName(),
+					'ru_newname' => $newCAUser->getName(),
+					'ru_status' => 'queued'
+				] ] );
 
 			if ( !$success ) {
 				$this->output(
