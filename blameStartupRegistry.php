@@ -242,50 +242,54 @@ class BlameStartupRegistry extends Maintenance {
 		if ( $this->hasOption( 'record-stats' ) ) {
 			echo "\n";
 			echo "Sending stats...\n";
-			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+			$stats = MediaWikiServices::getInstance()->getStatsFactory();
 			$wikiFmt = strtr( WikiMap::getCurrentWikiId(), '.', '_' );
+			$rlStartupModulesStats = $stats->getGauge( 'resourceloader_startup_modules' );
+			$rlStartupBytesStats = $stats->getGauge( 'resourceloader_startup_bytes' );
 			foreach ( $startupBreakdown as $component => $info ) {
 				$componentFmt = strtr( $component, '.', '_' );
 				if ( $info['modules'] > 0 ) {
-					$stats->gauge(
-						sprintf( 'resourceloader_startup_modules.%s.%s',
-							$wikiFmt, $componentFmt
-						),
-						$info['modules']
-					);
+					$rlStartupModulesStats
+						->setLabel( 'wiki', $wikiFmt )
+						->setLabel( 'component', $componentFmt )
+						->copyToStatsdAt( "resourceloader_startup_modules.$wikiFmt.$componentFmt" )
+						->set( $info['modules'] );
 				}
 				if ( $info['startupBytes'] > 0 ) {
-					$stats->gauge(
-						sprintf( 'resourceloader_startup_bytes.%s.%s',
-							$wikiFmt, $componentFmt
-						),
-						$info['startupBytes']
-					);
+					$rlStartupBytesStats
+						->setLabel( 'wiki', $wikiFmt )
+						->setLabel( 'component', $componentFmt )
+						->copyToStatsdAt( "resourceloader_startup_bytes.$wikiFmt.$componentFmt" )
+						->set( $info['startupBytes'] );
 				}
 			}
-			$stats->gauge(
-				sprintf( 'resourceloader_startup_modules_total.%s', $wikiFmt ),
-				$startupCount
-			);
-			$stats->gauge(
-				sprintf( 'resourceloader_startup_bytes_total.%s', $wikiFmt ),
-				$startupBytesTotal
-			);
+
+			$stats->getGauge( 'resourceloader_startup_total_modules' )
+				->setLabel( 'wiki', $wikiFmt )
+				->copyToStatsdAt( "resourceloader_startup_modules_total.$wikiFmt" )
+				->set( $startupCount );
+			$stats->getGauge( 'resourceloader_startup_total_bytes' )
+				->setLabel( 'wiki', $wikiFmt )
+				->copyToStatsdAt( "resourceloader_startup_bytes_total.$wikiFmt" )
+				->set( $startupBytesTotal );
+
+			$rlModuleTransferStats = $stats->getGauge( 'resourceloader_module_transfersize_bytes' );
+			$rlModuleDecodedBytesStats = $stats->getGauge( 'resourceloader_module_decodedsize_bytes' );
 			foreach ( $contentBreakdown as $name => $info ) {
 				$componentFmt = strtr( $info['component'], '.', '_' );
 				$nameFmt = strtr( $name, '.', '_' );
-				$stats->gauge(
-					sprintf( 'resourceloader_module_transfersize_bytes.%s.%s.%s',
-						$wikiFmt, $componentFmt, $nameFmt
-					),
-					$info['transferSize']
-				);
-				$stats->gauge(
-					sprintf( 'resourceloader_module_decodedsize_bytes.%s.%s.%s',
-						$wikiFmt, $componentFmt, $nameFmt
-					),
-					$info['decodedSize']
-				);
+				$rlModuleTransferStats
+					->setLabel( 'wiki', $wikiFmt )
+					->setLabel( 'component', $componentFmt )
+					->setLabel( 'name', $nameFmt )
+					->copyToStatsdAt( "resourceloader_module_transfersize_bytes.$wikiFmt.$componentFmt.$nameFmt" )
+					->set( $info['transferSize'] );
+				$rlModuleDecodedBytesStats
+					->setLabel( 'wiki', $wikiFmt )
+					->setLabel( 'component', $componentFmt )
+					->setLabel( 'name', $nameFmt )
+					->copyToStatsdAt( "resourceloader_module_decodedsize_bytes.$wikiFmt.$componentFmt.$nameFmt" )
+					->set( $info['decodedSize'] );
 			}
 
 			echo "Done!\n";
