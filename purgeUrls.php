@@ -43,16 +43,16 @@ class PurgeUrls extends Maintenance {
 		// Select cluster
 		$cluster = $this->getOption( 'cluster', 'cache_text' );
 		switch ( $cluster ) {
-		case 'cache_text':
-			// Use value from wmf-config (239.128.0.112, 4827)
-			break;
-		case 'cache_misc':
-			// FIXME: Hardcoded https://github.com/wikimedia/operations-puppet/commit/71e9017
-			$wgHTCPRouting = [ '' => [ 'host' => '239.128.0.115', 'port' => 4827 ] ];
-			break;
-		default:
-			$this->error( 'Invalid --cluster value.' );
-			return;
+			case 'cache_text':
+				// Use value from wmf-config (239.128.0.112, 4827)
+				break;
+			case 'cache_misc':
+				// FIXME: Hardcoded https://github.com/wikimedia/operations-puppet/commit/71e9017
+				$wgHTCPRouting = [ '' => [ 'host' => '239.128.0.115', 'port' => 4827 ] ];
+				break;
+			default:
+				$this->error( 'Invalid --cluster value.' );
+				return;
 		}
 
 		$urls = [];

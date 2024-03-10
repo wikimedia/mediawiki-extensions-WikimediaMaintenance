@@ -295,13 +295,13 @@ class SendBulkEmails extends Maintenance {
 			"\n";
 		$this->output( sprintf( $format,
 			wfTimestamp( TS_DB ),
-			$this->total,     $this->total / $delta,
-			$this->ok,        $this->reportPcnt( $this->ok ),
-			$this->failed,    $this->reportPcnt( $this->failed ),
-			$this->missing,   $this->reportPcnt( $this->missing ),
+			$this->total, $this->total / $delta,
+			$this->ok, $this->reportPcnt( $this->ok ),
+			$this->failed, $this->reportPcnt( $this->failed ),
+			$this->missing, $this->reportPcnt( $this->missing ),
 			$this->noreceive, $this->reportPcnt( $this->noreceive ),
-			$this->optedout,  $this->reportPcnt( $this->optedout ),
-			$this->blocked,   $this->reportPcnt( $this->blocked )
+			$this->optedout, $this->reportPcnt( $this->optedout ),
+			$this->blocked, $this->reportPcnt( $this->blocked )
 		) );
 	}
 

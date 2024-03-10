@@ -50,7 +50,7 @@ class MakeDumpList extends Maintenance {
 		$dbr = wfGetDB( DB_REPLICA );
 		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
 		$queryInfo = $linksMigration->getQueryInfo( 'templatelinks' );
-		list( $nsField, $titleField ) = $linksMigration->getTitleFields( 'templatelinks' );
+		[ $nsField, $titleField ] = $linksMigration->getTitleFields( 'templatelinks' );
 		$conds = [
 			$linkBatch->constructSet( 'page', $dbr ),
 			'page_id=tl_from'

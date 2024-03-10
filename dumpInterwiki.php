@@ -358,7 +358,7 @@ class DumpInterwiki extends Maintenance {
 					/**
 					 * @var string $site
 					 */
-					list( $site, $lang ) = self::$siteOverrides[$db];
+					[ $site, $lang ] = self::$siteOverrides[$db];
 					$site = $sites[$site];
 				} else {
 					$matches = [];

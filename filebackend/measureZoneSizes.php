@@ -42,16 +42,16 @@ class MeasureZoneSizes extends Maintenance {
 		// Public zone files (Backend 1)...
 		$dirC = $b1->getRootStoragePath() . "/local-public/$psuffix"; // current
 		$dirA = $b1->getRootStoragePath() . "/local-public/archive/$psuffix"; // archived
-		list( $countC, $bytesC ) = $this->getSizeOfDirectory( $b1, $dirC );
-		list( $countA, $bytesA ) = $this->getSizeOfDirectory( $b1, $dirA );
+		[ $countC, $bytesC ] = $this->getSizeOfDirectory( $b1, $dirC );
+		[ $countA, $bytesA ] = $this->getSizeOfDirectory( $b1, $dirA );
 		$b1_count = ( $countC + $countA ) * $pfactor;
 		$b1_bytes = ( $bytesC + $bytesA ) * $pfactor;
 		$output .= "B1\t\tpublic\t\t$b1_count\t\t$b1_bytes\t\n";
 		// Public zone files (Backend 2)...
 		$dirC = $b2->getRootStoragePath() . "/local-public/$psuffix"; // current
 		$dirA = $b2->getRootStoragePath() . "/local-public/archive/$psuffix"; // archived
-		list( $countC, $bytesC ) = $this->getSizeOfDirectory( $b2, $dirC );
-		list( $countA, $bytesA ) = $this->getSizeOfDirectory( $b2, $dirA );
+		[ $countC, $bytesC ] = $this->getSizeOfDirectory( $b2, $dirC );
+		[ $countA, $bytesA ] = $this->getSizeOfDirectory( $b2, $dirA );
 		$b2_count = ( $countC + $countA ) * $pfactor;
 		$b2_bytes = ( $bytesC + $bytesA ) * $pfactor;
 		$output .= "B2\t\tpublic\t\t$b2_count\t\t$b2_bytes\t\n";
@@ -65,13 +65,13 @@ class MeasureZoneSizes extends Maintenance {
 		$output .= "Store\t\tZone\t\tObjects\t\tTotal bytes\t\n";
 		// Deleted zone files (Backend 1)...
 		$dir = $b1->getRootStoragePath() . "/local-deleted/$dsuffix";
-		list( $count, $bytes ) = $this->getSizeOfDirectory( $b1, $dir );
+		[ $count, $bytes ] = $this->getSizeOfDirectory( $b1, $dir );
 		$b1_count = $count * $dfactor;
 		$b1_bytes = $bytes * $dfactor;
 		$output .= "B1\t\tdeleted\t\t$b1_count\t\t$b1_bytes\t\n";
 		// Deleted zone files (Backend 2)...
 		$dir = $b2->getRootStoragePath() . "/local-deleted/$dsuffix";
-		list( $count, $bytes ) = $this->getSizeOfDirectory( $b2, $dir );
+		[ $count, $bytes ] = $this->getSizeOfDirectory( $b2, $dir );
 		$b2_count = $count * $dfactor;
 		$b2_bytes = $bytes * $dfactor;
 		$output .= "B2\t\tdeleted\t\t$b2_count\t\t$b2_bytes\t\n";
