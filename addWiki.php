@@ -480,7 +480,7 @@ EOT;
 	 * @return Status
 	 */
 	private function setFundraisingLink( $domain, $language, User $editor ) {
-		$title = Title::newFromText( "Mediawiki:Sitesupport-url" );
+		$title = Title::newFromText( "MediaWiki:Sitesupport-url" );
 		$this->output( "Writing sidebar donate link to " . $title->getPrefixedDBkey() . "\n" );
 		$article = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 
