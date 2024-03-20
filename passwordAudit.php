@@ -35,7 +35,7 @@ class PasswordAudit extends Maintenance {
 		if ( $ca ) {
 			$dbr = CentralAuthServices::getDatabaseManager()->getCentralReplicaDB();
 		} else {
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $this->getReplicaDB();
 		}
 
 		foreach ( $userList as $user ) {

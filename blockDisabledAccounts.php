@@ -21,7 +21,7 @@ class BlockDisabledAccounts extends Maintenance {
 	}
 
 	public function execute() {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$inactive = $dbr->selectFieldValues(
 			'user_groups',
 			'ug_user',

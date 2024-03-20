@@ -47,7 +47,7 @@ class MakeDumpList extends Maintenance {
 	}
 
 	public function doBatch( $linkBatch ) {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
 		$queryInfo = $linksMigration->getQueryInfo( 'templatelinks' );
 		[ $nsField, $titleField ] = $linksMigration->getTitleFields( 'templatelinks' );
