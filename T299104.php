@@ -146,16 +146,16 @@ class UpdateUserSkinPreferences extends Maintenance {
 					if ( $userIdHasPropertyVectorSkinVersionAndSkin->$propertyValue === 'vector' ) {
 						if ( !$dryRun ) {
 							// Update the user skin preference to vector-2022.
-							$dbw->update(
-								$table,
-								[ $propertyValue => 'vector-2022' ],
-								[
+							$dbw->newUpdateQueryBuilder()
+								->update( $table )
+								->set( [ $propertyValue => 'vector-2022' ] )
+								->where( [
 									$user => $userIdHasPropertyVectorSkinVersionAndSkin->userId,
 									$property => 'skin',
 									$propertyValue => 'vector',
-								],
-								__METHOD__
-							);
+								] )
+								->caller( __METHOD__ )
+								->execute();
 							$lbFactory->waitForReplication();
 						}
 						$updatesFoundUserIds[] = $userIdHasPropertyVectorSkinVersionAndSkin->userId;
@@ -177,15 +177,15 @@ class UpdateUserSkinPreferences extends Maintenance {
 			foreach ( $userIdsWithPropertyVectorSkinVersion2MissingPropertySkin as $userIdMissingPropertySkin ) {
 				if ( !$dryRun ) {
 					// Insert the missing user skin preference to vector-2022.
-					$dbw->insert(
-						$table,
-						[
+					$dbw->newInsertQueryBuilder()
+						->insertInto( $table )
+						->row( [
 							$user => $userIdMissingPropertySkin,
 							$property => 'skin',
 							$propertyValue => 'vector-2022',
-						],
-						__METHOD__
-					);
+						] )
+						->caller( __METHOD__ )
+						->execute();
 					$lbFactory->waitForReplication();
 				}
 				$insertsFoundUserIds[] = $userIdMissingPropertySkin;

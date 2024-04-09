@@ -50,22 +50,22 @@ class RenameChangeTag extends Maintenance {
 
 		$this->beginTransaction( $dbw, __METHOD__ );
 
-		$dbw->update(
-			'change_tag_def',
-			[ 'ctd_name' => $newname ],
-			[ 'ctd_name' => $oldname ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'change_tag_def' )
+			->set( [ 'ctd_name' => $newname ] )
+			->where( [ 'ctd_name' => $oldname ] )
+			->caller( __METHOD__ )
+			->execute();
 
-		$dbw->update(
-			'abuse_filter_action',
-			[ 'afa_parameters' => $newname ],
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'abuse_filter_action' )
+			->set( [ 'afa_parameters' => $newname ] )
+			->where( [
 				'afa_parameters' => $oldname,
 				'afa_consequence' => 'tag'
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		$this->commitTransaction( $dbw, __METHOD__ );
 
