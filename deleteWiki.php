@@ -95,8 +95,6 @@ class DeleteWiki extends Maintenance {
 		// as long as all rows meeting the WHERE clause are deleted, then all replicas will
 		// converge. For sanity, issue one final DELETE query to assure this.
 		$dbw->query( $query, __METHOD__ );
-
-		$lb->reuseConnection( $dbw );
 	}
 }
 

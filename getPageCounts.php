@@ -63,7 +63,6 @@ class GetPageCounts extends Maintenance {
 				'pages' => intval( $row->ss_total_pages ),
 				'contentPages' => intval( $row->ss_good_articles ),
 			];
-			$lb->reuseConnection( $dbr );
 		}
 		$this->output( FormatJson::encode( $counts, true ) . "\n" );
 	}

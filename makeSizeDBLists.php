@@ -40,7 +40,6 @@ class MakeSizeDBLists extends Maintenance {
 			} else {
 				$large[] = $wiki;
 			}
-			$lb->reuseConnection( $db );
 		}
 
 		$this->output( 'Small wiki count: ' . count( $small ) . "\n" );

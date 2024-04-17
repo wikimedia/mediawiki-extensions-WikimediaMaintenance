@@ -59,7 +59,6 @@ class UnsuppressCrossWiki extends Maintenance {
 				RevisionDeleteUser::unsuppressUserName( $userName, $localUser->getId(), $dbw );
 				echo "done!\n\n";
 			}
-			$lb->reuseConnection( $dbw ); // not really needed
 			# Don't lag too bad
 			try {
 				$lbFactory->waitForReplication( [ 'wiki' => $wiki ] );

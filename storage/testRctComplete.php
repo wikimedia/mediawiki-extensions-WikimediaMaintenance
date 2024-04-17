@@ -33,7 +33,6 @@ class TestRctComplete extends Maintenance {
 					$good++;
 				}
 			}
-			$lb->reuseConnection( $db );
 		}
 		$this->output( "$bad wiki(s) incomplete\n" );
 		$this->output( "$good wiki(s) complete\n" );
