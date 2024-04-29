@@ -20,12 +20,12 @@ class TestRctComplete extends Maintenance {
 			$db = $lb->getConnection( DB_REPLICA, [], $wiki );
 			'@phan-var IMaintainableDatabase $db';
 			if ( $db->tableExists( 'blob_tracking', __METHOD__ ) ) {
-				$notDone = $db->selectField(
-					'blob_tracking',
-					'1',
-					[ 'bt_moved' => 0 ],
-					__METHOD__
-				);
+				$notDone = $db->newSelectQueryBuilder()
+					->select( '1' )
+					->from( 'blob_tracking' )
+					->where( [ 'bt_moved' => 0 ] )
+					->caller( __METHOD__ )
+					->fetchField();
 				if ( $notDone ) {
 					$bad++;
 					echo "$wiki\n";

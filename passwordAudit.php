@@ -51,20 +51,20 @@ class PasswordAudit extends Maintenance {
 			);
 
 			if ( $ca ) {
-				$hash = $dbr->selectField(
-					'globaluser',
-					'gu_password',
-					[ 'gu_name' => $username ],
-					__METHOD__
-				);
+				$hash = $dbr->newSelectQueryBuilder()
+					->select( 'gu_password' )
+					->from( 'globaluser' )
+					->where( [ 'gu_name' => $username ] )
+					->caller( __METHOD__ )
+					->fetchField();
 
 			} else {
-				$hash = $dbr->selectField(
-					'user',
-					'user_password',
-					[ 'user_name' => $username ],
-					__METHOD__
-				);
+				$hash = $dbr->newSelectQueryBuilder()
+					->select( 'user_password' )
+					->from( 'user' )
+					->where( [ 'user_name' => $username ] )
+					->caller( __METHOD__ )
+					->fetchField();
 			}
 
 			$pbkdf2 = false;

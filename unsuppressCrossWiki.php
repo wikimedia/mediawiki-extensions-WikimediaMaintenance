@@ -33,24 +33,28 @@ class UnsuppressCrossWiki extends Maintenance {
 			$lb = $lbFactory->getMainLB( $wiki );
 			$dbw = $lb->getConnection( DB_PRIMARY, [], $wiki );
 			# Get local ID like $user->localUserData( $wiki ) does
-			$localUser = User::newFromRow( $dbw->selectRow( $userQuery['tables'], $userQuery['fields'],
-				[ 'user_name' => $userName ], __METHOD__, [], $userQuery['joins'] ) );
+			$localUser = User::newFromRow( $dbw->newSelectQueryBuilder()
+				->queryInfo( $userQuery )
+				->where( [ 'user_name' => $userName ] )
+				->caller( __METHOD__ )
+				->fetchRow()
+			);
 
 			$delUserBit = RevisionRecord::DELETED_USER;
 			$revWhere = ActorMigration::newMigration()->getWhere( $dbw, 'rev_user', $localUser );
 			$hiddenCount = 0;
 			foreach ( $revWhere['orconds'] as $cond ) {
-				$hiddenCount += $dbw->selectField(
-					[ 'revision' ] + $revWhere['tables'],
-					'COUNT(*)',
-					[
+				$hiddenCount += $dbw->newSelectQueryBuilder()
+					->select( 'COUNT(*)' )
+					->from( 'revision' )
+					->tables( $revWhere['tables'] )
+					->where( [
 						$cond,
 						"rev_deleted & $delUserBit != 0"
-					],
-					__METHOD__,
-					[],
-					$revWhere['joins']
-				);
+					] )
+					->joinConds( $revWhere['joins'] )
+					->caller( __METHOD__ )
+					->fetchField();
 			}
 			echo "$hiddenCount edits have the username hidden on \"$wiki\"\n";
 			# Unsuppress username on edits

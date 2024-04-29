@@ -4,6 +4,8 @@ use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\Extension\SecurePoll\MailingListEntry;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
@@ -47,12 +49,12 @@ class MakeUserPrefixMailingList extends Maintenance {
 				'gp_user=gu_id',
 				'gp_property' => 'language'
 			] )
-			->where( 'gu_name' . $dbc->buildLike( $prefix, $dbc->anyString() ) )
+			->where( $dbc->expr( 'gu_name', IExpression::LIKE, new LikeValue( $prefix, $dbc->anyString() ) ) )
 			->caller( __METHOD__ );
 
 		if ( $format === 'securepoll' ) {
-			$queryBuilder->andWhere( 'gu_email <> ' . $dbc->addQuotes( '' ) )
-				->andWhere( 'gu_email_authenticated IS NOT NULL' );
+			$queryBuilder->andWhere( $dbc->expr( 'gu_email', '!=', '' ) )
+				->andWhere( $dbc->expr( 'gu_email_authenticated', '!=', null ) );
 		}
 		$res = $queryBuilder->fetchResultSet();
 		foreach ( $res as $row ) {

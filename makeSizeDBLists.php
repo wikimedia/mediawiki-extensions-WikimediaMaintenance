@@ -32,7 +32,11 @@ class MakeSizeDBLists extends Maintenance {
 				// Probably just wikitech etc, skip!
 				continue;
 			}
-			$count = intval( $db->selectField( 'site_stats', 'ss_total_pages', '', __METHOD__ ) );
+			$count = intval( $db->newSelectQueryBuilder()
+				->select( 'ss_total_pages' )
+				->from( 'site_stats' )
+				->caller( __METHOD__ )
+				->fetchField() );
 			if ( $count < self::DB_SMALL ) {
 				$small[] = $wiki;
 			} elseif ( $count < self::DB_MEDIUM ) {

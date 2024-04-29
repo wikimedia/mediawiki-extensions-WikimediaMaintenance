@@ -50,12 +50,11 @@ class GetPageCounts extends Maintenance {
 			}
 			$lb = $lbFactory->getMainLB( $wiki );
 			$dbr = $lb->getConnection( DB_REPLICA, [], $wiki );
-			$row = $dbr->selectRow(
-				'site_stats',
-				[ 'ss_total_pages', 'ss_good_articles' ],
-				'',
-				__METHOD__
-			);
+			$row = $dbr->newSelectQueryBuilder()
+				->select( [ 'ss_total_pages', 'ss_good_articles' ] )
+				->from( 'site_stats' )
+				->caller( __METHOD__ )
+				->fetchRow();
 			if ( !$row ) {
 				$this->fatalError( "Error: '$wiki' has empty site_stats" );
 			}

@@ -130,15 +130,15 @@ class UpdateUserSkinPreferences extends Maintenance {
 			foreach ( $batch as $row ) {
 				$userIdsWithPropertyVectorSkinVersion[] = $row->$user;
 				// Get all the user ids that have VectorSkinVersion = 2 and have a 'skin' row.
-				$hasPropertyVectorSkinVersionAndSkin = $dbr->select(
-					$table,
-					[ $user . ' AS userId', $propertyValue ],
-					[
+				$hasPropertyVectorSkinVersionAndSkin = $dbr->newSelectQueryBuilder()
+					->select( [ 'userId' => $user, $propertyValue ] )
+					->from( $table )
+					->where( [
 						$user => $row->$user,
 						$property => 'skin'
-					],
-					__METHOD__
-				);
+					] )
+					->caller( __METHOD__ )
+					->fetchResultSet();
 
 				foreach ( $hasPropertyVectorSkinVersionAndSkin as $userIdHasPropertyVectorSkinVersionAndSkin ) {
 					$userIdsHasPropertyVectorSkinVersionAndSkin[] = $userIdHasPropertyVectorSkinVersionAndSkin->userId;

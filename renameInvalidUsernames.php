@@ -96,10 +96,11 @@ class RenameInvalidUsernames extends Maintenance {
 
 		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase( $wiki );
 		$userQuery = User::getQueryInfo();
-		$row = $dbw->selectRow(
-			$userQuery['tables'], $userQuery['fields'], [ 'user_id' => $userId ],
-			__METHOD__, [], $userQuery['joins']
-		);
+		$row = $dbw->newSelectQueryBuilder()
+			->queryInfo( $userQuery )
+			->where( [ 'user_id' => $userId ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 
 		$oldUser = User::newFromRow( $row );
 
@@ -188,12 +189,11 @@ class RenameInvalidUsernames extends Maintenance {
 
 	protected function getCurrentRenameCount() {
 		// TODO: why does this need a primary connection?
-		$row = CentralAuthServices::getDatabaseManager()->getCentralPrimaryDB()->selectRow(
-			[ 'renameuser_status' ],
-			[ 'COUNT(*) as count' ],
-			[],
-			__METHOD__
-		);
+		$row = CentralAuthServices::getDatabaseManager()->getCentralPrimaryDB()->newSelectQueryBuilder()
+			->select( [ 'count' => 'COUNT(*)' ] )
+			->from( 'renameuser_status' )
+			->caller( __METHOD__ )
+			->fetchRow();
 		return (int)$row->count;
 	}
 }

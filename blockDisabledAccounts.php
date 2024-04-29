@@ -22,25 +22,25 @@ class BlockDisabledAccounts extends Maintenance {
 
 	public function execute() {
 		$dbr = $this->getReplicaDB();
-		$inactive = $dbr->selectFieldValues(
-			'user_groups',
-			'ug_user',
-			[
+		$inactive = $dbr->newSelectQueryBuilder()
+			->select( 'ug_user' )
+			->from( 'user_groups' )
+			->where( [
 				'ug_group' => 'inactive',
-				'ug_expiry IS NULL OR ug_expiry >= ' . $dbr->addQuotes( $dbr->timestamp() )
-			],
-			__METHOD__
-		);
+				$dbr->expr( 'ug_expiry', '=', null )->or( 'ug_expiry', '>=', $dbr->timestamp() ),
+			] )
+			->caller( __METHOD__ )
+			->fetchFieldValues();
 
-		$nulledDetails = $dbr->selectFieldValues(
-			'user',
-			'user_id',
-			[
+		$nulledDetails = $dbr->newSelectQueryBuilder()
+			->select( 'user_id' )
+			->from( 'user' )
+			->where( [
 				'user_password' => '',
 				'user_email' => '',
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->fetchFieldValues();
 
 		$ids = array_unique( array_merge( $inactive, $nulledDetails ) );
 

@@ -55,14 +55,14 @@ class MakeDumpList extends Maintenance {
 			$linkBatch->constructSet( 'page', $dbr ),
 			'page_id=tl_from'
 		];
-		$res = $dbr->select(
-			array_merge( [ 'page' ], $queryInfo['tables'] ),
-			[ $nsField, $titleField ],
-			$conds,
-			__METHOD__,
-			[],
-			$queryInfo['joins']
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [ $nsField, $titleField ] )
+			->from( 'page' )
+			->tables( $queryInfo['tables'] )
+			->where( $conds )
+			->joinConds( $queryInfo['joins'] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		foreach ( $res as $row ) {
 			$title = Title::makeTitle( $row->$nsField, $row->$titleField );
 			$this->templates[$title->getPrefixedDBkey()] = true;

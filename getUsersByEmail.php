@@ -46,12 +46,12 @@ class GetUsersByEmail extends Maintenance {
 	public function execute() {
 		$email = trim( $this->getOption( 'email' ) );
 		$dbr = $this->getDB( DB_REPLICA );
-		$res = $dbr->select(
-			'user',
-			[ 'user_name', 'user_email', 'user_email_authenticated' ],
-			[ 'user_email' => $email ],
-			__METHOD__
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [ 'user_name', 'user_email', 'user_email_authenticated' ] )
+			->from( 'user' )
+			->where( [ 'user_email' => $email ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		if ( $res->numRows() === 0 ) {
 			$this->fatalError( $email . " was not found on the wiki" );
 		}
