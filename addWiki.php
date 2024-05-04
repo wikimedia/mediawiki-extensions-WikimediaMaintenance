@@ -316,8 +316,9 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/DiscussionTools/sql/mysql/discussiontools_subscription.sql" );
 		$dbw->sourceFile( "$IP/extensions/DiscussionTools/sql/mysql/discussiontools_persistent.sql" );
 
-		// most wikis are wikibase client wikis and no harm to adding this everywhere
-		$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/mysql/entity_usage.sql" );
+		if ( in_array( $dbName, MWWikiversions::readDbListFile( 'wikidataclient' ) ) ) {
+			$dbw->sourceFile( "$IP/extensions/Wikibase/client/sql/mysql/entity_usage.sql" );
+		}
 
 		if ( $this->isPrivate( $dbName )
 			&& in_array( $dbName, MWWikiversions::readDbListFile( 'flow' ) )
