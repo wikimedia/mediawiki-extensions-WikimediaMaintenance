@@ -144,7 +144,8 @@ class AddWiki extends Maintenance {
 				'growthexperiments_link_recommendations.sql',
 				'growthexperiments_link_submissions.sql',
 				'growthexperiments_mentee_data.sql',
-				'growthexperiments_mentor_mentee.sql'
+				'growthexperiments_mentor_mentee.sql',
+				'growthexperiments_user_impact.sql',
 			];
 			foreach ( $files as $file ) {
 				$growthDbw->sourceFile( "$IP/extensions/GrowthExperiments/sql/mysql/$file" );
