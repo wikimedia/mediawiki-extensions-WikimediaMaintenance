@@ -306,6 +306,8 @@ class DumpInterwiki extends Maintenance {
 			$this->fatalError( "m:Interwiki_map not found" );
 		}
 
+		$links = [];
+
 		// Global interwiki map
 		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		foreach ( $lines as $line ) {
@@ -326,30 +328,37 @@ class DumpInterwiki extends Maintenance {
 
 				if ( empty( $reserved[$prefix] ) ) {
 					$imap = [ "iw_prefix" => $prefix, "iw_url" => $url, "iw_local" => $local ];
-					$this->makeLink( $imap, "__global" );
+					$links += $this->makeLink( $imap, "__global" );
 				}
 			}
 		}
 
 		// Multilanguage sites
 		foreach ( $sites as $site ) {
-			$this->makeLanguageLinks( $site, "_" . $site->suffix );
+			$links = array_merge( $links, $this->makeLanguageLinks( $site, "_" . $site->suffix ) );
 		}
 
 		foreach ( $this->dblist as $db ) {
 			if ( isset( $this->specials[$db] ) && !isset( self::$siteOverrides[$db] ) ) {
-				// Special wiki
-				// Has interwiki links and interlanguage links to wikipedia
+				// Special wiki - has interwiki links and interlanguage links to wikipedia
 
-				$this->makeLink( [ 'iw_prefix' => $db, 'iw_url' => "wiki" ], "__sites" );
+				$links = array_merge(
+					$links,
+					$this->makeLink( [ 'iw_prefix' => $db, 'iw_url' => "wiki" ], "__sites" )
+				);
 				// Links to multilanguage sites
 				/**
 				 * @var $targetSite WMFSite
 				 */
 				foreach ( $sites as $targetSite ) {
-					$this->makeLink( [ 'iw_prefix' => $targetSite->prefix,
-						'iw_url' => $targetSite->getURL( 'en', $this->urlprotocol ),
-						'iw_local' => 1 ], $db );
+					$links = array_merge( $links, $this->makeLink(
+						[
+							'iw_prefix' => $targetSite->prefix,
+							'iw_url' => $targetSite->getURL( 'en', $this->urlprotocol ),
+							'iw_local' => 1
+						],
+						$db
+					) );
 				}
 			} else {
 				// Find out which site this DB belongs to
@@ -372,7 +381,10 @@ class DumpInterwiki extends Maintenance {
 					$lang = $matches[1];
 				}
 
-				$this->makeLink( [ 'iw_prefix' => $db, 'iw_url' => $site->suffix ], "__sites" );
+				$links = array_merge(
+					$links,
+					$this->makeLink( [ 'iw_prefix' => $db, 'iw_url' => $site->suffix ], "__sites" )
+				);
 				if ( !$site ) {
 					$this->error( "Invalid database $db\n" );
 					continue;
@@ -393,15 +405,24 @@ class DumpInterwiki extends Maintenance {
 						$lateralLang = self::$languageOverrides[$site->suffix][$lang];
 					}
 
-					$this->makeLink( [ 'iw_prefix' => $targetSite->prefix,
-						'iw_url' => $targetSite->getURL( $lateralLang, $this->urlprotocol ),
-						'iw_local' => 1 ], $db );
+					$links = array_merge( $links, $this->makeLink(
+						[
+							'iw_prefix' => $targetSite->prefix,
+							'iw_url' => $targetSite->getURL( $lateralLang, $this->urlprotocol ),
+							'iw_local' => 1
+						],
+						$db
+					) );
 				}
 
 			}
 		}
 		foreach ( $extraLinks as $link ) {
-			$this->makeLink( $link, "__global" );
+			$links = array_merge( $links, $this->makeLink( $link, "__global" ) );
+		}
+
+		foreach ( $links as $k => $v ) {
+			$this->output( "\t'$k' => '$v',\n" );
 		}
 
 		// List prefixes for each source
@@ -421,14 +442,16 @@ class DumpInterwiki extends Maintenance {
 	 *
 	 * @param WMFSite &$site
 	 * @param string $source
+	 * @return array
 	 */
 	private function makeLanguageLinks( &$site, $source ) {
+		$links = [];
 		// Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
-			$this->makeLink(
+			$links = array_merge( $links, $this->makeLink(
 				[ $targetLang, $site->getURL( $targetLang, $this->urlprotocol ), 1 ],
 				$source
-			);
+			) );
 		}
 
 		// Language aliases
@@ -436,15 +459,15 @@ class DumpInterwiki extends Maintenance {
 			foreach ( self::$languageAliases as $alias => $lang ) {
 				// Very special edge case: T214400
 				if ( $site->suffix === 'wiktionary' && $alias === 'yue' ) {
-					$this->makeLink(
+					$links = array_merge( $links, $this->makeLink(
 						[ $lang, $site->getURL( $alias, $this->urlprotocol ), 1 ],
 						$source
-					);
+					) );
 				} else {
-					$this->makeLink(
+					$links = array_merge( $links, $this->makeLink(
 						[ $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ],
 						$source
-					);
+					) );
 				}
 			}
 		}
@@ -452,13 +475,15 @@ class DumpInterwiki extends Maintenance {
 		// Additional links
 		$additionalLinks = $this->getAdditionalLinks( $site->suffix );
 		foreach ( $additionalLinks as $link ) {
-			$this->makeLink( $link, $source );
+			$links = array_merge( $links, $this->makeLink( $link, $source ) );
 		}
+		return $links;
 	}
 
 	/**
 	 * @param array $entry
 	 * @param string $source
+	 * @return array
 	 */
 	private function makeLink( $entry, $source ) {
 		if ( isset( self::$prefixRewrites[$source] )
@@ -484,10 +509,10 @@ class DumpInterwiki extends Maintenance {
 
 		$k = "{$source}:{$entry['iw_prefix']}";
 		$v = trim( "{$entry['iw_local']} {$entry['iw_url']}" );
-		$this->output( "\t'$k' => '$v',\n" );
 
-		// Add to list of prefixes
+		// Add to the list of prefixes
 		$this->prefixLists[$source][$entry['iw_prefix']] = 1;
+		return [ $k => $v ];
 	}
 }
 
