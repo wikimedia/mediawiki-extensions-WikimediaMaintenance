@@ -49,20 +49,6 @@ class DumpInterwiki extends Maintenance {
 			false, true );
 		$this->addOption( 'insecure', 'Output wikimedia interwiki urls using HTTP instead of HTTPS',
 			false, false );
-
-		// Set --mwconfig-dir and --target-realm automatically in Beta Cluster
-		// to ease debugging and for workflow backward compatibility.
-		global $wmgRealm;
-		$this->realm = $this->getOption( 'target-realm', $wmgRealm === 'labs' ? 'labs' : 'production' );
-		$this->mwconfigDir = $this->getOption( 'mwconfig-dir',
-			getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki' );
-
-		$this->end = $this->realm === 'labs' ? '.beta.wmflabs.org' : '.org';
-
-		if ( !file_exists( "$this->mwconfigDir/dblists" ) ) {
-			$this->fatalError( "--mwconfig-dir is unset or invalid. "
-				. "Unable to find dblists directory in $this->mwconfigDir" );
-		}
 	}
 
 	/**
@@ -241,6 +227,20 @@ class DumpInterwiki extends Maintenance {
 	}
 
 	public function execute() {
+		// Set --mwconfig-dir and --target-realm automatically in Beta Cluster
+		// to ease debugging and for workflow backward compatibility.
+		global $wmgRealm;
+		$this->realm = $this->getOption( 'target-realm', $wmgRealm === 'labs' ? 'labs' : 'production' );
+		$this->mwconfigDir = $this->getOption( 'mwconfig-dir',
+			getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki' );
+
+		$this->end = $this->realm === 'labs' ? '.beta.wmflabs.org' : '.org';
+
+		if ( !file_exists( "$this->mwconfigDir/dblists" ) ) {
+			$this->fatalError( "--mwconfig-dir is unset or invalid. "
+				. "Unable to find dblists directory in $this->mwconfigDir" );
+		}
+
 		$dblistSpecial = "{$this->mwconfigDir}/dblists/special.dblist";
 		$dblistAll = $this->realm === 'labs'
 			? "{$this->mwconfigDir}/dblists/all-labs.dblist"
