@@ -292,39 +292,37 @@ class DumpInterwiki extends Maintenance {
 		}
 
 		// Extract the intermap from meta
-		$url = 'https://meta.wikimedia.org/w/index.php?title=Interwiki_map&action=raw';
+		$url = 'https://meta.wikimedia.org/w/index.php?title=Interwiki_map/list&action=raw';
 		$intermap = MediaWikiServices::getInstance()->getHttpRequestFactory()
 			->get( $url, [ 'timeout' => 30 ], __METHOD__ );
-		$lines = array_map( 'trim', explode( "\n", trim( $intermap ) ) );
 
-		if ( !$lines || count( $lines ) < 2 ) {
-			$this->fatalError( "m:Interwiki_map not found" );
+		$arr = json_decode( $intermap, true );
+
+		if ( !$arr || count( $arr ) < 2 ) {
+			$this->fatalError( "m:Interwiki_map/list not found" );
 		}
 
 		$links = [];
 
-		// Global interwiki map
 		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-		foreach ( $lines as $line ) {
-			if ( preg_match( '/^\|\s*(.*?)\s*\|\|\s*(.*?)\s*$/', $line, $matches ) ) {
-				$prefix = $contLang->lc( $matches[1] );
-				$prefix = str_replace( ' ', '_', $prefix );
+		foreach ( $arr as $item ) {
+			$prefix = $contLang->lc( $item['prefix'] );
+			$prefix = str_replace( ' ', '_', $prefix );
 
-				$url = $matches[2];
-				if ( preg_match(
-					'/(?:\/\/|\.)(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|' .
-						'wikinews|wikiversity|wikivoyage|wikimediafoundation|mediawiki|wikidata|wikifunctions)\.org/',
-					$url )
-				) {
-					$local = 1;
-				} else {
-					$local = 0;
-				}
+			$url = $item['url'];
+			if ( preg_match(
+				'/(?:\/\/|\.)(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia|' .
+					'wikinews|wikiversity|wikivoyage|wikimediafoundation|mediawiki|wikidata|wikifunctions)\.org/',
+				$url )
+			) {
+				$local = 1;
+			} else {
+				$local = 0;
+			}
 
-				if ( empty( $reserved[$prefix] ) ) {
-					$imap = [ "iw_prefix" => $prefix, "iw_url" => $url, "iw_local" => $local ];
-					$links += $this->makeLink( $imap, "__global" );
-				}
+			if ( empty( $reserved[$prefix] ) ) {
+				$imap = [ "iw_prefix" => $prefix, "iw_url" => $url, "iw_local" => $local ];
+				$links = array_merge( $links, $this->makeLink( $imap, "__global" ) );
 			}
 		}
 
