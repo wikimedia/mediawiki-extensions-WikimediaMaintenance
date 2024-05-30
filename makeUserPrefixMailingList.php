@@ -145,6 +145,7 @@ class MakeUserPrefixMailingList extends Maintenance {
 				->from( 'revision' )
 				->join( 'actor', null, 'rev_actor=actor_id' )
 				->where( [ 'actor_name' => $userName ] )
+				->caller( __METHOD__ )
 				->fetchField();
 
 			if ( $ts !== null ) {
