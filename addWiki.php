@@ -267,22 +267,6 @@ class AddWiki extends Maintenance {
 		// Forces re-cache
 		MediaWiki\MassMessage\Lookup\DatabaseLookup::getDBName( '' );
 
-		if ( !$this->isPrivateOrFishbowl( $dbName ) ) {
-			/** @phpcs-require-sorted-array */
-			$users = [ 'Taavi', 'Zabe' ];
-			shuffle( $users );
-
-			foreach ( $users as $user ) {
-				$createLocalAccount = $this->runChild(
-					CreateLocalAccount::class,
-					"$IP/extensions/CentralAuth/maintenance/createLocalAccount.php"
-				);
-				$createLocalAccount->setDB( $dbw );
-				$createLocalAccount->setOption( 'username', $user );
-				$createLocalAccount->execute();
-			}
-		}
-
 		$user = getenv( 'SUDO_USER' );
 		$time = wfTimestamp( TS_RFC2822 );
 		UserMailer::send( new MailAddress( $wmgAddWikiNotify ),
