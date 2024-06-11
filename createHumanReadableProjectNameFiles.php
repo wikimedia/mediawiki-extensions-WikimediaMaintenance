@@ -3,6 +3,7 @@
  * @defgroup Wikimedia Wikimedia
  */
 
+use MediaWiki\Extension\CLDR\LanguageNames;
 use MediaWiki\MediaWikiServices;
 
 /**
