@@ -305,7 +305,10 @@ class DumpInterwiki extends Maintenance {
 		$links = [];
 
 		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-		foreach ( $arr as $item ) {
+		foreach ( $arr as $i => $item ) {
+			if ( !isset( $item['prefix'] ) || !isset( $item['url'] ) ) {
+				$this->fatalError( "m:Interwiki_map/list entry $i is missing required 'prefix' and 'url' keys" );
+			}
 			$prefix = $contLang->lc( $item['prefix'] );
 			$prefix = str_replace( ' ', '_', $prefix );
 
