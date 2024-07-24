@@ -9,7 +9,6 @@ use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Wikimedia\Rdbms\ILBFactory;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
@@ -27,7 +26,6 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  */
 class RenameInvalidUsernames extends Maintenance {
 
-	private ILBFactory $lbFactory;
 	private CentralAuthDatabaseManager $caDatabaseManager;
 	private GlobalRenameFactory $globalRenameFactory;
 
@@ -48,7 +46,6 @@ class RenameInvalidUsernames extends Maintenance {
 
 	private function initServices() {
 		$services = MediaWikiServices::getInstance();
-		$this->lbFactory = $services->getDBLoadBalancerFactory();
 		$this->caDatabaseManager = $services->get( 'CentralAuth.CentralAuthDatabaseManager' );
 		$this->globalRenameFactory = $services->get( 'CentralAuth.GlobalRenameFactory' );
 	}
@@ -75,7 +72,7 @@ class RenameInvalidUsernames extends Maintenance {
 				$count = 0;
 				$this->output( "Sleep for 5 and waiting for replicas...\n" );
 				$this->caDatabaseManager->waitForReplication();
-				$this->lbFactory->waitForReplication();
+				$this->waitForReplication();
 				sleep( 5 );
 				$this->output( "done.\n" );
 				$count = $this->getCurrentRenameCount();
