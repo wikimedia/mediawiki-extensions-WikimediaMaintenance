@@ -425,6 +425,8 @@ class DumpInterwiki extends Maintenance {
 			$links[$k] = $v;
 		}
 
+		ksort( $links );
+
 		$this->output(
 			StaticArrayWriter::write(
 				$links,
