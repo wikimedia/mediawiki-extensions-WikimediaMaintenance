@@ -14,6 +14,7 @@
 	},
 	"AutoloadClasses": {
 		"AddWiki": "addWiki.php",
-		"BlockDisabledAccounts": "blockDisabledAccounts.php"
+		"BlockDisabledAccounts": "blockDisabledAccounts.php",
+		"GetUsersByEmail": "getUsersByEmail.php"
 	}
 }
