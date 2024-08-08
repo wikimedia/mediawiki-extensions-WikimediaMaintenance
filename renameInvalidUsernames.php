@@ -1,6 +1,5 @@
 <?php
 
-use MediaWiki\Extension\CentralAuth\CentralAuthDatabaseManager;
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameFactory;
 use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserLogger;
@@ -26,7 +25,6 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  */
 class RenameInvalidUsernames extends Maintenance {
 
-	private CentralAuthDatabaseManager $caDatabaseManager;
 	private GlobalRenameFactory $globalRenameFactory;
 
 	/** @var string|null */
@@ -46,11 +44,11 @@ class RenameInvalidUsernames extends Maintenance {
 
 	private function initServices() {
 		$services = MediaWikiServices::getInstance();
-		$this->caDatabaseManager = $services->get( 'CentralAuth.CentralAuthDatabaseManager' );
 		$this->globalRenameFactory = $services->get( 'CentralAuth.GlobalRenameFactory' );
 	}
 
 	public function execute() {
+		$this->initServices();
 		$this->reason = $this->getOption( 'reason' );
 		$list = $this->getOption( 'list' );
 		$file = fopen( $list, 'r' );
@@ -71,7 +69,6 @@ class RenameInvalidUsernames extends Maintenance {
 			if ( $count > $batchSize ) {
 				$count = 0;
 				$this->output( "Sleep for 5 and waiting for replicas...\n" );
-				$this->caDatabaseManager->waitForReplication();
 				$this->waitForReplication();
 				sleep( 5 );
 				$this->output( "done.\n" );
