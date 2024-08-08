@@ -11,5 +11,8 @@
 		"WikimediaMaintenance": [
 			"i18n"
 		]
+	},
+	"AutoloadClasses": {
+		"AddWiki": "addWiki.php"
 	}
 }
