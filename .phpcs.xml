@@ -3,10 +3,8 @@
 	<rule ref="./vendor/mediawiki/mediawiki-codesniffer/MediaWiki">
 		<exclude name="MediaWiki.Commenting.FunctionComment.MissingDocumentationProtected" />
 		<exclude name="MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic" />
-		<exclude name="MediaWiki.Commenting.PropertyDocumentation.MissingDocumentationPublic" />
 		<exclude name="Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition" />
 		<exclude name="MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment" />
-		<exclude name="PSR2.Classes.PropertyDeclaration.Multiple" />
 		<exclude name="MediaWiki.Commenting.FunctionComment.MissingDocumentationPrivate" />
 	</rule>
 	<rule ref="MediaWiki.NamingConventions.PrefixedGlobalFunctions">

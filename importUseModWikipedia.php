@@ -8,6 +8,8 @@
  *
  */
 
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple,MediaWiki.Commenting.PropertyDocumentation
+
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\Title\Title;
