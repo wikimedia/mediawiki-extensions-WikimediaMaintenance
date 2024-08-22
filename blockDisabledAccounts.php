@@ -5,6 +5,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserArray;
+use Wikimedia\Rdbms\IExpression;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
@@ -32,15 +33,25 @@ class BlockDisabledAccounts extends Maintenance {
 			->caller( __METHOD__ )
 			->fetchFieldValues();
 
-		$nulledDetails = $dbr->newSelectQueryBuilder()
+		$nulledDetailsQuery = $dbr->newSelectQueryBuilder()
 			->select( 'user_id' )
 			->from( 'user' )
 			->where( [
 				'user_password' => '',
 				'user_email' => '',
 			] )
-			->caller( __METHOD__ )
-			->fetchFieldValues();
+			->caller( __METHOD__ );
+
+		// Temporary users look like users with nulled details, so add an extra
+		// condition so they aren't all blocked.
+		$tempUserConfig = $this->getServiceContainer()->getTempUserConfig();
+		if ( $tempUserConfig->isKnown() ) {
+			$nulledDetailsQuery->andWhere(
+				$tempUserConfig->getMatchCondition( $dbr, 'user_name', IExpression::NOT_LIKE )
+			);
+		}
+
+		$nulledDetails = $nulledDetailsQuery->fetchFieldValues();
 
 		$ids = array_unique( array_merge( $inactive, $nulledDetails ) );
 
