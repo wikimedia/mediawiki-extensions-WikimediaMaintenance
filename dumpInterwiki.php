@@ -122,7 +122,8 @@ class DumpInterwiki extends Maintenance {
 		# Real ISO language codes to our fake ones
 		'cmn' => 'zh',
 		'egl' => 'eml',
-		'en-simple' => 'simple', # T283149
+		# Per T283149:
+		'en-simple' => 'simple',
 		'gsw' => 'als',
 		'lzh' => 'zh-classical',
 		'nan' => 'zh-min-nan',

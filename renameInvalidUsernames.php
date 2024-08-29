@@ -132,7 +132,8 @@ class RenameInvalidUsernames extends Maintenance {
 				)
 				->withSession( $session )
 				->rename( $data );
-		} else { // Not attached, do a promote to global rename
+		} else {
+			// Not attached, do a promote to global rename
 			$suffix = '~' . str_replace( '_', '-', $wiki );
 			$newUser = User::newFromName(
 				$newName ?? 'Invalid username ' . (string)$oldUser->getId() . $suffix, 'usable'

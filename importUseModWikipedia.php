@@ -189,10 +189,14 @@ class ImportUseModWikipedia extends Maintenance {
 
 	private function initLinkPatterns() {
 		# Field separators are used in the URL-style patterns below.
-		$this->FS  = "\xb3";      # The FS character is a superscript "3"
-		$this->FS1 = $this->FS . "1";   # The FS values are used to separate fields
-		$this->FS2 = $this->FS . "2";   # in stored hashtables and other data structures.
-		$this->FS3 = $this->FS . "3";   # The FS character is not allowed in user data.
+		# The FS character is a superscript "3"
+		$this->FS = "\xb3";
+		# The FS values are used to separate fields
+		$this->FS1 = $this->FS . "1";
+		# in stored hashtables and other data structures.
+		$this->FS2 = $this->FS . "2";
+		# The FS character is not allowed in user data.
+		$this->FS3 = $this->FS . "3";
 
 		$UpperLetter = "[A-Z";
 		$LowerLetter = "[a-z";
@@ -210,7 +214,8 @@ class ImportUseModWikipedia extends Maintenance {
 
 		# Loose pattern: If subpage is used, subpage may be simple name
 		$this->LinkPattern = "((?:(?:$LpA)?\\/$LpB)|$LpA)";
-		$QDelim = '(?:"")?';     # Optional quote delimiter (not in output)
+		# Optional quote delimiter (not in output)
+		$QDelim = '(?:"")?';
 		$this->LinkPattern .= $QDelim;
 
 		# Inter-site convention: sites must start with uppercase letter
@@ -800,7 +805,8 @@ EOT
 		$this->old = $old;
 		$this->new = $new;
 
-		$text = str_replace( $this->FS, '', $text ); # Remove separators (paranoia)
+		# Remove separators (paranoia)
+		$text = str_replace( $this->FS, '', $text );
 		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is',
 			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is',
@@ -823,8 +829,9 @@ EOT
 		$text = preg_replace_callback( "/{$this->LinkPattern}/",
 			[ $this, 'subWikiLink' ], $text );
 
+		# Restore saved text
 		$text = preg_replace_callback( "/{$this->FS}(\d+){$this->FS}/",
-			[ $this, 'restoreRaw' ], $text );   # Restore saved text
+			[ $this, 'restoreRaw' ], $text );
 		return $text;
 	}
 
@@ -832,7 +839,8 @@ EOT
 		$this->saveUrl = [];
 		$this->linkList = [];
 
-		$text = str_replace( $this->FS, '', $text ); # Remove separators (paranoia)
+		# Remove separators (paranoia)
+		$text = str_replace( $this->FS, '', $text );
 		$text = preg_replace_callback( '/(<pre>(.*?)<\/pre>)/is',
 			[ $this, 'storeRaw' ], $text );
 		$text = preg_replace_callback( '/(<code>(.*?)<\/code>)/is',
@@ -876,7 +884,8 @@ EOT
 		if ( $link == $this->old ) {
 			$link = $this->new;
 		} else {
-			$link = $oldlink;  # Preserve spaces if no match
+			# Preserve spaces if no match
+			$link = $oldlink;
 		}
 		$link = "[[$link";
 		if ( $name !== "" ) {

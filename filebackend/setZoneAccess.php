@@ -34,10 +34,12 @@ class SetZoneAccess extends Maintenance {
 		$this->output( "Making sure $dir exists..." );
 		$status = $backend->prepare( [ 'dir' => $dir ] + $secure );
 		// Make sure zone has the right ACLs...
-		if ( count( $secure ) ) { // private
+		if ( count( $secure ) ) {
+			// private
 			$this->output( "making '$dir' private..." );
 			$status->merge( $backend->secure( [ 'dir' => $dir ] + $secure ) );
-		} else { // public
+		} else {
+			// public
 			$this->output( "making '$dir' public..." );
 			$status->merge( $backend->publish( [ 'dir' => $dir, 'access' => true ] ) );
 		}

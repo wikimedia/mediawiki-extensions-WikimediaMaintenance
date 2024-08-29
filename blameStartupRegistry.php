@@ -65,12 +65,16 @@ class BlameStartupRegistry extends Maintenance {
 		];
 
 		$coreModuleNames = array_keys( require "$IP/resources/Resources.php" );
-		$extModuleNames = []; // from module name to extension name
+		// Map from module name to extension name
+		$extModuleNames = [];
 
 		// Approximate ExtensionRegistry and ExtensionProcessor
 		$extReg = ExtensionRegistry::getInstance();
 		foreach ( $extReg->getAllThings() as $extName => $extData ) {
-			$json = json_decode( file_get_contents( $extData['path'] ), /* assoc = */ true );
+			$json = json_decode(
+				file_get_contents( $extData['path'] ),
+				/* assoc = */ true
+			);
 			$modules = $json['ResourceModules'] ?? [];
 			foreach ( $modules as $moduleName => $moduleInfo ) {
 				$extModuleNames[$moduleName] = $extName;

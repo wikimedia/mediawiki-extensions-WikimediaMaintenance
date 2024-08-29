@@ -56,12 +56,14 @@ class CreateHumanReadableProjectNameFiles extends Maintenance {
 		$messageMatrix = [
 			// code => project name
 			"wiki" => wfMessage( "wikibase-otherprojects-wikipedia" )->text(),
-			"wiktionary" => "Wiktionary", // No message for this!?
+			// No message for the Wiktionary project family!?
+			"wiktionary" => "Wiktionary",
 			"wikibooks" => wfMessage( "wikibase-otherprojects-wikibooks" )->text(),
 			"wikiquote" => wfMessage( "wikibase-otherprojects-wikiquote" )->text(),
 			"wikinews" => wfMessage( "wikibase-otherprojects-wikinews" )->text(),
 			"wikisource" => wfMessage( "wikibase-sitelinks-wikisource" )->text(),
-			"wikiversity" => "Wikiversity", // No message for this, either!
+			// No message for the Wikiversity project family, either!
+			"wikiversity" => "Wikiversity",
 			"wikivoyage" => wfMessage( "wikibase-otherprojects-wikivoyage" )->text(),
 		];
 
