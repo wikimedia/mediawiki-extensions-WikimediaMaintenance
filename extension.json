@@ -13,6 +13,7 @@
 		]
 	},
 	"AutoloadClasses": {
-		"AddWiki": "addWiki.php"
+		"AddWiki": "addWiki.php",
+		"BlockDisabledAccounts": "blockDisabledAccounts.php"
 	}
 }
