@@ -21,6 +21,7 @@ class MakeDumpList extends Maintenance {
 		$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
 		$linkBatch = $linkBatchFactory->newLinkBatch();
 		$batchSize = 0;
+		// @phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $line = fgets( STDIN ) ) !== false ) {
 			$line = trim( $line );
 			$title = Title::newFromText( $line );

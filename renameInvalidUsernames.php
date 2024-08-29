@@ -60,6 +60,7 @@ class RenameInvalidUsernames extends Maintenance {
 		}
 		$count = 0;
 		$batchSize = $this->getBatchSize();
+		// @phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $line = trim( fgets( $file ) ) ) {
 			$this->output( "$line\n" );
 			// xxwiki	#####

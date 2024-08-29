@@ -285,6 +285,7 @@ EOT
 
 	private function readRclog() {
 		$rcFile = fopen( "{$this->dataDir}/rclog", 'r' );
+		// @phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $line = fgets( $rcFile ) ) {
 			$bits = explode( $this->FS3, $line );
 			if ( count( $bits ) !== 7 ) {
