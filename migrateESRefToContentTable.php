@@ -42,6 +42,12 @@ class MigrateESRefToContentTable extends Maintenance {
 			false,
 			true
 		);
+		$this->addOption(
+			'skip',
+			'List of tt: references to not delete',
+			false,
+			true
+		);
 
 		$this->setBatchSize( 100 );
 	}
@@ -64,6 +70,13 @@ class MigrateESRefToContentTable extends Maintenance {
 		$minID = (int)$this->getOption( 'start', 1 );
 
 		$diff = $maxID - $minID + 1;
+
+		$filename = $this->getOption( 'skip', false );
+		$skip = [];
+		if ( $filename ) {
+			$skipfile = file( $filename );
+			$skip = $skipfile ?: $skip;
+		}
 
 		while ( true ) {
 			$res = $dbw->newSelectQueryBuilder()
@@ -137,11 +150,13 @@ class MigrateESRefToContentTable extends Maintenance {
 						->caller( __METHOD__ )
 						->execute();
 
-					$dbw->newDeleteQueryBuilder()
-						->deleteFrom( 'text' )
-						->where( [ 'old_id' => $oldId ] )
-						->caller( __METHOD__ )
-						->execute();
+					if ( !in_array( $row->content_address . "\n", $skip ) ) {
+						$dbw->newDeleteQueryBuilder()
+							->deleteFrom( 'text' )
+							->where( [ 'old_id' => $oldId ] )
+							->caller( __METHOD__ )
+							->execute();
+					}
 				} else {
 					$this->output( "DRY-RUN: Would set content address for {$row->content_id} to "
 						. "{$newContentAddress} and delete text row {$oldId}.\n" );
