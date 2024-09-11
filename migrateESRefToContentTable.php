@@ -48,6 +48,12 @@ class MigrateESRefToContentTable extends Maintenance {
 			false,
 			true
 		);
+		$this->addOption(
+			'dump',
+			'Filename to dump tt: -> es:DB references to.',
+			false,
+			true
+		);
 
 		$this->setBatchSize( 100 );
 	}
@@ -76,6 +82,11 @@ class MigrateESRefToContentTable extends Maintenance {
 		if ( $filename ) {
 			$skipfile = file( $filename );
 			$skip = $skipfile ?: $skip;
+		}
+
+		$dump = $this->getOption( 'dump', false );
+		if ( $dump ) {
+			$dumpfile = fopen( $dump, 'a' );
 		}
 
 		while ( true ) {
@@ -157,6 +168,13 @@ class MigrateESRefToContentTable extends Maintenance {
 							->caller( __METHOD__ )
 							->execute();
 					}
+
+					if ( $dump ) {
+						fwrite(
+							$dumpfile,
+							$row->content_address . " => " . $newContentAddress . ";\n"
+						);
+					}
 				} else {
 					$this->output( "DRY-RUN: Would set content address for {$row->content_id} to "
 						. "{$newContentAddress} and delete text row {$oldId}.\n" );
@@ -174,6 +192,10 @@ class MigrateESRefToContentTable extends Maintenance {
 			if ( $minID > $maxID ) {
 				break;
 			}
+		}
+
+		if ( $dump ) {
+			fclose( $dumpfile );
 		}
 	}
 }
