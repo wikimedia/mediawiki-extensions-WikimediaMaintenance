@@ -22,6 +22,9 @@
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\Storage\SqlBlobStore;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Migrates references of the text table which again references external storage in the content table
@@ -67,8 +70,15 @@ class MigrateESRefToContentTable extends Maintenance {
 		$maxID = $this->getOption( 'end' );
 		if ( $maxID === null ) {
 			$maxID = $dbw->newSelectQueryBuilder()
-				->select( 'MAX(content_id)' )
+				->select( 'content_id' )
 				->from( 'content' )
+				->where( $dbw->expr(
+					'content_address',
+					IExpression::LIKE,
+					new LikeValue( 'tt:', $dbw->anyString() )
+				) )
+				->orderBy( 'content_id', SelectQueryBuilder::SORT_DESC )
+				->limit( 1 )
 				->caller( __METHOD__ )
 				->fetchField();
 		}
