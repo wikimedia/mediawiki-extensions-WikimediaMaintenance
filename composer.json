@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"lint": "parallel-lint --exclude vendor --exclude node_modules --ignore-fails -e php,inc .",
-		"phpcs": "phpcs -p -s",
+		"phpcs": "phpcs -p -s --cache",
 		"fix": [
 			"minus-x fix .",
 			"phpcbf"
