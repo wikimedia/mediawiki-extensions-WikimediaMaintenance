@@ -3,6 +3,8 @@
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Password\PasswordFactory;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 

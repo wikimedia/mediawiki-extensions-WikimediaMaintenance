@@ -20,6 +20,7 @@
 require_once __DIR__ . '/WikimediaMaintenance.php';
 require_once __DIR__ . '/WMFSite.php';
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\StaticArrayWriter;
 

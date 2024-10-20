@@ -27,6 +27,7 @@
  * @ingroup Wikimedia
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\WikiMap\WikiMap;
 

@@ -21,6 +21,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Storage\SqlBlobStore;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
