@@ -21,6 +21,7 @@
  */
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\WikiMap\WikiMap;
 

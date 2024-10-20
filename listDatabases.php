@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Maintenance\Maintenance;
+
 class ListDatabases extends Maintenance {
 	public function __construct() {
 		$this->addDescription( 'Prints a list of databases' );

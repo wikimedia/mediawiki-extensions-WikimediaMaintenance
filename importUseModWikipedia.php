@@ -12,6 +12,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use UtfNormal\Utils;
 use Wikimedia\AtEase\AtEase;

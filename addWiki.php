@@ -30,6 +30,8 @@
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use Cognate\PopulateCognateSites;
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Status\Status;

@@ -23,6 +23,8 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Maintenance\Maintenance;
+
 /**
  * Maintenance script to gather data associated with a specific email address
  *

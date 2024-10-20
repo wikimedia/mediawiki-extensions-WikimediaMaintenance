@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Maintenance\Maintenance;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
 require_once __DIR__ . '/../WikimediaMaintenance.php';

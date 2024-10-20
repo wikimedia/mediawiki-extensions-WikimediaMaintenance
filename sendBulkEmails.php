@@ -20,6 +20,8 @@
  * @ingroup Wikimedia
  */
 
+use MediaWiki\Content\TextContent;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Revision\SlotRecord;

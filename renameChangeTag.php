@@ -21,6 +21,7 @@
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\Maintenance\Maintenance;
 
 /**
  * Maintenance script that renames a change tag.

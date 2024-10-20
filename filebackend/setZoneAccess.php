@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/../WikimediaMaintenance.php';
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\FileBackend\FileBackend;
 
 class SetZoneAccess extends Maintenance {
 	public function __construct() {

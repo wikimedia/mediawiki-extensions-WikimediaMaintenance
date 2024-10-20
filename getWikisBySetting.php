@@ -22,6 +22,8 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use MediaWiki\Maintenance\Maintenance;
+
 /**
  * Usage:
  *  $ mwscript getWikisBySetting.php --setting wgExampleUrl --value '/example'
