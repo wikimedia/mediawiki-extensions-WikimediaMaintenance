@@ -193,6 +193,8 @@ class CreateExtensionTables extends Maintenance {
 					'translate_messageindex.sql',
 					'translate_reviews.sql',
 					'translate_translatable_bundles.sql',
+					'translate_cache.sql',
+					'translate_message_group_subscriptions.sql',
 				];
 				$path = "$IP/extensions/Translate/sql/mysql";
 				break;
