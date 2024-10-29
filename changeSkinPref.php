@@ -71,7 +71,7 @@ class ChangeSkinPref extends Maintenance {
 		}
 
 		$skinFactory = $services->getSkinFactory();
-		if ( !array_key_exists( $newSkin, $skinFactory->getSkinNames() ) ) {
+		if ( !array_key_exists( $newSkin, $skinFactory->getInstalledSkins() ) ) {
 			$this->fatalError( "$newSkin is not a valid skin" );
 		}
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
