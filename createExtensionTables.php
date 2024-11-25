@@ -36,7 +36,7 @@ class CreateExtensionTables extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster, $wgGEDatabaseCluster, $wgVirtualDomainsMapping;
+		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster, $wgVirtualDomainsMapping;
 
 		$dbw = $this->getDB( DB_PRIMARY );
 		$extension = $this->getArg( 0 );
@@ -102,10 +102,8 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'growthexperiments':
-				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-				$geLB = $wgGEDatabaseCluster
-					? $lbFactory->getExternalLB( $wgGEDatabaseCluster )
-					: $lbFactory->getMainLB();
+				$geLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
+					->getLoadBalancer( 'virtual-growthexperiments' );
 				$conn = $geLB->getConnection( DB_PRIMARY, [], $geLB::DOMAIN_ANY );
 				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
 				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
