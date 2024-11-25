@@ -36,7 +36,7 @@ class CreateExtensionTables extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster, $wgVirtualDomainsMapping;
+		global $IP, $wgFlowDefaultWikiDb, $wgEchoCluster;
 
 		$dbw = $this->getDB( DB_PRIMARY );
 		$extension = $this->getArg( 0 );
@@ -126,14 +126,8 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'mediamoderation':
-				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-				$mmLB = $lbFactory->getMainLB();
-				if ( isset( $wgVirtualDomainsMapping['virtual-mediamoderation'] ) ) {
-					$config = $wgVirtualDomainsMapping['virtual-mediamoderation'];
-					if ( isset( $config['cluster'] ) ) {
-						$mmLB = $lbFactory->getExternalLB( $config['cluster'] );
-					}
-				}
+				$mmLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
+					->getLoadBalancer( 'virtual-mediamoderation' );
 				$conn = $mmLB->getConnection( DB_PRIMARY, [], $mmLB::DOMAIN_ANY );
 				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
 				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
