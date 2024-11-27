@@ -29,6 +29,7 @@
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use MediaWiki\Installer\DatabaseCreator;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
@@ -64,6 +65,7 @@ class AddWiki extends InstallPreConfigured {
 
 		$this->populateSites();
 		$this->setZoneAccess();
+		$this->updateSearchIndexConfig();
 		$this->notifyNewProjects();
 
 		$this->output( "Done.\n" );
@@ -150,6 +152,20 @@ class AddWiki extends InstallPreConfigured {
 			SetZoneAccess::class,
 			"$extDir/WikimediaMaintenance/filebackend/setZoneAccess.php",
 			$options
+		);
+	}
+
+	/**
+	 * Set up ElasticSearch namespaces
+	 *
+	 * TODO: move to ElasticSearch install task or update
+	 */
+	private function updateSearchIndexConfig() {
+		$extDir = $this->getConfig()->get( MainConfigNames::ExtensionDirectory );
+		$this->runInstallScript(
+			UpdateSearchIndexConfig::class,
+			"$extDir/CirrusSearch/maintenance/UpdateSearchIndexConfig.php",
+			[ 'cluster' => 'all' ]
 		);
 	}
 
