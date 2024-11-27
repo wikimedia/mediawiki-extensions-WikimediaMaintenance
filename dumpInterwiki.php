@@ -248,6 +248,8 @@ class DumpInterwiki extends Maintenance {
 		$dblistAll = $this->realm === 'labs'
 			? "{$this->mwconfigDir}/dblists/all-labs.dblist"
 			: "{$this->mwconfigDir}/dblists/all.dblist";
+		$dblistPreInstall = $this->realm === 'labs'
+			? null : "{$this->mwconfigDir}/dblists/preinstall.dblist";
 		$langlist = $this->realm === 'labs'
 			? "{$this->mwconfigDir}/langlist-labs"
 			: "{$this->mwconfigDir}/langlist";
@@ -257,6 +259,11 @@ class DumpInterwiki extends Maintenance {
 
 		// List of all database names
 		$this->dblist = $this->removeComments( array_map( "trim", file( $dblistAll ) ) );
+		if ( $dblistPreInstall ) {
+			$preinstall = array_filter( $this->removeComments(
+				array_map( 'trim', file( $dblistPreInstall ) ) ) );
+			$this->dblist = array_merge( $this->dblist, $preinstall );
+		}
 
 		// Special-case databases
 		$this->specials = $this->removeComments( array_flip( array_map( "trim", file( $dblistSpecial ) ) ) );
