@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\WikimediaMaintenance\Tests\Integration;
 
 use AddWiki;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 
 /**
@@ -16,26 +17,11 @@ class AddWikiTest extends MaintenanceBaseTestCase {
 		return AddWiki::class;
 	}
 
-	private function addMockArguments( $language = null, $site = null, $dbname = null, $domain = null ) {
-		$this->maintenance->setArg( 'language', $language ?? 'en' );
-		$this->maintenance->setArg( 'site', $site ?? 'wikipedia' );
-		$this->maintenance->setArg( 'dbname', $dbname ?? 'enwiki' );
-		$this->maintenance->setArg( 'domain', $domain ?? 'en.wikipedia.org' );
-	}
-
-	public function testExecuteWhenWmgVersionNumberNotSet() {
-		$this->expectCallToFatalError();
-		$this->expectOutputRegex( '/\$wmgVersionNumber is not set/' );
-		$this->addMockArguments();
-		$this->maintenance->execute();
-	}
-
 	public function testExecuteForUndefinedLanguageName() {
-		global $wmgVersionNumber;
-		$wmgVersionNumber = 'master';
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'fakelanguage' );
+		$this->maintenance->setOption( 'allow-existing', true );
 		$this->expectCallToFatalError();
 		$this->expectOutputRegex( '/Language fakelanguage not found/' );
-		$this->addMockArguments( 'fakelanguage' );
 		$this->maintenance->execute();
 	}
 }
