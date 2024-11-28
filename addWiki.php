@@ -32,7 +32,6 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use MediaWiki\Installer\DatabaseCreator;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\WikiMap\WikiMap;
 use Wikibase\Lib\Maintenance\PopulateSitesTable;
 
@@ -42,10 +41,6 @@ class AddWiki extends InstallPreConfigured {
 		$this->addDescription( "Add a new wiki to the family. Wikimedia specific!" );
 		$this->addOption( 'allow-existing',
 			'Allow the script to run on an existing wiki' );
-	}
-
-	public function getDbType() {
-		return Maintenance::DB_ADMIN;
 	}
 
 	public function execute() {
