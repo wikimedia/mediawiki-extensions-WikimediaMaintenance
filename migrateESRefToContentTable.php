@@ -66,7 +66,7 @@ class MigrateESRefToContentTable extends Maintenance {
 		$dbw = $this->getPrimaryDB();
 		$batchSize = $this->getBatchSize();
 		$dryRun = $this->getOption( 'dry-run', false );
-		$sleep = (int)$this->getOption( 'sleep', 0 );
+		$sleep = (float)$this->getOption( 'sleep', 0 );
 
 		$maxID = $this->getOption( 'end' );
 		if ( $maxID === null ) {
@@ -93,6 +93,11 @@ class MigrateESRefToContentTable extends Maintenance {
 		if ( $filename ) {
 			$skipfile = file( $filename );
 			$skip = $skipfile ?: $skip;
+		}
+
+		// Put the values as keys to make the checks much faster
+		if ( $skip ) {
+			$skip = array_flip( $skip );
 		}
 
 		$dump = $this->getOption( 'dump', false );
@@ -172,7 +177,7 @@ class MigrateESRefToContentTable extends Maintenance {
 						->caller( __METHOD__ )
 						->execute();
 
-					if ( !in_array( $row->content_address . "\n", $skip ) ) {
+					if ( !array_key_exists( $row->content_address . "\n", $skip ) ) {
 						$dbw->newDeleteQueryBuilder()
 							->deleteFrom( 'text' )
 							->where( [ 'old_id' => $oldId ] )
@@ -194,7 +199,11 @@ class MigrateESRefToContentTable extends Maintenance {
 
 			$this->waitForReplication();
 			if ( $sleep > 0 ) {
-				sleep( $sleep );
+				if ( $sleep >= 1 ) {
+					sleep( $sleep );
+				} else {
+					usleep( $sleep * 1000000 );
+				}
 			}
 
 			$this->output( "Processed {$res->numRows()} rows out of $diff.\n" );
