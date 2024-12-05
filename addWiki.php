@@ -32,6 +32,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use MediaWiki\Installer\DatabaseCreator;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Status\Status;
 use MediaWiki\WikiMap\WikiMap;
 use Wikibase\Lib\Maintenance\PopulateSitesTable;
 
@@ -55,15 +56,6 @@ class AddWiki extends InstallPreConfigured {
 		if ( !parent::execute() ) {
 			return false;
 		}
-
-		$this->output( "Core installer complete\n" );
-
-		$this->populateSites();
-		$this->setZoneAccess();
-		$this->updateSearchIndexConfig();
-		$this->notifyNewProjects();
-
-		$this->output( "Done.\n" );
 		return true;
 	}
 
@@ -81,6 +73,43 @@ class AddWiki extends InstallPreConfigured {
 			?? ucfirst( $site ?? 'wikipedia' );
 
 		return $options;
+	}
+
+	protected function getExtraTaskSpecs() {
+		return [
+			[
+				'name' => 'populate-sites',
+				'description' => 'Populating the sites table on the new wiki',
+				'after' => 'extension-tables',
+				'callback' => function () {
+					return $this->populateSites();
+				}
+			],
+			[
+				'name' => 'set-zone-access',
+				'description' => 'Configuring Swift zones',
+				'after' => 'extension-tables',
+				'callback' => function () {
+					return $this->setZoneAccess();
+				}
+			],
+			[
+				'name' => 'search-index',
+				'description' => 'Configuring CirrusSearch indexes',
+				'after' => 'extension-tables',
+				'callback' => function () {
+					return $this->updateSearchIndexConfig();
+				}
+			],
+			[
+				'name' => 'notify-newprojects',
+				'description' => 'Notifying the newprojects mailing list',
+				'postInstall' => true,
+				'callback' => function () {
+					return $this->notifyNewProjects();
+				}
+			]
+		];
 	}
 
 	/**
@@ -114,16 +143,17 @@ class AddWiki extends InstallPreConfigured {
 	 * Populate the sites table
 	 *
 	 * TODO: move to core. Move the weird bits to config.
+	 *
+	 * @return Status
 	 */
 	private function populateSites() {
 		$extDir = $this->getConfig()->get( MainConfigNames::ExtensionDirectory );
 		// Populate sites table (this should be idempotent)
 		// At least it's idempotent in the sense that it will give you the same fatal error every time
-		$this->runInstallScript(
+		return $this->runInstallScript(
 			PopulateSitesTable::class,
 			"$extDir/Wikibase/lib/maintenance/populateSitesTable.php",
 			[
-				'wiki' => WikiMap::getCurrentWikiId(),
 				'force-protocol' => 'https',
 			],
 		);
@@ -133,6 +163,8 @@ class AddWiki extends InstallPreConfigured {
 	 * Set up Swift zones
 	 *
 	 * TODO: move to core
+	 *
+	 * @return Status
 	 */
 	private function setZoneAccess() {
 		$extDir = $this->getConfig()->get( MainConfigNames::ExtensionDirectory );
@@ -143,7 +175,7 @@ class AddWiki extends InstallPreConfigured {
 			$options['private'] = 1;
 		}
 		// Sets up the filebackend zones (this should be idempotent)
-		$this->runInstallScript(
+		return $this->runInstallScript(
 			SetZoneAccess::class,
 			"$extDir/WikimediaMaintenance/filebackend/setZoneAccess.php",
 			$options
@@ -154,10 +186,12 @@ class AddWiki extends InstallPreConfigured {
 	 * Set up ElasticSearch namespaces
 	 *
 	 * TODO: move to ElasticSearch install task or update
+	 *
+	 * @return Status
 	 */
 	private function updateSearchIndexConfig() {
 		$extDir = $this->getConfig()->get( MainConfigNames::ExtensionDirectory );
-		$this->runInstallScript(
+		return $this->runInstallScript(
 			UpdateSearchIndexConfig::class,
 			"$extDir/CirrusSearch/maintenance/UpdateSearchIndexConfig.php",
 			[ 'cluster' => 'all' ]
@@ -166,6 +200,8 @@ class AddWiki extends InstallPreConfigured {
 
 	/**
 	 * Send an email to the newprojects mailing list
+	 *
+	 * @return Status
 	 */
 	private function notifyNewProjects() {
 		global $wmgAddWikiNotify, $wgConf;
@@ -196,13 +232,7 @@ class AddWiki extends InstallPreConfigured {
 				"Once the wiki is fully set up, it'll be visible at $url";
 		}
 
-		$this->output( "Notifying $to... " );
-		$status = UserMailer::send( $to, $from, "New wiki: $wiki", $body );
-		if ( !$status->isOK() ) {
-			$this->error( $status );
-		} else {
-			$this->output( "done\n" );
-		}
+		return UserMailer::send( $to, $from, "New wiki: $wiki", $body );
 	}
 
 	/**
@@ -220,6 +250,7 @@ class AddWiki extends InstallPreConfigured {
 	 * @param string $class
 	 * @param string $classFile
 	 * @param array $options
+	 * @return Status
 	 */
 	private function runInstallScript( $class, $classFile, $options ) {
 		$wiki = WikiMap::getCurrentWikiId();
@@ -235,9 +266,9 @@ class AddWiki extends InstallPreConfigured {
 		}
 		$this->output( "\nRunning maintenance script class as if executing: $cmd\n" );
 		if ( $maint->execute() !== false ) {
-			$this->output( "$baseName complete\n" );
+			return Status::newGood();
 		} else {
-			$this->fatalError( "$baseName failed\n" );
+			return Status::newFatal( new RawMessage( "$baseName failed" ) );
 		}
 	}
 
