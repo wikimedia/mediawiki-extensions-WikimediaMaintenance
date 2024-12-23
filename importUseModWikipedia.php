@@ -8,7 +8,7 @@
  *
  */
 
-// phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple,MediaWiki.Commenting.PropertyDocumentation
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple,MediaWiki.Commenting.PropertyDocumentation,MediaWiki.Commenting.FunctionComment
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 

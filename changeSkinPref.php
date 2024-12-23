@@ -50,6 +50,10 @@ class ChangeSkinPref extends Maintenance {
 		);
 	}
 
+	/**
+	 * @param string|int $userName
+	 * @param string $newSkin
+	 */
 	private function setSkin( $userName, $newSkin ) {
 		$services = MediaWikiServices::getInstance();
 		$userFactory = $services->getUserFactory();
