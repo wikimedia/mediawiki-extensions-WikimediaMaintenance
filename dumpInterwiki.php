@@ -223,7 +223,7 @@ class DumpInterwiki extends Maintenance {
 		}
 	}
 
-	private function removeComments( $array ) {
+	private function removeComments( array $array ): array {
 		return array_filter( $array, static function ( $element ) {
 			return strpos( $element, '#' ) !== 0;
 		} );

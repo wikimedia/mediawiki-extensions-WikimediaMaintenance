@@ -68,11 +68,11 @@ class GetPageCounts extends Maintenance {
 		$this->output( FormatJson::encode( $counts, true ) . "\n" );
 	}
 
-	private function getExcludedWikis() {
+	private function getExcludedWikis(): array {
 		return $this->dblist( 'private' );
 	}
 
-	private function dblist( $name ) {
+	private function dblist( string $name ): array {
 		if ( !defined( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ) {
 			$this->error(
 				"Warning: MEDIAWIKI_DEPLOYMENT_DIR is not defined, no wikis will be ignored\n"

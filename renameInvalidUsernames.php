@@ -86,7 +86,7 @@ class RenameInvalidUsernames extends Maintenance {
 		fclose( $file );
 	}
 
-	protected function rename( $userId, $wiki, $newName = '' ) {
+	protected function rename( string $userId, string $wiki, string $newName = '' ) {
 		if ( $newName === '' ) {
 			$newName = null;
 		}
@@ -185,7 +185,7 @@ class RenameInvalidUsernames extends Maintenance {
 		}
 	}
 
-	protected function getCurrentRenameCount() {
+	protected function getCurrentRenameCount(): int {
 		// TODO: why does this need a primary connection?
 		$row = CentralAuthServices::getDatabaseManager()->getCentralPrimaryDB()->newSelectQueryBuilder()
 			->select( [ 'count' => 'COUNT(*)' ] )

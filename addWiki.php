@@ -59,7 +59,7 @@ class AddWiki extends InstallPreConfigured {
 		return true;
 	}
 
-	protected function getSubclassDefaultOptions() {
+	protected function getSubclassDefaultOptions(): array {
 		global $wgConf;
 		$options = [];
 
@@ -75,7 +75,7 @@ class AddWiki extends InstallPreConfigured {
 		return $options;
 	}
 
-	protected function getExtraTaskSpecs() {
+	protected function getExtraTaskSpecs(): array {
 		return [
 			[
 				'name' => 'populate-sites',

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Cache\LinkBatch;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
@@ -48,7 +49,7 @@ class MakeDumpList extends Maintenance {
 		}
 	}
 
-	public function doBatch( $linkBatch ) {
+	public function doBatch( LinkBatch $linkBatch ) {
 		$dbr = $this->getReplicaDB();
 		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
 		$queryInfo = $linksMigration->getQueryInfo( 'templatelinks' );

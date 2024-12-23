@@ -88,7 +88,7 @@ class MeasureZoneSizes extends Maintenance {
 		$this->output( $output );
 	}
 
-	protected function getSizeOfDirectory( FileBackend $backend, $dir ) {
+	protected function getSizeOfDirectory( FileBackend $backend, string $dir ): array {
 		$bytes = 0;
 		$count = 0;
 		$list = $backend->getFileList( [ 'dir' => $dir, 'adviseStat' => true ] );

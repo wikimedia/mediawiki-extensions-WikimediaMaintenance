@@ -31,7 +31,7 @@ class SetZoneAccess extends Maintenance {
 		}
 	}
 
-	protected function prepareDirectory( FileBackend $backend, $dir, array $secure ) {
+	protected function prepareDirectory( FileBackend $backend, string $dir, array $secure ) {
 		// Create zone if it doesn't exist...
 		$this->output( "Making sure $dir exists..." );
 		$status = $backend->prepare( [ 'dir' => $dir ] + $secure );

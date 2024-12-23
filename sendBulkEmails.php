@@ -278,7 +278,7 @@ class SendBulkEmails extends Maintenance {
 		return true;
 	}
 
-	private function reportPcnt( $val ) {
+	private function reportPcnt( int $val ): float {
 		if ( $this->total > 0 ) {
 			return $val / $this->total * 100.0;
 		}
