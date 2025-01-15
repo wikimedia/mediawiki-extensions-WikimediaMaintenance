@@ -114,7 +114,12 @@ class BlockDisabledAccounts extends Maintenance {
 		$block->isUsertalkEditAllowed( false );
 
 		// Try to update block if user is already blocked. Otherwise, attempt to insert a new one.
-		$success = $alreadyBlocked ? $block->update() : $block->insert();
+		$store = $this->getServiceContainer()->getDatabaseBlockStore();
+		if ( $alreadyBlocked ) {
+			$success = $store->updateBlock( $block );
+		} else {
+			$success = $store->insertBlock( $block );
+		}
 
 		if ( is_array( $success ) ) {
 			$logAction = $alreadyBlocked ? 'reblock' : 'block';
