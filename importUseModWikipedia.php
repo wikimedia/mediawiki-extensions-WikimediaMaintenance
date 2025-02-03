@@ -683,7 +683,7 @@ EOT
 			$params['diff'] = $diff;
 			$params['title'] = $title;
 			$params['diffStartLine'] = $diffStartLine;
-			call_user_func( $callback, $params );
+			$callback( $params );
 		}
 		echo "\n";
 
