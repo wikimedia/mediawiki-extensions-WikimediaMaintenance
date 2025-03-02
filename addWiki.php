@@ -31,6 +31,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use MediaWiki\Installer\DatabaseCreator;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Status\Status;
 use MediaWiki\WikiMap\WikiMap;
