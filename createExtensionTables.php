@@ -16,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
- * @ingroup Wikimedia
  */
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
@@ -25,13 +23,10 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\WikiMap\WikiMap;
 
-/**
- * Creates the necessary tables to install various extensions on a WMF wiki
- */
 class CreateExtensionTables extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->addDescription( 'Creates database tables for specific MediaWiki Extensions' );
+		$this->addDescription( 'Create the necessary tables for a given MediaWiki extension on a WMF wiki.' );
 		$this->addArg( 'extension', 'Which extension to install' );
 	}
 

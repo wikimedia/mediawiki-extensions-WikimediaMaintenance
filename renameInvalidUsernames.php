@@ -14,8 +14,9 @@ use Wikimedia\Rdbms\IDBAccessObject;
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
 /**
- * Rename users whose usernames are now invalid after
- * various MW changes, updates to interwiki map, etc.
+ * Rename users whose usernames are now invalid.
+ *
+ * E.g. after MW changes, updates to interwiki map, etc.
  *
  * At the same time, convert them to a global account if necessary.
  *
@@ -23,7 +24,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
  * unattached accounts will be renamed to 'Invalid username $userId~$wiki' and
  * global accounts will be renamed to 'Invalid username $globalUserId'.
  *
- * @see bug T5507
+ * @see T5507
  */
 class RenameInvalidUsernames extends Maintenance {
 

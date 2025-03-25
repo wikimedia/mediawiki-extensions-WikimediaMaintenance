@@ -16,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance ExternalStorage
  */
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
@@ -24,7 +23,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use MediaWiki\Maintenance\Maintenance;
 
 /**
- * Deletes the entries from the text table based on a given file.
+ * Delete the entries from the text table based on a given file.
  */
 class MigrateESRefToContentTableStage2 extends Maintenance {
 

@@ -26,9 +26,6 @@ use Wikimedia\StaticArrayWriter;
 
 /**
  * Build an $wgInterwikiCache array based on the [[m:Interwiki_map]] page on Meta-Wiki.
- *
- * @ingroup Maintenance
- * @ingroup Wikimedia
  */
 class DumpInterwiki extends Maintenance {
 	protected ?array $langlist;

@@ -1,12 +1,5 @@
 <?php
 /**
- * @defgroup Wikimedia Wikimedia
- */
-
-/**
- * Set a skin preference for a user. Mostly nice for running in a loop on
- * bunches of wikis
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
- * @ingroup Wikimedia
  */
 
 use MediaWiki\Maintenance\Maintenance;
@@ -33,6 +24,9 @@ use MediaWiki\WikiMap\WikiMap;
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
 
+/**
+ * Set a skin preference for a user. Designed to run in a loop over many wikis.
+ */
 class ChangeSkinPref extends Maintenance {
 	public function __construct() {
 		parent::__construct();

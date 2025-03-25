@@ -16,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance ExternalStorage
  */
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
@@ -28,9 +27,13 @@ use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
- * Migrates references of the text table which again references external storage in the content table
- * to the content table directly referencing external storage and getting rid od the row in the text
- * table.
+ * Remove references to the local text table.
+ *
+ * Look for entries in the content table which reference the local text table,
+ * which in turn references external storage. Change these to directly reference
+ * external storage in the content table.
+ *
+ * Use migrateESRefToContentTableStage2.php to rid of the rows in the text table.
  */
 class MigrateESRefToContentTable extends Maintenance {
 

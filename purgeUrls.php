@@ -16,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
  */
 
 require_once __DIR__ . '/WikimediaMaintenance.php';

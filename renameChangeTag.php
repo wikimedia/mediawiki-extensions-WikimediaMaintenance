@@ -24,11 +24,9 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Maintenance\Maintenance;
 
 /**
- * Maintenance script that renames a change tag.
+ * Renames a change tag.
  *
- * This script does not rename tag log entries!
- *
- * @since 1.40
+ * This script does not rename tag-related log entries!
  */
 class RenameChangeTag extends Maintenance {
 

@@ -16,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
- * @ingroup Wikimedia
  */
 
 use MediaWiki\Content\TextContent;

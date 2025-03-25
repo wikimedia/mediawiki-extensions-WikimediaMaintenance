@@ -16,9 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
- * @author <jbond at wikimedia dot org>
- * @license GPL-2.0-or-later
  */
 
 require_once __DIR__ . '/WikimediaMaintenance.php';
@@ -35,7 +32,7 @@ use MediaWiki\Maintenance\Maintenance;
  * authenticated/verified via email.  If this value is empty/null it indicates
  * the user never completed the verification process
  *
- * @ingroup Maintenance
+ * @author <jbond at wikimedia dot org>
  */
 class GetUsersByEmail extends Maintenance {
 	public function __construct() {

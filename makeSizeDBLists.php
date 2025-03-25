@@ -1,14 +1,13 @@
 <?php
 
-/**
- * Builds database lists of wikis based on size
- */
-
-require_once __DIR__ . '/WikimediaMaintenance.php';
-
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 
+require_once __DIR__ . '/WikimediaMaintenance.php';
+
+/**
+ * Builds database lists of wikis based on size
+ */
 class MakeSizeDBLists extends Maintenance {
 
 	private const DB_SMALL = 10000;
