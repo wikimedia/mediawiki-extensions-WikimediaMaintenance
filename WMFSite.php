@@ -1,33 +1,21 @@
 <?php
 /**
- * A simple little class referring to a specific WMF site.
- * @ingroup Maintenance
+ * A simple class representing a single WMF wiki.
+ *
+ * Used by dumpInterwiki.php.
  */
 class WMFSite {
-	/** @var string */
-	public $suffix;
-	/** @var string */
-	public $prefix;
-	/** @var string */
-	public $url;
+	public string $suffix;
+	public string $prefix;
+	public string $url;
 
-	/**
-	 * @param string $suffix
-	 * @param string $prefix
-	 * @param string $url
-	 */
-	public function __construct( $suffix, $prefix, $url ) {
+	public function __construct( string $suffix, string $prefix, string $url ) {
 		$this->suffix = $suffix;
 		$this->prefix = $prefix;
 		$this->url = $url;
 	}
 
-	/**
-	 * @param string $lang
-	 * @param string $urlprotocol
-	 * @return string
-	 */
-	public function getURL( $lang, $urlprotocol ) {
+	public function getURL( string $lang, string $urlprotocol ): string {
 		$xlang = str_replace( '_', '-', $lang );
 		return "$urlprotocol//$xlang.{$this->url}/wiki/\$1";
 	}
