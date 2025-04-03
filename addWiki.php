@@ -45,6 +45,7 @@ class AddWiki extends InstallPreConfigured {
 			'Allow the script to run on an existing wiki' );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		if ( $this->hasArg() ) {
 			$this->fatalError( "This script no longer takes arguments. " .
