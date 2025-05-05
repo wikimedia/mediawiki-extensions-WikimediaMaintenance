@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\UserBlockTarget;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
@@ -98,6 +99,7 @@ class BlockDisabledAccounts extends Maintenance {
 	 * @return bool true on success, false on failure
 	 */
 	private function doBlockAndLog( User $user ) {
+		$services = $this->getServiceContainer();
 		$block = $user->getBlock();
 		$alreadyBlocked = ( $block !== null );
 
@@ -105,9 +107,10 @@ class BlockDisabledAccounts extends Maintenance {
 			$block = new DatabaseBlock();
 		}
 		$reason = $this->getOption( 'reason', 'Convert disabled account to blocked account' );
-		$scriptUser = User::newFromName( 'Maintenance script' );
 
-		$block->setTarget( $user );
+		$scriptUser = $services->getUserFactory()->newFromName( 'Maintenance script' );
+
+		$block->setTarget( new UserBlockTarget( $user->getUser() ) );
 		$block->setBlocker( $scriptUser );
 		$block->setReason( $reason );
 		$block->setExpiry( 'infinity' );
@@ -115,7 +118,7 @@ class BlockDisabledAccounts extends Maintenance {
 		$block->isUsertalkEditAllowed( false );
 
 		// Try to update block if user is already blocked. Otherwise, attempt to insert a new one.
-		$store = $this->getServiceContainer()->getDatabaseBlockStore();
+		$store = $services->getDatabaseBlockStore();
 		if ( $alreadyBlocked ) {
 			$success = $store->updateBlock( $block );
 		} else {
