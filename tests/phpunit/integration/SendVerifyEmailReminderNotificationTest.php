@@ -2,11 +2,14 @@
 namespace MediaWiki\Extension\WikimediaMaintenance\Tests\Integration;
 
 use CentralAuthTestUser;
+use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
+use MediaWiki\Extension\Notifications\Jobs\NotificationJob;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Site\HashSiteStore;
 use MediaWiki\Site\MediaWikiSite;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
+use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\WikiMap\WikiMap;
 use SendVerifyEmailReminderNotification;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -39,6 +42,24 @@ class SendVerifyEmailReminderNotificationTest extends MaintenanceBaseTestCase {
 		$this->overrideConfigValue(
 			MainConfigNames::LocalDatabases, [ WikiMap::getCurrentWikiId(), self::OTHER_WIKI_ID ]
 		);
+
+		// Configure CentralAuth, LBFactory and ActorStoreFactory to return the test database connection
+		// for the "foreign" wiki as well.
+		$virtualDomainsMapping = $this->getServiceContainer()->getMainConfig()->get( 'VirtualDomainsMapping' );
+		$virtualDomainsMapping['virtual-centralauth'] = [ 'db' => false ];
+		$this->overrideConfigValue( 'VirtualDomainsMapping', $virtualDomainsMapping );
+
+		$actorStoreFactory = $this->createMock( ActorStoreFactory::class );
+		$actorStoreFactory->method( 'getActorStore' )
+			->willReturnMap( [
+				[ WikiAwareEntity::LOCAL, $this->getServiceContainer()->getActorStore() ],
+				[ WikiMap::getCurrentWikiId(), $this->getServiceContainer()->getActorStore() ],
+				[ self::OTHER_WIKI_ID, $this->getServiceContainer()->getActorStore() ],
+			] );
+		$actorStoreFactory->method( 'getActorNormalization' )
+			->willReturnCallback( [ $actorStoreFactory, 'getActorStore' ] );
+
+		$this->setService( 'ActorStoreFactory', $actorStoreFactory );
 	}
 
 	protected function getMaintenanceClass() {
@@ -98,8 +119,13 @@ class SendVerifyEmailReminderNotificationTest extends MaintenanceBaseTestCase {
 			$this->assertStringContainsString( $expectedOutput, $actualOutput );
 		}
 		$this->assertStringContainsString(
-			'Sent email to 5 users that have been active since 20250301000000', $actualOutput
+			'Sent verification reminder to 2 users active since 20250301000000. ' .
+				'Checked a total of 5 users, where 1 had already confirmed their email.',
+			$actualOutput
 		);
+
+		$this->assertUsersNotifiedOnWiki( [ 'ActiveUser1' ], self::OTHER_WIKI_ID );
+		$this->assertUsersNotifiedOnWiki( [ 'ActiveUser2' ], WikiMap::getCurrentWikiId() );
 	}
 
 	public static function provideShouldSendNotificationsToActiveUsers(): array {
@@ -107,19 +133,61 @@ class SendVerifyEmailReminderNotificationTest extends MaintenanceBaseTestCase {
 			'--batch-size is 2' => [
 				2,
 				[
-					'...would have sent verify-email-reminder for central IDs between 10 - 11',
-					'...would have sent verify-email-reminder for central IDs between 12 - 13',
-					'...would have sent verify-email-reminder for central IDs between 15 - 15',
+					'...checking if verification reminder is needed for central IDs between 10 - 11',
+					'...checking if verification reminder is needed for central IDs between 12 - 13',
+					'...checking if verification reminder is needed for central IDs between 15 - 15',
 				],
 			],
 			'--batch-size is 3' => [
 				3,
 				[
-					'...would have sent verify-email-reminder for central IDs between 10 - 12',
-					'...would have sent verify-email-reminder for central IDs between 13 - 15',
+					'...checking if verification reminder is needed for central IDs between 10 - 12',
+					'...checking if verification reminder is needed for central IDs between 13 - 15',
 				],
 			],
 		];
+	}
+
+	/**
+	 * Verify that the specified users were notified on the given wiki.
+	 * @param string[] $expectedUserNames
+	 * @param string $wikiId
+	 */
+	private function assertUsersNotifiedOnWiki( array $expectedUserNames, string $wikiId ): void {
+		$jobQueue = $this->getServiceContainer()
+			->getJobQueueGroupFactory()
+			->makeJobQueueGroup( $wikiId )
+			->get( 'EchoNotificationJob' );
+
+		$actorStore = $this->getServiceContainer()->getActorStore();
+
+		$userNames = [];
+
+		while ( true ) {
+			$job = $jobQueue->pop();
+			if ( $job === false ) {
+				break;
+			}
+
+			// Extract recipient usernames from job parameters.
+			if ( $job instanceof NotificationJob ) {
+				$params = $job->getParams();
+				$extraData = json_decode( $params['eventData']['event_extra'], true );
+
+				$recipientUserNames = $actorStore
+					->newSelectQueryBuilder()
+					->whereUserIds( $extraData['recipients'] )
+					->caller( __METHOD__ )
+					->fetchUserNames();
+
+				$userNames = array_merge( $userNames, $recipientUserNames );
+			}
+		}
+
+		$this->assertArrayEquals(
+			$expectedUserNames,
+			$userNames
+		);
 	}
 
 	/**
