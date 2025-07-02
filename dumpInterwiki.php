@@ -44,7 +44,7 @@ class DumpInterwiki extends Maintenance {
 			'Path to operations/mediawiki-config checkout. '
 				. 'Used for langlist, all.dblist and special.dblist',
 			false, true );
-		$this->addOption( 'target-realm', 'One of "labs" (beta.wmflabs.org) or "production".',
+		$this->addOption( 'target-realm', 'One of "labs" (beta.wmcloud.org) or "production".',
 			false, true );
 		$this->addOption( 'insecure', 'Output wikimedia interwiki urls using HTTP instead of HTTPS',
 			false, false );
@@ -234,7 +234,7 @@ class DumpInterwiki extends Maintenance {
 		$this->mwconfigDir = $this->getOption( 'mwconfig-dir',
 			getenv( 'MEDIAWIKI_DEPLOYMENT_DIR' ) ?: '/srv/mediawiki' );
 
-		$this->end = $this->realm === 'labs' ? '.beta.wmflabs.org' : '.org';
+		$this->end = $this->realm === 'labs' ? '.beta.wmcloud.org' : '.org';
 
 		if ( !file_exists( "$this->mwconfigDir/dblists" ) ) {
 			$this->fatalError( "--mwconfig-dir is unset or invalid. "
