@@ -27,7 +27,9 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Send a bulk email message to a list of wiki account holders using
@@ -421,5 +423,7 @@ class SendBulkEmails extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = SendBulkEmails::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

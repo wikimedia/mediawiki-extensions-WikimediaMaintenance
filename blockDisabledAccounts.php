@@ -10,7 +10,9 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserArray;
 use Wikimedia\Rdbms\IExpression;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Script to migrate disabled accounts to blocked accounts. This will also remove these users
@@ -146,5 +148,7 @@ class BlockDisabledAccounts extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BlockDisabledAccounts::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -5,7 +5,9 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 class MakeDumpList extends Maintenance {
 	public function __construct() {
@@ -73,5 +75,7 @@ class MakeDumpList extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MakeDumpList::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

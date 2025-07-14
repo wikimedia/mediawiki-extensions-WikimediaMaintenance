@@ -11,7 +11,9 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\Rdbms\IDBAccessObject;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Rename users whose usernames are now invalid.
@@ -197,5 +199,7 @@ class RenameInvalidUsernames extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RenameInvalidUsernames::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

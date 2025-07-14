@@ -10,7 +10,9 @@
 
 // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple,MediaWiki.Commenting.PropertyDocumentation,MediaWiki.Commenting.FunctionComment
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
@@ -939,5 +941,7 @@ EOT
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ImportUseModWikipedia::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

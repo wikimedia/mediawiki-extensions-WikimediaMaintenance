@@ -18,7 +18,9 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Deferred\CdnCacheUpdate;
 use MediaWiki\Maintenance\Maintenance;
@@ -82,5 +84,7 @@ class PurgeUrls extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PurgeUrls::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

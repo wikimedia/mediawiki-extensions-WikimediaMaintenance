@@ -1,5 +1,7 @@
 <?php
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
@@ -51,5 +53,8 @@ class SetZoneAccess extends Maintenance {
 		}
 	}
 }
+
+// @codeCoverageIgnoreStart
 $maintClass = SetZoneAccess::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -18,7 +18,9 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Maintenance\Maintenance;
@@ -86,5 +88,7 @@ class GetPageCounts extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GetPageCounts::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

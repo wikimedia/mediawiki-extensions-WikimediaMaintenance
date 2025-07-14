@@ -18,7 +18,9 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 
@@ -99,5 +101,7 @@ class MigrateESRefToContentTableStage2 extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MigrateESRefToContentTableStage2::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -18,7 +18,9 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Maintenance\Maintenance;
@@ -78,5 +80,7 @@ class RenameChangeTag extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RenameChangeTag::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

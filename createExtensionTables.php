@@ -17,7 +17,9 @@
  *
  * @file
  */
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
@@ -213,5 +215,7 @@ class CreateExtensionTables extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CreateExtensionTables::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

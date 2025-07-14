@@ -17,7 +17,9 @@
  *
  * @file
  */
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 require_once __DIR__ . '/WMFSite.php';
 
 use MediaWiki\Maintenance\Maintenance;
@@ -521,5 +523,7 @@ class DumpInterwiki extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DumpInterwiki::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

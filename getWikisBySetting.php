@@ -18,7 +18,9 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 
@@ -65,5 +67,7 @@ class GetWikisBySetting extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GetWikisBySetting::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

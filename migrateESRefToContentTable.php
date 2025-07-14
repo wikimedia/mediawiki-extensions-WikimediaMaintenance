@@ -18,7 +18,9 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Storage\SqlBlobStore;
@@ -223,5 +225,7 @@ class MigrateESRefToContentTable extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MigrateESRefToContentTable::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

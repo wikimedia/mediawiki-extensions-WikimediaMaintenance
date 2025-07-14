@@ -3,7 +3,9 @@
 use MediaWiki\Maintenance\Maintenance;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 class TestRctComplete extends Maintenance {
 	public function __construct() {
@@ -41,5 +43,7 @@ class TestRctComplete extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = TestRctComplete::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

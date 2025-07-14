@@ -18,7 +18,9 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 
@@ -68,5 +70,7 @@ class GetUsersByEmail extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GetUsersByEmail::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

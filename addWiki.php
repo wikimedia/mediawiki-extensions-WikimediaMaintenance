@@ -27,7 +27,9 @@
  * @ingroup Wikimedia
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use MediaWiki\Installer\DatabaseCreator;
@@ -276,5 +278,7 @@ class AddWiki extends InstallPreConfigured {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = AddWiki::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

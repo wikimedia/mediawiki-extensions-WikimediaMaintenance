@@ -22,7 +22,9 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\WikiMap\WikiMap;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Set a skin preference for a user. Designed to run in a loop over many wikis.
@@ -86,5 +88,7 @@ class ChangeSkinPref extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ChangeSkinPref::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

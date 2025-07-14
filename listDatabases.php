@@ -1,5 +1,7 @@
 <?php
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
 
@@ -18,5 +20,7 @@ class ListDatabases extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ListDatabases::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -26,7 +26,9 @@ use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\WikiMap\WikiMap;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * To test this locally, simply run it without parameters:
@@ -345,5 +347,7 @@ class BlameStartupRegistry extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BlameStartupRegistry::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

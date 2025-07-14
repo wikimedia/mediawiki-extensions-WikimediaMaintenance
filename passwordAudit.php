@@ -6,7 +6,9 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Password\PasswordFactory;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
+// @codeCoverageIgnoreEnd
 
 class PasswordAudit extends Maintenance {
 
@@ -119,5 +121,7 @@ class PasswordAudit extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PasswordAudit::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd
