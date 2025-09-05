@@ -3,12 +3,12 @@
 	<rule ref="./vendor/mediawiki/mediawiki-codesniffer/MediaWiki" />
 	<rule ref="MediaWiki.NamingConventions.PrefixedGlobalFunctions">
 		<properties>
-			<property name="ignoreList" type="array" value="doSanityCheck,purgeStaleMemcachedText,fixBug41778,assertCanAlter,doStuff" />
+			<property name="ignoreList[]" value="doSanityCheck,purgeStaleMemcachedText,fixBug41778,assertCanAlter,doStuff" />
 		</properties>
 	</rule>
 	<rule ref="MediaWiki.NamingConventions.ValidGlobalName">
 		<properties>
-			<property name="ignoreList" type="array" value="$IP,$wmgRealm,$wmgVersionNumber,$wmgAddWikiNotify" />
+			<property name="ignoreList[]" value="$IP,$wmgRealm,$wmgVersionNumber,$wmgAddWikiNotify" />
 		</properties>
 	</rule>
 	<file>.</file>
