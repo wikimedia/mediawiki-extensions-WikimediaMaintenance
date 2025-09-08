@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Stub for phan for the helper class MWWikiversions in multiversion
- */
+// Stub for phan for the helper class MWWikiversions in multiversion
 
 class MWWikiversions {
 	/**
