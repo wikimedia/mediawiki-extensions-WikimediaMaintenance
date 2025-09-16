@@ -116,6 +116,10 @@ class AddWiki extends InstallPreConfigured {
 		];
 	}
 
+	protected function getTaskSkips(): array {
+		return [ 'interwiki' ];
+	}
+
 	/**
 	 * Check if the wiki already exists. This is in case of confusion with the old
 	 * addWiki.php which didn't act on the wiki specified with --wiki.
