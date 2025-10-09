@@ -174,6 +174,18 @@ class DumpInterwiki extends Maintenance {
 		'wikiversity' => [
 			'beta' => 'en',
 		],
+		'special' => [
+			'arbcom_cswiki' => 'cs',
+			'arbcom_dewiki' => 'de',
+			'arbcom_fiwiki' => 'fi',
+			'arbcom_itwiki' => 'it',
+			'arbcom_nlwiki' => 'nl',
+			'arbcom_plwiki' => 'pl',
+			'arbcom_ruwiki' => 'ru',
+			'arbcom_zhwiki' => 'zh',
+			'sysop_itwiki' => 'it',
+			'sysop_plwiki' => 'pl',
+		],
 	];
 
 	/**
@@ -355,10 +367,16 @@ class DumpInterwiki extends Maintenance {
 				 * @var $targetSite WMFSite
 				 */
 				foreach ( $sites as $targetSite ) {
+					$lateralLang = 'en';
+					// Check for language overrides
+					if ( isset( self::$languageOverrides['special'][$db] ) ) {
+						$lateralLang = self::$languageOverrides['special'][$db];
+					}
+
 					$links = array_merge( $links, $this->makeLink(
 						[
 							'iw_prefix' => $targetSite->prefix,
-							'iw_url' => $targetSite->getURL( 'en', $this->urlprotocol ),
+							'iw_url' => $targetSite->getURL( $lateralLang, $this->urlprotocol ),
 							'iw_local' => 1
 						],
 						$db
@@ -404,8 +422,7 @@ class DumpInterwiki extends Maintenance {
 
 					$lateralLang = $lang;
 					// Check for language overrides
-					if ( isset( self::$languageOverrides[$site->suffix] ) &&
-						isset( self::$languageOverrides[$site->suffix][$lang] ) ) {
+					if ( isset( self::$languageOverrides[$site->suffix][$lang] ) ) {
 						$lateralLang = self::$languageOverrides[$site->suffix][$lang];
 					}
 
