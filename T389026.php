@@ -5,6 +5,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 // @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\WikiMap\WikiMap;
 
 class T389026 extends Maintenance {
 
@@ -22,27 +23,33 @@ class T389026 extends Maintenance {
 			$this->fatalError( 'This script can not be run on commonswiki since it uses more than one slot.' );
 		}
 
-		$db = $this->getDB();
+		$dbr = $this->getReplicaDB();
+		$dbw = $this->getPrimaryDB();
 		$batchSize = $this->getBatchSize();
 		$dryRun = $this->getOption( 'dry-run', false );
 
 		$currentId = (int)$this->getOption( 'start', 0 );
+		$maxId = (int)$dbr->newSelectQueryBuilder()
+			->select( 'MAX(content_id)' )
+			->from( 'content' )
+			->caller( __METHOD__ )
+			->fetchField();
 
-		while ( $currentId < $batchSize ) {
-			$res = $db->newSelectQueryBuilder()
+		while ( $currentId < $maxId ) {
+			$res = $dbr->newSelectQueryBuilder()
 				->select( [ 'slot_revision_id', 'content_id' ] )
 				->from( 'slots' )
 				->join( 'content', null, 'content_id = slot_content_id' )
 				->where( [
 					'content_sha1' => '',
-					$db->expr( 'content_id', '>=', $currentId ),
-					$db->expr( 'content_id', '<', $currentId + $batchSize ),
+					$dbr->expr( 'content_id', '>=', $currentId ),
+					$dbr->expr( 'content_id', '<', $currentId + $batchSize ),
 				] )
 				->caller( __METHOD__ )
 				->fetchResultSet();
 
 			foreach ( $res as $row ) {
-				$revSha1 = $db->newSelectQueryBuilder()
+				$revSha1 = $dbr->newSelectQueryBuilder()
 					->select( 'rev_sha1' )
 					->from( 'revision' )
 					->where( [ 'rev_id' => $row->slot_revision_id ] )
@@ -50,7 +57,7 @@ class T389026 extends Maintenance {
 					->fetchField();
 
 				if ( !$revSha1 ) {
-					$arSha1 = $db->newSelectQueryBuilder()
+					$arSha1 = $dbr->newSelectQueryBuilder()
 						->select( 'ar_sha1' )
 						->from( 'archive' )
 						->where( [ 'ar_rev_id' => $row->slot_revision_id ] )
@@ -66,7 +73,7 @@ class T389026 extends Maintenance {
 				if ( $dryRun ) {
 					$this->output( "Would update {$row->content_id} to " . ( $revSha1 ?? $arSha1 ) . "\n" );
 				} else {
-					$db->newUpdateQueryBuilder()
+					$dbw->newUpdateQueryBuilder()
 						->update( 'content' )
 						->set( [ 'content_sha1' => $revSha1 ?? $arSha1 ] )
 						->where( [ 'content_id' => $row->content_id ] )
