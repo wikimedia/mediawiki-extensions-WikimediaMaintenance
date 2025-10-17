@@ -13,9 +13,9 @@
 		]
 	},
 	"AutoloadClasses": {
-		"AddWiki": "addWiki.php",
-		"BlockDisabledAccounts": "blockDisabledAccounts.php",
-		"GetUsersByEmail": "getUsersByEmail.php",
-		"SendVerifyEmailReminderNotification": "sendVerifyEmailReminderNotification.php"
+		"AddWiki": "maintenance/addWiki.php",
+		"BlockDisabledAccounts": "maintenance/blockDisabledAccounts.php",
+		"GetUsersByEmail": "maintenance/getUsersByEmail.php",
+		"SendVerifyEmailReminderNotification": "maintenance/sendVerifyEmailReminderNotification.php"
 	}
 }

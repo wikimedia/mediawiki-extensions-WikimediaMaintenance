@@ -30,7 +30,7 @@ class MakeSizeDBLists extends Maintenance {
 			try {
 				$lb = $lbFactory->getMainLB( $wiki );
 				$db = $lb->getConnection( DB_PRIMARY, [], $wiki );
-			} catch ( Exception $e ) {
+			} catch ( Exception ) {
 				// Probably just wikitech etc, skip!
 				continue;
 			}

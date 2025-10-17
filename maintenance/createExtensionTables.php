@@ -204,7 +204,7 @@ class CreateExtensionTables extends Maintenance {
 
 		$this->output( "Creating $extension tables...\n" );
 		foreach ( $files as $table => $file ) {
-			if ( !is_numeric( $table ) && $dbw->tableExists( $table ) ) {
+			if ( !is_numeric( $table ) && $dbw->tableExists( $table, __METHOD__ ) ) {
 				$this->output( "  $table already exists\n" );
 				continue;
 			}

@@ -87,7 +87,7 @@ class BlameStartupRegistry extends Maintenance {
 
 		try {
 			$rl->preloadModuleInfo( $moduleNames, $context );
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			// Ignore
 		}
 
@@ -100,7 +100,7 @@ class BlameStartupRegistry extends Maintenance {
 			// Approximate what RL\StartUpModule does
 			try {
 				$versionHash = $module->getVersionHash( $context );
-			} catch ( Exception $e ) {
+			} catch ( Exception ) {
 				// Ignore
 				$versionHash = '';
 			}

@@ -10,6 +10,7 @@ $cfg['directory_list'] = array_merge(
 		'../../extensions/CirrusSearch',
 		'../../extensions/cldr',
 		'../../extensions/Cognate',
+		'../../extensions/Echo',
 		'../../extensions/MassMessage',
 		'../../extensions/Wikibase',
 	]
@@ -23,8 +24,16 @@ $cfg['exclude_analysis_directory_list'] = array_merge(
 		'../../extensions/CirrusSearch',
 		'../../extensions/cldr',
 		'../../extensions/Cognate',
+		'../../extensions/Echo',
 		'../../extensions/MassMessage',
 		'../../extensions/Wikibase',
+	]
+);
+
+$cfg['exclude_file_list'] = array_merge(
+	$cfg['exclude_file_list'],
+	[
+		'../../extensions/MassMessage/.phan/stubs/Event.php',
 	]
 );
 

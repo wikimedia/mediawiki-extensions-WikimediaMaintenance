@@ -106,6 +106,7 @@ class MigrateESRefToContentTable extends Maintenance {
 		}
 
 		$dump = $this->getOption( 'dump', false );
+		$dumpfile = null;
 		if ( $dump ) {
 			$dumpfile = fopen( $dump, 'a' );
 		}
@@ -190,7 +191,7 @@ class MigrateESRefToContentTable extends Maintenance {
 							->execute();
 					}
 
-					if ( $dump ) {
+					if ( $dumpfile ) {
 						fwrite(
 							$dumpfile,
 							$row->content_address . " => " . $newContentAddress . ";\n"
@@ -205,9 +206,9 @@ class MigrateESRefToContentTable extends Maintenance {
 			$this->waitForReplication();
 			if ( $sleep > 0 ) {
 				if ( $sleep >= 1 ) {
-					sleep( $sleep );
+					sleep( (int)$sleep );
 				} else {
-					usleep( $sleep * 1000000 );
+					usleep( (int)( $sleep * 1000000 ) );
 				}
 			}
 
@@ -219,7 +220,7 @@ class MigrateESRefToContentTable extends Maintenance {
 			}
 		}
 
-		if ( $dump ) {
+		if ( $dumpfile ) {
 			fclose( $dumpfile );
 		}
 	}

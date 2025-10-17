@@ -69,7 +69,7 @@ class MigrateESRefToContentTableStage2 extends Maintenance {
 			$oldId = intval( substr( $id, 3 ) );
 
 			if ( !$oldId ) {
-				$this->output( "Malformed text_id: $oldid\n" );
+				$this->output( "Malformed text_id: {$oldId}\n" );
 				continue;
 			}
 
@@ -89,13 +89,13 @@ class MigrateESRefToContentTableStage2 extends Maintenance {
 				$this->waitForReplication();
 				if ( $sleep > 0 ) {
 					if ( $sleep >= 1 ) {
-						sleep( $sleep );
+						sleep( (int)$sleep );
 					} else {
-						usleep( $sleep * 1000000 );
+						usleep( (int)( $sleep * 1000000 ) );
 					}
 				}
 
-				$this->output( "Processed $count rows out of $total.\n" );
+				$this->output( "Processed {$count} rows out of {$total}.\n" );
 			}
 		}
 	}
