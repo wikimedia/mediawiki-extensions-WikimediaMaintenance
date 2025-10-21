@@ -108,18 +108,20 @@ class SendVerifyEmailReminderNotificationTest extends MaintenanceBaseTestCase {
 		] );
 
 		$this->maintenance->loadWithArgv( [ '--batch-size', $batchSize ] );
-		$this->maintenance->setArg( 'timestamp', '20250301000000' );
+
+		$twoMonthsInSeconds = 5184000;
+		$this->maintenance->setArg( 'cutoff', $twoMonthsInSeconds );
 		$this->maintenance->execute();
 
 		$actualOutput = $this->getActualOutputForAssertion();
 		$this->assertStringContainsString(
-			'Sending email verification reminder to users who have been active since 20250301000000:', $actualOutput
+			'Sending email verification reminder to users who have been active since 20250302000000:', $actualOutput
 		);
 		foreach ( $expectedOutputStrings as $expectedOutput ) {
 			$this->assertStringContainsString( $expectedOutput, $actualOutput );
 		}
 		$this->assertStringContainsString(
-			'Sent verification reminder to 2 users active since 20250301000000. ' .
+			'Sent verification reminder to 2 users active since 20250302000000. ' .
 				'Checked a total of 5 users, where 1 had already confirmed their email.',
 			$actualOutput
 		);
