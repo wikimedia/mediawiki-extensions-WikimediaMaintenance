@@ -13,6 +13,7 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorStoreFactory;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/WikimediaMaintenance.php';
@@ -36,9 +37,9 @@ class SendVerifyEmailReminderNotification extends Maintenance {
 			'the specified time period'
 		);
 		$this->addArg(
-			'timestamp',
-			'The TS_MW formatted timestamp to use for selecting users to notify. Any users with activity ' .
-			'recorded after this timestamp will be notified.'
+			'cutoff',
+			'The maximum number of seconds ago the users last action must have been for ' .
+			'them to receive a verification reminder email'
 		);
 		$this->setBatchSize( 1000 );
 	}
@@ -54,7 +55,11 @@ class SendVerifyEmailReminderNotification extends Maintenance {
 
 		/** @var CheckUserCentralIndexLookup $checkUserCentralIndexLookup */
 		$checkUserCentralIndexLookup = $this->getServiceContainer()->get( 'CheckUserCentralIndexLookup' );
-		$timestamp = $this->getArg( 'timestamp' );
+
+		// Subtract the cutoff seconds from the current time to get the TS_MW absolute cutoff that can be passed
+		// to CheckUserCentralIndexLookup::getUsersActiveSinceTimestamp
+		$cutoffSeconds = (int)$this->getArg( 'cutoff' );
+		$timestamp = ConvertibleTimestamp::convert( TS_MW, ConvertibleTimestamp::time() - $cutoffSeconds );
 
 		$emailedCount = 0;
 		$usersWithConfirmedEmail = 0;
