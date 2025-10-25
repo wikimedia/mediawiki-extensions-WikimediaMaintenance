@@ -71,11 +71,11 @@ class T389026 extends Maintenance {
 				}
 
 				if ( $dryRun ) {
-					$this->output( "Would update {$row->content_id} to " . ( $revSha1 ?? $arSha1 ) . "\n" );
+					$this->output( "Would update {$row->content_id} to " . ( $revSha1 ?: $arSha1 ) . "\n" );
 				} else {
 					$dbw->newUpdateQueryBuilder()
 						->update( 'content' )
-						->set( [ 'content_sha1' => $revSha1 ?? $arSha1 ] )
+						->set( [ 'content_sha1' => $revSha1 ?: $arSha1 ] )
 						->where( [ 'content_id' => $row->content_id ] )
 						->caller( __METHOD__ )
 						->execute();
