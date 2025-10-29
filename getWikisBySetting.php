@@ -1,0 +1,1 @@
+getWikisBySetting.php
