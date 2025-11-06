@@ -33,7 +33,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 /**
  * To test this locally, simply run it without parameters:
  *
- *     $ php extensions/WikimediaMaintenance/blameStartupRegistry.php
+ *     $ php extensions/WikimediaMaintenance/maintenance/blameStartupRegistry.php
  *
  * The extension does not need to be installed first.
  */

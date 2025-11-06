@@ -185,7 +185,7 @@ class AddWiki extends InstallPreConfigured {
 		// Sets up the filebackend zones (this should be idempotent)
 		return $this->runInstallScript(
 			SetZoneAccess::class,
-			"$extDir/WikimediaMaintenance/filebackend/setZoneAccess.php",
+			"$extDir/WikimediaMaintenance/maintenance/filebackend/setZoneAccess.php",
 			$options
 		);
 	}
