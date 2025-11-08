@@ -1,1 +1,1 @@
-listDatabases.php
+maintenance/listDatabases.php

@@ -1,1 +1,1 @@
-blameStartupRegistry.php
+maintenance/blameStartupRegistry.php

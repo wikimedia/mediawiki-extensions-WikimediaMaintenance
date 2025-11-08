@@ -1,1 +1,1 @@
-blockDisabledAccounts.php
+maintenance/blockDisabledAccounts.php

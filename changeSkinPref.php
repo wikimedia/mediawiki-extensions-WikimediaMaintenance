@@ -1,1 +1,1 @@
-changeSkinPref.php
+maintenance/changeSkinPref.php

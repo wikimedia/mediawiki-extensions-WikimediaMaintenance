@@ -1,1 +1,1 @@
-sendVerifyEmailReminderNotification.php
+maintenance/sendVerifyEmailReminderNotification.php

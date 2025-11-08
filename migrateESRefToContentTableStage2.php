@@ -1,1 +1,1 @@
-migrateESRefToContentTableStage2.php
+maintenance/migrateESRefToContentTableStage2.php

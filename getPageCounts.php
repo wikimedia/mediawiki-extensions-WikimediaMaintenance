@@ -1,1 +1,1 @@
-getPageCounts.php
+maintenance/getPageCounts.php

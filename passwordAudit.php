@@ -1,1 +1,1 @@
-passwordAudit.php
+maintenance/passwordAudit.php

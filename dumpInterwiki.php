@@ -1,1 +1,1 @@
-dumpInterwiki.php
+maintenance/dumpInterwiki.php

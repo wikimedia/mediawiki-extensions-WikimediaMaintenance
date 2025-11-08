@@ -1,1 +1,1 @@
-getUsersByEmail.php
+maintenance/getUsersByEmail.php

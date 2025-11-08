@@ -1,1 +1,1 @@
-importUseModWikipedia.php
+maintenance/importUseModWikipedia.php

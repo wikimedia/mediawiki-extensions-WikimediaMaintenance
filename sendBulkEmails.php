@@ -1,1 +1,1 @@
-sendBulkEmails.php
+maintenance/sendBulkEmails.php

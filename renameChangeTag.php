@@ -1,1 +1,1 @@
-renameChangeTag.php
+maintenance/renameChangeTag.php

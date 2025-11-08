@@ -1,1 +1,1 @@
-renameInvalidUsernames.php
+maintenance/renameInvalidUsernames.php

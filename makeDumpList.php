@@ -1,1 +1,1 @@
-makeDumpList.php
+maintenance/makeDumpList.php

@@ -1,1 +1,1 @@
-purgeUrls.php
+maintenance/purgeUrls.php

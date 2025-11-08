@@ -1,1 +1,1 @@
-migrateESRefToContentTable.php
+maintenance/migrateESRefToContentTable.php

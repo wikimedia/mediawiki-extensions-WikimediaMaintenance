@@ -1,1 +1,1 @@
-getWikisBySetting.php
+maintenance/getWikisBySetting.php

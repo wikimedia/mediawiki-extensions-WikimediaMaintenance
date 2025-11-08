@@ -1,1 +1,1 @@
-makeSizeDBLists.php
+maintenance/makeSizeDBLists.php

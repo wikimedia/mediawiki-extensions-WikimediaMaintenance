@@ -1,1 +1,1 @@
-createExtensionTables.php
+maintenance/createExtensionTables.php

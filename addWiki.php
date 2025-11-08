@@ -1,1 +1,1 @@
-addWiki.php
+maintenance/addWiki.php
