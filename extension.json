@@ -5,7 +5,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"descriptionmsg": "wikimediamaintenance-desc",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"MessagesDirs": {
 		"WikimediaMaintenance": [
