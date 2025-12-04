@@ -35,6 +35,7 @@ use CirrusSearch\Maintenance\UpdateSearchIndexConfig;
 use MediaWiki\Installer\DatabaseCreator;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Status\Status;
 use MediaWiki\WikiMap\WikiMap;
 use Wikibase\Lib\Maintenance\PopulateSitesTable;
@@ -255,14 +256,14 @@ class AddWiki extends InstallPreConfigured {
 	/**
 	 * Run a maintenance script, with some informative messaging
 	 *
-	 * @param string $class
+	 * @param class-string<Maintenance> $class
 	 * @param string $classFile
 	 * @param array $options
 	 * @return Status
 	 */
 	private function runInstallScript( $class, $classFile, $options ) {
 		$wiki = WikiMap::getCurrentWikiId();
-		$maint = $this->runChild( $class, $classFile );
+		$maint = $this->createChild( $class, $classFile );
 		$baseName = basename( $classFile );
 		$cmd = "$baseName --wiki=$wiki";
 		foreach ( $options as $name => $value ) {
