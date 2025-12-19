@@ -150,6 +150,50 @@ class SendVerifyEmailReminderNotificationTest extends MaintenanceBaseTestCase {
 		];
 	}
 
+	public function testShouldSkipUsersFromNonExistingWiki(): void {
+		ConvertibleTimestamp::setFakeTime( '20250501000000' );
+
+		// Set up central users with various home wikis (existing and not)
+		$this->createUsers( [
+			'idontexist' => [
+				[
+					'name' => 'ActiveUserOnGhostWiki',
+					'attrs' => [ 'gu_email' => '', 'gu_email_authenticated' => null, 'gu_id' => 21 ],
+				],
+			],
+			WikiMap::getCurrentWikiId() => [
+				[ 'name' => 'ActiveUser2', 'attrs' => [ 'gu_email_authenticated' => null, 'gu_id' => 22 ] ],
+			],
+		] );
+
+		// Insert last active timestamps for the users, which make them 'active'
+		$this->insertLastActiveTimestamps( [
+			'ActiveUserOnGhostWiki' => '20250404000000',
+			'ActiveUser2' => '20250405000000',
+		] );
+
+		$this->maintenance->loadWithArgv( [ '--batch-size', 2 ] );
+
+		$twoMonthsInSeconds = 5184000;
+		$this->maintenance->setArg( 'cutoff', $twoMonthsInSeconds );
+		$this->maintenance->execute();
+
+		$actualOutput = $this->getActualOutputForAssertion();
+		$this->assertStringContainsString(
+			'Sending email verification reminder to users who have been active since 20250302000000:', $actualOutput
+		);
+		$this->assertStringContainsString(
+			'...checking if verification reminder is needed for central IDs between 21 - 22', $actualOutput
+		);
+		$this->assertStringContainsString(
+			'Sent verification reminder to 1 users active since 20250302000000. ' .
+			'Checked a total of 2 users, where 0 had already confirmed their email.',
+			$actualOutput
+		);
+
+		$this->assertUsersNotifiedOnWiki( [ 'ActiveUser2' ], WikiMap::getCurrentWikiId() );
+	}
+
 	/**
 	 * Verify that the specified users were notified on the given wiki.
 	 * @param string[] $expectedUserNames

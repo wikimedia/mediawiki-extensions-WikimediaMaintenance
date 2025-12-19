@@ -12,6 +12,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorStoreFactory;
+use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -159,6 +160,17 @@ class SendVerifyEmailReminderNotification extends Maintenance {
 		// Defer notification creation via a job to ensure it is executed on the correct wiki,
 		// since the maintenance script will be running on a different wiki.
 		foreach ( $centralUsersByHomeWiki as $wikiId => $batch ) {
+			// Ensure the home wiki exists (T413093)
+			$wiki = WikiMap::getWiki( $wikiId );
+			if ( $wiki === null ) {
+				$this->logger->warning(
+					'Not sending email verification remainder to {numUsers} users whose home wiki is {wikiId}, which ' .
+						'does not exist.',
+					[ 'wikiId' => $wikiId, 'numUsers' => count( $batch ) ]
+				);
+				continue;
+			}
+
 			$localUserIds = $this->actorStoreFactory->getActorStore( $wikiId )
 				->newSelectQueryBuilder()
 				->select( 'actor_user' )
