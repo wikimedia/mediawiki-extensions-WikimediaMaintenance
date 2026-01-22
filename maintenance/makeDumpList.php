@@ -1,9 +1,9 @@
 <?php
 
-use MediaWiki\Cache\LinkBatch;
 use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\LinkBatch;
 use MediaWiki\Title\Title;
 
 // @codeCoverageIgnoreStart
