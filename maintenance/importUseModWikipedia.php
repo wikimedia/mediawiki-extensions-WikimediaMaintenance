@@ -17,7 +17,6 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use UtfNormal\Utils;
-use Wikimedia\AtEase\AtEase;
 
 class ImportUseModWikipedia extends Maintenance {
 	public $encodeMap, $decodeMap;
@@ -727,9 +726,8 @@ EOT
 					}
 				} else {
 					$this->printLatin1( "ERROR: unresolved diff in $title:\n" );
-					AtEase::suppressWarnings();
-					$diff = xdiff_string_diff( $text, $pageText ) . '';
-					AtEase::restoreWarnings();
+					// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+					$diff = @xdiff_string_diff( $text, $pageText ) . '';
 					$this->printLatin1( "$diff\n" );
 				}
 			}
