@@ -77,6 +77,10 @@ class AddWiki extends InstallPreConfigured {
 		$options['SiteGroupInEnglish'] = $wgSiteMatrixSites[$site]['name']
 			?? ucfirst( $site ?? 'wikipedia' );
 
+		// T415555: Always skip ALTER TABLE commands, as the database user used for install
+		// does not have permission to execute those SQL statements.
+		$options['SkipExtensionSchemaAlters'] = true;
+
 		return $options;
 	}
 
