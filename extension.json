@@ -16,6 +16,7 @@
 		"AddWiki": "maintenance/addWiki.php",
 		"BlockDisabledAccounts": "maintenance/blockDisabledAccounts.php",
 		"GetUsersByEmail": "maintenance/getUsersByEmail.php",
-		"SendVerifyEmailReminderNotification": "maintenance/sendVerifyEmailReminderNotification.php"
+		"SendVerifyEmailReminderNotification": "maintenance/sendVerifyEmailReminderNotification.php",
+		"SendBulkEmails": "maintenance/sendBulkEmails.php"
 	}
 }

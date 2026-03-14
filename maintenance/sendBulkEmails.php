@@ -118,7 +118,7 @@ class SendBulkEmails extends Maintenance {
 	private $from = null;
 
 	/**
-	 * @var MailAddress|null Email Reoly-To: address
+	 * @var MailAddress|null Email Reply-To: address
 	 */
 	private $replyto = null;
 
