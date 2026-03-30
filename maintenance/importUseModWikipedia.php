@@ -15,6 +15,7 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 // @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Shell\Shell;
 use MediaWiki\Title\Title;
 use UtfNormal\Utils;
 
@@ -506,8 +507,8 @@ EOT
 	private function patch( $source, $diff ) {
 		file_put_contents( $this->articleFileName, $source );
 		file_put_contents( $this->patchFileName, $diff );
-		$error = wfShellExec(
-			wfEscapeShellArg(
+		$error = Shell::command(
+			Shell::escape(
 				'patch',
 				'-n',
 				'-r', '-',
@@ -516,10 +517,10 @@ EOT
 				$this->articleFileName,
 				$this->patchFileName
 			) . ' 2>&1',
-			$status
-		);
+		)->execute();
+		$status = $error->getExitCode();
 		$text = file_get_contents( $this->articleFileName );
-		if ( $status || $text === false ) {
+		if ( $status != 0 || $text === false ) {
 			return false;
 		} else {
 			return $text;
