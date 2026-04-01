@@ -183,6 +183,20 @@ class CreateExtensionTables extends Maintenance {
 					'translate_reviews.sql',
 					'translate_translatable_bundles.sql',
 					'translate_cache.sql',
+				];
+				$path = "$IP/extensions/Translate/sql/mysql";
+				$this->output( "NOTE: You also need to run this script for translate-virtual\n" );
+				break;
+
+			case 'translate-virtual':
+				$mmLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
+					->getLoadBalancer( 'virtual-translate' );
+				$conn = $mmLB->getConnection( DB_PRIMARY, [], $mmLB::DOMAIN_ANY );
+				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
+				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
+
+				$dbw = $mmLB->getConnection( DB_PRIMARY );
+				$files = [
 					'translate_message_group_subscriptions.sql',
 				];
 				$path = "$IP/extensions/Translate/sql/mysql";
