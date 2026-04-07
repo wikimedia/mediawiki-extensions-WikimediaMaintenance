@@ -324,6 +324,10 @@ class DumpInterwiki extends Maintenance {
 
 		$links = [];
 
+		foreach ( $extraLinks as $link ) {
+			$links = array_merge( $links, $this->makeLink( $link, "__global" ) );
+		}
+
 		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		foreach ( $arr as $i => $item ) {
 			if ( !isset( $item['prefix'] ) || !isset( $item['url'] ) ) {
@@ -437,9 +441,6 @@ class DumpInterwiki extends Maintenance {
 				}
 
 			}
-		}
-		foreach ( $extraLinks as $link ) {
-			$links = array_merge( $links, $this->makeLink( $link, "__global" ) );
 		}
 
 		// List prefixes for each source
