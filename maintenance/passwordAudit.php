@@ -1,6 +1,5 @@
 <?php
 
-use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
@@ -49,7 +48,7 @@ class PasswordAudit extends Maintenance {
 
 			$this->output( "Working on '$username'..." );
 
-			$config = RequestContext::getMain()->getConfig();
+			$config = $this->getConfig();
 			$passwordFactory = new PasswordFactory(
 				$config->get( MainConfigNames::PasswordConfig ),
 				$config->get( MainConfigNames::PasswordDefault )
