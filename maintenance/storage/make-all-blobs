@@ -24,7 +24,7 @@ pass=$(echo 'echo $wgDBadminpassword;' | mwscript eval.php --wiki="enwiki");
 
 username=$(echo 'echo $wgDBadminuser;' | mwscript eval.php --wiki="enwiki");
 
-sqlfile="${PWD%/*/*/*}/maintenance/storage/blobs.sql"
+sqlfile="${PWD%/*/*/*/*}/maintenance/storage/blobs.sql"
 
 for db in `grep -v '^#' <$FILE`;do
 	echo "$db"
