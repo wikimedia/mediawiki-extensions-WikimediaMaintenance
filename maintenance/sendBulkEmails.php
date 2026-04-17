@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Content\TextContent;
+use MediaWiki\Mail\MailAddress;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;

@@ -10,6 +10,7 @@ use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\JobQueue\JobQueueGroupFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\WikiMap\WikiMap;
