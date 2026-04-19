@@ -160,6 +160,7 @@ class DumpInterwiki extends Maintenance {
 			'cn' => 'zh',
 			'co' => 'es',
 			'dk' => 'da',
+			'ge' => 'ka',
 			'il' => 'he',
 			'mx' => 'es',
 			'noboard_chapters' => 'no',
