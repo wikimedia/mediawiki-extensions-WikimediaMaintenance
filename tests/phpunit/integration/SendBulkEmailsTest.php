@@ -103,7 +103,7 @@ class SendBulkEmailsTest extends MaintenanceBaseTestCase {
 		$userInOptOut->setEmailAuthenticationTimestamp( '20250403020100' );
 		$userInOptOut->saveSettings();
 		$this->editPage(
-			Title::newFromText( 'Opt-out-list' ),
+			Title::makeTitle( NS_MAIN, 'Opt-out-list' ),
 			"<!-- BEGIN OPT-OUT LIST -->\n$userInOptOut"
 		);
 
