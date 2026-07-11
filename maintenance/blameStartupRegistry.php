@@ -260,25 +260,21 @@ class BlameStartupRegistry extends Maintenance {
 					$rlStartupModulesStats
 						->setLabel( 'wiki', $wikiFmt )
 						->setLabel( 'component', $componentFmt )
-						->copyToStatsdAt( "resourceloader_startup_modules.$wikiFmt.$componentFmt" )
 						->set( $info['modules'] );
 				}
 				if ( $info['startupBytes'] > 0 ) {
 					$rlStartupBytesStats
 						->setLabel( 'wiki', $wikiFmt )
 						->setLabel( 'component', $componentFmt )
-						->copyToStatsdAt( "resourceloader_startup_bytes.$wikiFmt.$componentFmt" )
 						->set( $info['startupBytes'] );
 				}
 			}
 
 			$stats->getGauge( 'resourceloader_startup_total_modules' )
 				->setLabel( 'wiki', $wikiFmt )
-				->copyToStatsdAt( "resourceloader_startup_modules_total.$wikiFmt" )
 				->set( $startupCount );
 			$stats->getGauge( 'resourceloader_startup_total_bytes' )
 				->setLabel( 'wiki', $wikiFmt )
-				->copyToStatsdAt( "resourceloader_startup_bytes_total.$wikiFmt" )
 				->set( $startupBytesTotal );
 
 			$rlModuleTransferStats = $stats->getGauge( 'resourceloader_module_transfersize_bytes' );
@@ -290,13 +286,11 @@ class BlameStartupRegistry extends Maintenance {
 					->setLabel( 'wiki', $wikiFmt )
 					->setLabel( 'component', $componentFmt )
 					->setLabel( 'name', $nameFmt )
-					->copyToStatsdAt( "resourceloader_module_transfersize_bytes.$wikiFmt.$componentFmt.$nameFmt" )
 					->set( $info['transferSize'] );
 				$rlModuleDecodedBytesStats
 					->setLabel( 'wiki', $wikiFmt )
 					->setLabel( 'component', $componentFmt )
 					->setLabel( 'name', $nameFmt )
-					->copyToStatsdAt( "resourceloader_module_decodedsize_bytes.$wikiFmt.$componentFmt.$nameFmt" )
 					->set( $info['decodedSize'] );
 			}
 
