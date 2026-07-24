@@ -2,13 +2,13 @@
 
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameFactory;
-use MediaWiki\Extension\CentralAuth\GlobalRename\GlobalRenameUserLogger;
 use MediaWiki\Extension\CentralAuth\GlobalRename\LocalRenameJob\LocalRenameUserJob;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 // @codeCoverageIgnoreStart
@@ -183,9 +183,38 @@ class RenameInvalidUsernames extends Maintenance {
 
 			$jobQueueGroupFactory->makeJobQueueGroup( $wiki )->push( $job );
 			// Log it
-			$logger = new GlobalRenameUserLogger( $maintScript );
-			$logger->logPromotion( $oldUser->getName(), $wiki, $newCAUser->getName(), $this->reason );
+			$this->logPromotion( $oldUser->getName(), $wiki, $newCAUser->getName(), $this->reason, $maintScript );
 		}
+	}
+
+	/**
+	 * Log the promotion of a local unattached to a global
+	 */
+	private function logPromotion(
+		string $oldName,
+		string $wiki,
+		string $newName,
+		string $reason,
+		UserIdentity $performingUser
+	): void {
+		// The following message is generated here:
+		// * logentry-gblrename-promote
+		$logEntry = new ManualLogEntry( 'gblrename', 'promote' );
+		$logEntry->setPerformer( $performingUser );
+		$logEntry->setTarget( SpecialPage::getTitleFor( 'CentralAuth', $newName ) );
+		$logEntry->setComment( $reason );
+		$logEntry->setParameters( [
+			'4::olduser' => $oldName,
+			'5::newuser' => $newName,
+			'6::oldwiki' => $wiki,
+		] );
+
+		$logEntry->setRelations( [
+			'oldname' => $oldName,
+		] );
+
+		$logid = $logEntry->insert();
+		$logEntry->publish( $logid );
 	}
 
 	protected function getCurrentRenameCount(): int {
