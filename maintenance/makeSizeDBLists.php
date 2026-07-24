@@ -22,14 +22,13 @@ class MakeSizeDBLists extends Maintenance {
 
 	public function execute() {
 		global $wgConf;
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$connectionProvider = MediaWikiServices::getInstance()->getConnectionProvider();
 		$small = [];
 		$medium = [];
 		$large = [];
 		foreach ( $wgConf->getLocalDatabases() as $wiki ) {
 			try {
-				$lb = $lbFactory->getMainLB( $wiki );
-				$db = $lb->getConnection( DB_PRIMARY, [], $wiki );
+				$db = $connectionProvider->getPrimaryDatabase( $wiki );
 			} catch ( Exception ) {
 				// Probably just wikitech etc, skip!
 				continue;

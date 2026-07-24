@@ -17,10 +17,9 @@ class TestRctComplete extends Maintenance {
 		global $wgLocalDatabases;
 		$bad = 0;
 		$good = 0;
-		$lbFactory = MediaWiki\MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$connectionProvider = MediaWiki\MediaWikiServices::getInstance()->getConnectionProvider();
 		foreach ( $wgLocalDatabases as $wiki ) {
-			$lb = $lbFactory->getMainLB( $wiki );
-			$db = $lb->getConnection( DB_REPLICA, [], $wiki );
+			$db = $connectionProvider->getReplicaDatabase( $wiki );
 			'@phan-var IMaintainableDatabase $db';
 			if ( $db->tableExists( 'blob_tracking', __METHOD__ ) ) {
 				$notDone = $db->newSelectQueryBuilder()

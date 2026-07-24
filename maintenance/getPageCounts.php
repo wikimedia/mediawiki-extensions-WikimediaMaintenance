@@ -39,7 +39,7 @@ class GetPageCounts extends Maintenance {
 
 		$wikis = $wgConf->getLocalDatabases();
 		$exclude = array_flip( $this->getExcludedWikis() );
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$connectionProvider = MediaWikiServices::getInstance()->getConnectionProvider();
 
 		$counts = [];
 		foreach ( $wikis as $wiki ) {
@@ -50,8 +50,7 @@ class GetPageCounts extends Maintenance {
 			if ( isset( $exclude[$wiki] ) ) {
 				continue;
 			}
-			$lb = $lbFactory->getMainLB( $wiki );
-			$dbr = $lb->getConnection( DB_REPLICA, [], $wiki );
+			$dbr = $connectionProvider->getReplicaDatabase( $wiki );
 			$row = $dbr->newSelectQueryBuilder()
 				->select( [ 'ss_total_pages', 'ss_good_articles' ] )
 				->from( 'site_stats' )
