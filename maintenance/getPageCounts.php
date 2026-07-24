@@ -28,10 +28,10 @@ use MediaWiki\MediaWikiServices;
 
 class GetPageCounts extends Maintenance {
 	public function __construct() {
+		parent::__construct();
 		$this->addDescription(
 			'Generates machine-readable statistics of pages on all wikis in the cluster'
 		);
-		parent::__construct();
 	}
 
 	public function execute() {
