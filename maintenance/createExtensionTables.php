@@ -24,6 +24,8 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 class CreateExtensionTables extends Maintenance {
 	public function __construct() {
@@ -67,11 +69,7 @@ class CreateExtensionTables extends Maintenance {
 				$echoLB = $wgEchoCluster
 					? $lbFactory->getExternalLB( $wgEchoCluster )
 					: $lbFactory->getMainLB();
-				$conn = $echoLB->getConnection( DB_PRIMARY, [], $echoLB::DOMAIN_ANY );
-				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
-				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
-
-				$dbw = $echoLB->getConnection( DB_PRIMARY );
+				$dbw = $this->getWikiConnection( $echoLB );
 
 				$files = [ 'tables-generated.sql' ];
 				$path = "$IP/extensions/Echo/sql/mysql";
@@ -101,11 +99,7 @@ class CreateExtensionTables extends Maintenance {
 			case 'growthexperiments':
 				$geLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
 					->getLoadBalancer( 'virtual-growthexperiments' );
-				$conn = $geLB->getConnection( DB_PRIMARY, [], $geLB::DOMAIN_ANY );
-				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
-				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
-
-				$dbw = $geLB->getConnection( DB_PRIMARY );
+				$dbw = $this->getWikiConnection( $geLB );
 
 				$files = [
 					'growthexperiments_link_recommendations' => 'growthexperiments_link_recommendations.sql',
@@ -125,11 +119,7 @@ class CreateExtensionTables extends Maintenance {
 			case 'mediamoderation':
 				$mmLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
 					->getLoadBalancer( 'virtual-mediamoderation' );
-				$conn = $mmLB->getConnection( DB_PRIMARY, [], $mmLB::DOMAIN_ANY );
-				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
-				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
-
-				$dbw = $mmLB->getConnection( DB_PRIMARY );
+				$dbw = $this->getWikiConnection( $mmLB );
 
 				$files = [
 					'mediamoderation_scan' => 'tables-generated.sql'
@@ -189,13 +179,9 @@ class CreateExtensionTables extends Maintenance {
 				break;
 
 			case 'translate-virtual':
-				$mmLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
+				$translateLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
 					->getLoadBalancer( 'virtual-translate' );
-				$conn = $mmLB->getConnection( DB_PRIMARY, [], $mmLB::DOMAIN_ANY );
-				$conn->query( "SET storage_engine=InnoDB", __METHOD__ );
-				$conn->query( "CREATE DATABASE IF NOT EXISTS " . WikiMap::getCurrentWikiId(), __METHOD__ );
-
-				$dbw = $mmLB->getConnection( DB_PRIMARY );
+				$dbw = $this->getWikiConnection( $translateLB );
 				$files = [
 					'translate_message_group_subscriptions.sql',
 				];
@@ -229,6 +215,35 @@ class CreateExtensionTables extends Maintenance {
 			$dbw->sourceFile( "$path/$file" );
 		}
 		$this->output( "  done!\n" );
+	}
+
+	/**
+	 * Get a primary connection to the current wiki's database on the given
+	 * load balancer, after verifying that the database actually exists there.
+	 *
+	 * The database should have already been created by addWiki.php. If it is
+	 * missing, that may be a sign of a configuration error (e.g. pointing at
+	 * the wrong cluster), and silently creating it here would put the tables
+	 * in the wrong place (T434314, T429304).
+	 */
+	private function getWikiConnection( ILoadBalancer $lb ): IDatabase {
+		$wikiId = WikiMap::getCurrentWikiId();
+		$conn = $lb->getConnection( DB_PRIMARY, [], ILoadBalancer::DOMAIN_ANY );
+		$dbExists = (bool)$conn->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'information_schema.schemata' )
+			->where( [ 'schema_name' => $wikiId ] )
+			->caller( __METHOD__ )
+			->fetchRow();
+		if ( !$dbExists ) {
+			$this->fatalError(
+				"Database \"$wikiId\" does not exist on cluster \"{$lb->getClusterName()}\".\n" .
+				"It should have been created by addWiki.php. Check that the wiki was created\n" .
+				"properly and that the configuration points at the correct cluster."
+			);
+		}
+
+		return $lb->getConnection( DB_PRIMARY );
 	}
 }
 
