@@ -216,7 +216,10 @@ class CreateExtensionTables extends Maintenance {
 				$this->fatalError( "This script is not configured to create tables for $extension\n" );
 		}
 
-		$this->output( "Creating $extension tables...\n" );
+		$this->output(
+			"Creating $extension tables in database \"{$dbw->getDBname()}\" " .
+				"on server \"{$dbw->getServerName()}\"...\n"
+		);
 		foreach ( $files as $table => $file ) {
 			if ( !is_numeric( $table ) && $dbw->tableExists( $table, __METHOD__ ) ) {
 				$this->output( "  $table already exists\n" );
