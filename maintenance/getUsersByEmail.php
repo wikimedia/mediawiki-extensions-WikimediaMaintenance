@@ -46,7 +46,7 @@ class GetUsersByEmail extends Maintenance {
 
 	public function execute() {
 		$email = trim( $this->getOption( 'email' ) );
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'user_name', 'user_email', 'user_email_authenticated' ] )
 			->from( 'user' )
