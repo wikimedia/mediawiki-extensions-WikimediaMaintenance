@@ -44,7 +44,7 @@ class RenameChangeTag extends Maintenance {
 	public function execute() {
 		$oldname = $this->getArg( 0 );
 		$newname = $this->getArg( 1 );
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		$this->output( "Rename tag {$oldname} to {$newname} ...\n" );
 		$this->output( "Updating change_tag_def and abuse_filter_action ..." );
