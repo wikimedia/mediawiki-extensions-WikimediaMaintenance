@@ -93,13 +93,19 @@ class FixFileRevisionMetadataDrift extends Maintenance {
 			foreach ( $res as $row ) {
 				$totalChecked++;
 
-				if ( $row->oi_metadata != $row->fr_metadata ) {
+				// Use binary comparison for BLOB fields
+				$oiMeta = $row->oi_metadata;
+				$frMeta = $row->fr_metadata;
+				$metadataDiff = ( strcmp( (string)$oiMeta, (string)$frMeta ) !== 0 );
+
+				if ( $metadataDiff ) {
 					$batchFixed++;
 					$totalFixed++;
 
 					$this->output(
 						"MISMATCH: {$row->oi_name} @ {$row->oi_timestamp} - " .
-						"oi_metadata={$row->oi_metadata}, fr_metadata={$row->fr_metadata}"
+						"oi_metadata length=" . strlen( (string)$oiMeta ) . ", " .
+						"fr_metadata length=" . strlen( (string)$frMeta )
 					);
 
 					if ( !$dryRun ) {
@@ -108,15 +114,18 @@ class FixFileRevisionMetadataDrift extends Maintenance {
 							->set( [ 'fr_metadata' => $row->oi_metadata ] )
 							->where( [ 'fr_id' => $row->fr_id ] )
 							->caller( __METHOD__ )->execute();
-
-						$this->output( " -> FIXED to {$row->oi_metadata}\n" );
+						$this->output(
+							" -> FIXED filerevision to match oldimage " .
+							"(affected rows: {$dbw->affectedRows()})\n"
+						);
 					} else {
-						$this->output( " -> WOULD FIX to {$row->oi_metadata}\n" );
+						$this->output( " -> WOULD FIX filerevision to match oldimage\n" );
 					}
 				} elseif ( $verbose ) {
 					$this->output(
 						"OK: {$row->oi_name} @ {$row->oi_timestamp} - " .
-						"oi_metadata={$row->oi_metadata}, fr_metadata={$row->fr_metadata}\n"
+						"oi_metadata length=" . strlen( (string)$oiMeta ) . ", " .
+						"fr_metadata length=" . strlen( (string)$frMeta ) . "\n"
 					);
 				}
 			}
@@ -188,13 +197,19 @@ class FixFileRevisionMetadataDrift extends Maintenance {
 			foreach ( $imageRes as $row ) {
 				$totalChecked++;
 
-				if ( $row->img_metadata != $row->fr_metadata ) {
+				// Use binary comparison for BLOB fields
+				$imgMeta = $row->img_metadata;
+				$frMeta = $row->fr_metadata;
+				$metadataDiff = ( strcmp( (string)$imgMeta, (string)$frMeta ) !== 0 );
+
+				if ( $metadataDiff ) {
 					$batchFixed++;
 					$totalFixed++;
 
 					$this->output(
 						"MISMATCH (current): {$row->img_name} - " .
-						"img_metadata={$row->img_metadata}, fr_metadata={$row->fr_metadata}"
+						"img_metadata length=" . strlen( (string)$imgMeta ) . ", " .
+						"fr_metadata length=" . strlen( (string)$frMeta )
 					);
 
 					if ( !$dryRun ) {
@@ -203,15 +218,18 @@ class FixFileRevisionMetadataDrift extends Maintenance {
 							->set( [ 'fr_metadata' => $row->img_metadata ] )
 							->where( [ 'fr_id' => $row->fr_id ] )
 							->caller( __METHOD__ )->execute();
-
-						$this->output( " -> FIXED to {$row->img_metadata}\n" );
+						$this->output(
+							" -> FIXED filerevision to match image " .
+							"(affected rows: {$dbw->affectedRows()})\n"
+						);
 					} else {
-						$this->output( " -> WOULD FIX to {$row->img_metadata}\n" );
+						$this->output( " -> WOULD FIX filerevision to match image\n" );
 					}
 				} elseif ( $verbose ) {
 					$this->output(
 						"OK (current): {$row->img_name} - " .
-						"img_metadata={$row->img_metadata}, fr_metadata={$row->fr_metadata}\n"
+						"img_metadata length=" . strlen( (string)$imgMeta ) . ", " .
+						"fr_metadata length=" . strlen( (string)$frMeta ) . "\n"
 					);
 				}
 			}
