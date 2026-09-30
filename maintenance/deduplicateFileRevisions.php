@@ -144,7 +144,7 @@ class DeduplicateFileRevisions extends Maintenance {
 		do {
 			$query = $dbw->newSelectQueryBuilder()
 				->select( [ 'fr_file' ] )
-				->from( 'filerevision' )
+				->from( 'filerevision', 'fr' )
 				->join( 'file', 'f', 'f.file_id = fr.fr_file' )
 				->groupBy( [ 'fr_file', 'fr_timestamp' ] )
 				->having( 'COUNT(*) > 1' )
@@ -164,7 +164,7 @@ class DeduplicateFileRevisions extends Maintenance {
 				$totalDuplicates++;
 
 				$rows = $dbw->newSelectQueryBuilder()
-					->select( 'fr.*' )
+					->select( '*' )
 					->from( 'filerevision' )
 					->where( [
 						'fr_file' => $row->fr_file,
