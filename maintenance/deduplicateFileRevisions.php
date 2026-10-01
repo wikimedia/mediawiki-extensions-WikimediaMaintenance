@@ -112,10 +112,11 @@ class DeduplicateFileRevisions extends Maintenance {
 							->where( [ 'oi_archive_name' => $delRow->oi_archive_name ] )
 							->caller( __METHOD__ )
 							->execute();
-						$totalDeleted++;
 					} else {
 						$this->output( " -> WOULD DELETE\n" );
 					}
+
+					$totalDeleted++;
 				}
 
 				$this->waitForReplication();
@@ -207,10 +208,11 @@ class DeduplicateFileRevisions extends Maintenance {
 							->where( [ 'fr_id' => $delRow->fr_id ] )
 							->caller( __METHOD__ )
 							->execute();
-						$totalDeleted++;
 					} else {
 						$this->output( " -> WOULD DELETE\n" );
 					}
+
+					$totalDeleted++;
 				}
 
 				$this->waitForReplication();
