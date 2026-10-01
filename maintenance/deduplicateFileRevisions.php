@@ -143,7 +143,7 @@ class DeduplicateFileRevisions extends Maintenance {
 
 		do {
 			$query = $dbw->newSelectQueryBuilder()
-				->select( [ 'fr_file' ] )
+				->select( [ 'fr_file', 'fr_timestamp' ] )
 				->from( 'filerevision', 'fr' )
 				->join( 'file', 'f', 'f.file_id = fr.fr_file' )
 				->groupBy( [ 'fr_file', 'fr_timestamp' ] )
