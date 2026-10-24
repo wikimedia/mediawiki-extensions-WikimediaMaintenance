@@ -16,7 +16,6 @@ require_once __DIR__ . '/WikimediaMaintenance.php';
 
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Shell\Shell;
-use MediaWiki\Title\Title;
 use UtfNormal\Utils;
 
 class ImportUseModWikipedia extends Maintenance {
@@ -606,6 +605,10 @@ EOT
 		return $changedLinks;
 	}
 
+	/**
+	 * @param callable $callback
+	 * @return bool
+	 */
 	private function processDiffFile( $callback ) {
 		$diffFile = fopen( "{$this->dataDir}/diff_log", 'r' );
 
@@ -733,10 +736,6 @@ EOT
 				}
 			}
 		}
-	}
-
-	private function makeTitle( $titleText ) {
-		return Title::newFromText( $this->encode( $titleText ) );
 	}
 
 	private function getText( $titleText ) {
@@ -920,10 +919,6 @@ EOT
 	private function encode( $s ) {
 		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		return strtr( $s, $this->encodeMap );
-	}
-
-	private function decode( $s ) {
-		return strtr( $s, $this->decodeMap );
 	}
 
 	private function printLatin1( $s ) {
