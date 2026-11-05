@@ -198,6 +198,17 @@ class CreateExtensionTables extends Maintenance {
 				$path = "$IP/extensions/WikiLove/patches";
 				break;
 
+			case 'wikimediaantiabuse':
+				$waaLB = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
+					->getLoadBalancer( 'virtual-wikimediaantiabuse' );
+				$dbw = $this->getWikiConnection( $waaLB );
+
+				$files = [
+					'abuse_review_case' => 'tables-generated.sql'
+				];
+				$path = "$IP/extensions/WikimediaAntiAbuse/schema/mysql";
+				break;
+
 			default:
 				$this->fatalError( "This script is not configured to create tables for $extension\n" );
 		}
